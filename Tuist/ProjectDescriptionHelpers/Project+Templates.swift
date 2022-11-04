@@ -36,7 +36,8 @@ extension Project {
             infoPlist: .default,
             sources: ["\(name)/Sources/**"],
             resources: [],
-            dependencies: [])
+            dependencies: [
+            ])
         
         return [sources]
         
@@ -45,13 +46,7 @@ extension Project {
     /// Helper function to create the application target and the unit test target.
     private static func makeAppTargets(name: String, platform: Platform, dependencies: [TargetDependency]) -> [Target] {
         let platform: Platform = platform
-        let infoPlist: [String: InfoPlist.Value] = [
-            "CFBundleShortVersionString": "1.0.0",
-            "CFBundleVersion": "1",
-            "UIMainStoryboardFile": "",
-            "UILaunchStoryboardName": "LaunchScreen",
-        ]
-        
+
         let mainTarget = Target(
             name: name,
             platform: platform,
@@ -62,7 +57,13 @@ extension Project {
             infoPlist: .file(path: "Applications/Info.plist"),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
-            dependencies: dependencies
+            dependencies: dependencies + [
+                .external(name: "ReactorKit"),
+                .external(name: "SnapKit"),
+                .external(name: "Then"),
+                .external(name: "Alamofire"),
+                .external(name: "RxCocoa")
+            ]
         )
 
         return [mainTarget]
