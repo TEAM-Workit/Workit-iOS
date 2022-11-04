@@ -27,15 +27,16 @@ extension Project {
 
     /// Helper function to create a framework target and an associated unit test target
     private static func makeFrameworkTargets(name: String, platform: Platform) -> [Target] {
-        let sources = Target(name: name,
-                platform: platform,
-                product: .framework,
-                bundleId: "\(workitOrganizationName).\(name)",
-                             infoPlist: .default,
-                sources: ["\(name)/Sources/**"],
-                resources: [],
-                dependencies: [])
-       
+        let sources = Target(
+            name: name,
+            platform: platform,
+            product: .framework,
+            bundleId: "\(workitOrganizationName).\(name)",
+            infoPlist: .default,
+            sources: ["\(name)/Sources/**"],
+            resources: [],
+            dependencies: [])
+        
         return [sources]
         
     }
@@ -58,8 +59,8 @@ extension Project {
             bundleId: "\(workitOrganizationName).\(name)",
             deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
             infoPlist: .extendingDefault(with: infoPlist),
-            sources: ["\(name)/Sources/**"],
-            resources: ["\(name)/Resources/**"],
+            sources: ["Sources/**"],
+            resources: ["Resources/**"],
             dependencies: dependencies
         )
 
