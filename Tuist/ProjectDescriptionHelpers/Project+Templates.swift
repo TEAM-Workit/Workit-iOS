@@ -20,6 +20,7 @@ extension Project {
         return Project(
             name: name,
             organizationName: workitOrganizationName,
+            options: .options(disableBundleAccessors: true),
             targets: targets)
     }
    
