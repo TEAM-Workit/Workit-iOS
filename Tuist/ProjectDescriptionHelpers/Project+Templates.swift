@@ -31,8 +31,8 @@ extension Project {
                 platform: platform,
                 product: .framework,
                 bundleId: "\(workitOrganizationName).\(name)",
-                infoPlist: .default,
-                sources: ["Targets/\(name)/Sources/**"],
+                             infoPlist: .default,
+                sources: ["\(name)/Sources/**"],
                 resources: [],
                 dependencies: [])
        
@@ -58,8 +58,8 @@ extension Project {
             bundleId: "\(workitOrganizationName).\(name)",
             deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
             infoPlist: .extendingDefault(with: infoPlist),
-            sources: ["Targets/\(name)/Sources/**"],
-            resources: ["Targets/\(name)/Resources/**"],
+            sources: ["\(name)/Sources/**"],
+            resources: ["\(name)/Resources/**"],
             dependencies: dependencies
         )
 
