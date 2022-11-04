@@ -59,7 +59,7 @@ extension Project {
             productName: "Workit",
             bundleId: "\(workitOrganizationName).\(name)",
             deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
-            infoPlist: .extendingDefault(with: infoPlist),
+            infoPlist: .file(path: "Applications/Info.plist"),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             dependencies: dependencies
