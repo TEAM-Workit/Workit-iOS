@@ -1,0 +1,16 @@
+disabled_rules:
+- line_length
+- trailing_whitespace
+- orphaned_doc_comment
+- nesting
+- todo
+
+included:
+excluded:
+
+identifier_name:
+  excluded:
+    - id
+    - x
+    - y
+    

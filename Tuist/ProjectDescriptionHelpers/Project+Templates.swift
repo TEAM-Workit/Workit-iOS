@@ -57,6 +57,7 @@ extension Project {
             infoPlist: .file(path: "Applications/Info.plist"),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
+            scripts: [.swiftlint],
             dependencies: dependencies + [
                 .external(name: "ReactorKit"),
                 .external(name: "SnapKit"),
