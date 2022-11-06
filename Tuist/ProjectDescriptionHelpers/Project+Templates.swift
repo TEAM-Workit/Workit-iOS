@@ -49,8 +49,10 @@ extension Project {
         let sources = Target(
             name: name,
             platform: platform,
+            
             product: .framework,
             bundleId: "\(workitOrganizationName).\(name)",
+            deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
             infoPlist: .default,
             sources: ["Sources/**"],
             resources: [],
@@ -61,6 +63,7 @@ extension Project {
             platform: platform,
             product: .unitTests,
             bundleId: "\(workitOrganizationName).\(name)",
+            deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
             infoPlist: .default,
             sources: ["Tests/**"],
             dependencies: [
@@ -93,7 +96,7 @@ extension Project {
             scripts: [.swiftlint],
             dependencies: dependencies + [
                 .package(product: "ReactorKit"),
-                .package(product: "Snapkit"),
+                .package(product: "SnapKit"),
                 .package(product: "Then"),
                 .package(product: "Alamofire"),
                 .package(product: "RxCocoa")
@@ -105,7 +108,8 @@ extension Project {
             platform: platform,
             product: .unitTests,
             bundleId: "\(workitOrganizationName).\(name)",
-            infoPlist: .default,
+            deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
+            infoPlist: .file(path: "Applications/Info.plist"),
             sources: ["Tests/**"],
             dependencies: [
                 .target(name: "\(name)")
