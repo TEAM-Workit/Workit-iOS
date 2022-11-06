@@ -11,6 +11,6 @@ import ProjectDescriptionHelpers
 let workspace = Workspace(
     name: "WorkitWorkspace",
     projects: [
-        "Projects/iOS"
+        "Projects/*"
     ]
 )
