@@ -21,6 +21,18 @@ extension Project {
             name: name,
             organizationName: workitOrganizationName,
             options: .options(disableBundleAccessors: true),
+            packages: [
+                .remote(url: "https://github.com/ReactorKit/ReactorKit.git",
+                        requirement: .upToNextMajor(from: "3.0.0")),
+                .remote(url: "https://github.com/SnapKit/SnapKit.git",
+                        requirement: .upToNextMajor(from: "5.0.1")),
+                .remote(url: "https://github.com/devxoul/Then",
+                        requirement: .upToNextMajor(from: "2")),
+                .remote(url: "https://github.com/Alamofire/Alamofire.git",
+                        requirement: .upToNextMajor(from: "5.6.1")),
+                .remote(url: "https://github.com/ReactiveX/RxSwift.git",
+                        requirement: .upToNextMinor(from: "6.5.0"))
+            ],
             targets: targets)
     }
    
@@ -59,11 +71,16 @@ extension Project {
             resources: ["Resources/**"],
             scripts: [.swiftlint],
             dependencies: dependencies + [
-                .external(name: "ReactorKit"),
-                .external(name: "SnapKit"),
-                .external(name: "Then"),
-                .external(name: "Alamofire"),
-                .external(name: "RxCocoa")
+                .package(product: "ReactorKit"),
+                .package(product: "Snapkit"),
+                .package(product: "Then"),
+                .package(product: "Alamofire"),
+                .package(product: "RxCocoa")
+//                .external(name: "ReactorKit"),
+//                .external(name: "SnapKit"),
+//                .external(name: "Then"),
+//                .external(name: "Alamofire"),
+//                .external(name: "RxCocoa")
             ]
         )
 
