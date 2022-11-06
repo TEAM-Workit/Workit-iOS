@@ -6,7 +6,9 @@ disabled_rules:
 - todo
 
 included:
+- Projects/
 excluded:
+- Tuist/
 
 identifier_name:
   excluded:
