@@ -8,4 +8,18 @@ let project = Project.app(
     dependencies: [
         .project(target: "Data", path: "../Data"),
         .project(target: "DesignSystem", path: "../DesignSystem")
-    ])
+    ],
+    packages: [
+        .remote(url: "https://github.com/ReactorKit/ReactorKit.git",
+                requirement: .upToNextMajor(from: "3.0.0")),
+        .remote(url: "https://github.com/SnapKit/SnapKit.git",
+                requirement: .upToNextMajor(from: "5.0.1")),
+        .remote(url: "https://github.com/devxoul/Then",
+                requirement: .upToNextMajor(from: "2")),
+        .remote(url: "https://github.com/Alamofire/Alamofire.git",
+                requirement: .upToNextMajor(from: "5.6.1")),
+        .remote(url: "https://github.com/ReactiveX/RxSwift.git",
+                requirement: .upToNextMinor(from: "6.5.0"))
+    ],
+    infoPlist: .file(path: "Plists/Info.plist")
+)

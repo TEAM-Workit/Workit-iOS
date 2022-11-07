@@ -11,6 +11,5 @@ import ProjectDescription
 let project = Project.framework(
     name: "DesignSystem",
     platform: .iOS,
-    iOSTargetVersion: "15.0",
     dependencies: [])
 
