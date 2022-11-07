@@ -55,7 +55,7 @@ extension Project {
             deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
             infoPlist: .default,
             sources: ["Sources/**"],
-            resources: [],
+            resources: ["Resources/**"],
             dependencies: dependencies)
         
         let testTarget = Target(
@@ -90,7 +90,7 @@ extension Project {
             productName: "Workit",
             bundleId: "\(workitOrganizationName).\(name)",
             deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
-            infoPlist: .file(path: "Applications/Info.plist"),
+            infoPlist: .file(path: "Plists/Info.plist"),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             scripts: [.swiftlint],
@@ -109,7 +109,7 @@ extension Project {
             product: .unitTests,
             bundleId: "\(workitOrganizationName).\(name)",
             deploymentTarget: .iOS(targetVersion: "15.0", devices: [.iphone]),
-            infoPlist: .file(path: "Applications/Info.plist"),
+            infoPlist: .file(path: "Plists/Info.plist"),
             sources: ["Tests/**"],
             dependencies: [
                 .target(name: "\(name)")
