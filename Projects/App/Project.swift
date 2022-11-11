@@ -14,8 +14,6 @@ let project = Project.app(
                 requirement: .upToNextMajor(from: "3.0.0")),
         .remote(url: "https://github.com/SnapKit/SnapKit.git",
                 requirement: .upToNextMajor(from: "5.0.1")),
-        .remote(url: "https://github.com/devxoul/Then",
-                requirement: .upToNextMajor(from: "2")),
         .remote(url: "https://github.com/Alamofire/Alamofire.git",
                 requirement: .upToNextMajor(from: "5.6.1")),
         .remote(url: "https://github.com/ReactiveX/RxSwift.git",

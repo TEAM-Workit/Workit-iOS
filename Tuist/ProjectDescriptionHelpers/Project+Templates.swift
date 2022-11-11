@@ -72,7 +72,6 @@ extension Project {
             dependencies: dependencies + [
                 .package(product: "ReactorKit"),
                 .package(product: "SnapKit"),
-                .package(product: "Then"),
                 .package(product: "Alamofire"),
                 .package(product: "RxCocoa")
             ]
