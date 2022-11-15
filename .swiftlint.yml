@@ -9,10 +9,11 @@ included:
 - Projects/
 excluded:
 - Tuist/
+- Projects/DesignSystem/Project.swift
+- Projects/Data/Project.swift
 
 identifier_name:
   excluded:
     - id
     - x
     - y
-    
