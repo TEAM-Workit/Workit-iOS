@@ -33,17 +33,21 @@ extension Project {
     public static func framework(
         name: String,
         platform: Platform,
-        dependencies: [TargetDependency] = [])
-    -> Project {
+        dependencies: [TargetDependency] = [],
+        additionalPackageDependencies: [TargetDependency] = [],
+        packages: [ProjectDescription.Package] = []
+    ) -> Project {
         
         let targets = makeFrameworkTargets(
             name: name,
             platform: platform,
-            dependencies: dependencies)
+            dependencies: dependencies,
+            additionalPackageDependencies: additionalPackageDependencies)
         
         return Project(
             name: name,
             organizationName: workitOrganizationName,
+            packages: packages,
             targets: targets)
     }
    
@@ -95,8 +99,9 @@ extension Project {
     private static func makeFrameworkTargets(
         name: String,
         platform: Platform,
-        dependencies: [TargetDependency])
-    -> [Target] {
+        dependencies: [TargetDependency],
+        additionalPackageDependencies: [TargetDependency]
+    ) -> [Target] {
         
         let bundleId = "\(workitOrganizationName).\(name)"
         
@@ -109,7 +114,7 @@ extension Project {
             infoPlist: .default,
             sources: ["Sources/**"],
             resources: ["Resources/**"],
-            dependencies: dependencies)
+            dependencies: dependencies + additionalPackageDependencies)
         
         let testTarget = Target(
             name: "\(name)Tests",
