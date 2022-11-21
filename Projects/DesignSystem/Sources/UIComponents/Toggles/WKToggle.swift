@@ -16,7 +16,7 @@ protocol WKToggleDelegate: AnyObject {
     func toggleStateChanged(_ toggle: WKToggle, isOn: Bool)
 }
 
-class WKToggle: UIView {
+public class WKToggle: UIView {
 
     enum Number {
         static let circleInnerPadding: CGFloat = 2
