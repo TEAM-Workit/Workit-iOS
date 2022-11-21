@@ -19,10 +19,10 @@ public enum Image {
     public static let wkEmpty1 = Assets.wkEmpty1.image
     public static let wkEmpty2 = Assets.wkEmpty2.image
     public static let wkLogo = Assets.wkLogo.image
-    public static let wkTabBarHomeActive = Assets.wkNavigationBarButton1.image
-    public static let wkTabBarMoaInActive = Assets.wkNavigationBarButton2.image
-    public static let wkTabBarMoaActive = Assets.wkNavigationBarButton3.image
-    public static let wkTabBarHomeInActive = Assets.wkNavigationBarButton.image
+    public static let wkTabBarHomeSelected = Assets.property1HomeProperty2Selected.image
+    public static let wkTabBarHomeUnSelected = Assets.property1HomeProperty2Unselected.image
+    public static let wkTabBarMoaSelected = Assets.property1MoaProperty2Selected.image
+    public static let wkTabBarMoaUnSelected = Assets.property1MoaProperty2Unselected.image
     public static let wkWriteBtn = Assets.wkWriteBtn.image
     public static let wkX = Assets.wkX.image
     public static let wkArrowBig = Assets.wkArrowBig.image
