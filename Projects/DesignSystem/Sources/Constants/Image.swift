@@ -23,8 +23,8 @@ public enum Image {
     public static let wkTabBarMoaInActive = Assets.wkNavigationBarButton2.image
     public static let wkTabBarMoaActive = Assets.wkNavigationBarButton3.image
     public static let wkTabBarHomeInActive = Assets.wkNavigationBarButton.image
-    public static let wk_write_btn = Assets.wkWriteBtn.image
-    public static let wk_x = Assets.wkX.image
+    public static let wkWriteBtn = Assets.wkWriteBtn.image
+    public static let wkX = Assets.wkX.image
     public static let wkArrowBig = Assets.wkArrowBig.image
     public static let wkArrowWhite = Assets.wkArrowWhite.image
     public static let wkCalendar = Assets.wkCalendar.image
