@@ -11,6 +11,4 @@ import ProjectDescription
 let project = Project.framework(
     name: "Global",
     platform: .iOS,
-    dependencies: [
-        .project(target: "DesignSystem", path: "../DesignSystem")
-    ])
+    dependencies: [])
