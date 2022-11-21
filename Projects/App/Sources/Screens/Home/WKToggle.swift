@@ -10,6 +10,12 @@ import UIKit
 
 import SnapKit
 
+// MARK: - Protocols
+
+protocol WKToggleDelegate: AnyObject {
+    func toggleStateChanged(_ toggle: WKToggle, isOn: Bool)
+}
+
 class WKToggle: UIView {
 
     enum Number {
@@ -37,7 +43,8 @@ class WKToggle: UIView {
     // MARK: - Properties
 
     private var isOn: Bool = true
-    
+    weak var delegate: WKToggleDelegate?
+
     // MARK: - Initializer
 
     override init(frame: CGRect) {
@@ -60,6 +67,7 @@ class WKToggle: UIView {
     private func toggleDidTap(sender: UITapGestureRecognizer) {
         self.isOn.toggle()
         self.isOn ? self.turnOn() : self.turnOff()
+        self.delegate?.toggleStateChanged(self, isOn: self.isOn)
     }
 
     // MARK: - Methods
