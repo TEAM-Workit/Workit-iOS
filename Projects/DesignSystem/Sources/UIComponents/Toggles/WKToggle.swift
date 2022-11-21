@@ -60,13 +60,17 @@ class WKToggle: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - Actions
 
     @objc
     private func toggleDidTap(sender: UITapGestureRecognizer) {
         self.isOn.toggle()
-        self.isOn ? self.turnOn() : self.turnOff()
+        if self.isOn {
+            self.turnOn()
+        } else {
+            self.turnOff()
+        }
         self.delegate?.toggleStateChanged(self, isOn: self.isOn)
     }
 
