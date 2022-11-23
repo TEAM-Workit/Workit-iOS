@@ -49,7 +49,7 @@ public class WKTextField: UITextField {
         
         self.clearButton.rx.tap
             .withUnretained(self)
-            .bind { (owner, event) in
+            .bind { (owner, _) in
                 owner.text = ""
                 owner.clearButton.isHidden = true
             }
