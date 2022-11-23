@@ -72,15 +72,15 @@ extension WKTextField {
     }
     
     private func setDefaultStyle() {
-        // TODO: font, color 변경
-        self.backgroundColor = .white
+        self.backgroundColor = .wkWhite
         self.layer.cornerRadius = 5
-        self.layer.borderColor = UIColor.lightGray.cgColor
+        self.layer.borderColor = UIColor.wkBlack15.cgColor
         self.layer.borderWidth = 1
         self.addLeftPadding(12)
         self.addRightPadding(44)
-        self.attributedPlaceholder = NSAttributedString(string: self.placeholder ?? "placeholder", attributes: [NSAttributedString.Key.foregroundColor: UIColor.systemGray])
-        self.textColor = .black
+        self.attributedPlaceholder = NSAttributedString(string: self.placeholder ?? "placeholder", attributes: [NSAttributedString.Key.foregroundColor: UIColor.wkBlack30])
+        self.textColor = .wkBlack
+        self.font = .b1M
         
         self.setActiveStyle()
         self.setClearButtonStyle()
@@ -90,20 +90,20 @@ extension WKTextField {
     private func setActiveStyle() {
         self.rx.controlEvent(.allEditingEvents)
             .subscribe(onNext: { _ in
-                self.layer.borderColor = UIColor.purple.cgColor
+                self.layer.borderColor = UIColor.wkMainPurple.cgColor
                 self.layer.borderWidth = 2
             })
             .disposed(by: disposeBag)
         
         self.rx.controlEvent(.editingDidEnd)
             .subscribe(onNext: { _ in
-                self.layer.borderColor = UIColor.lightGray.cgColor
+                self.layer.borderColor = UIColor.wkBlack15.cgColor
                 self.layer.borderWidth = 1
             })
             .disposed(by: disposeBag)
     }
     
     private func setClearButtonStyle() {
-        self.clearButton.setImage(UIImage(systemName: "x.circle.fill")?.withRenderingMode(.alwaysOriginal), for: .normal)
+        self.clearButton.setImage(Image.wkTextFieldXButton.withRenderingMode(.alwaysOriginal), for: .normal)
     }
 }
