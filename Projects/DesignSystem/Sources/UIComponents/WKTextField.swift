@@ -89,16 +89,18 @@ extension WKTextField {
     
     private func setActiveStyle() {
         self.rx.controlEvent(.allEditingEvents)
-            .subscribe(onNext: { _ in
-                self.layer.borderColor = UIColor.wkMainPurple.cgColor
-                self.layer.borderWidth = 2
+            .withUnretained(self)
+            .subscribe(onNext: { (owner, _) in
+                owner.layer.borderColor = UIColor.wkMainPurple.cgColor
+                owner.layer.borderWidth = 2
             })
             .disposed(by: disposeBag)
         
         self.rx.controlEvent(.editingDidEnd)
-            .subscribe(onNext: { _ in
-                self.layer.borderColor = UIColor.wkBlack15.cgColor
-                self.layer.borderWidth = 1
+            .withUnretained(self)
+            .subscribe(onNext: { (owner, _) in
+                owner.layer.borderColor = UIColor.wkBlack15.cgColor
+                owner.layer.borderWidth = 1
             })
             .disposed(by: disposeBag)
     }
