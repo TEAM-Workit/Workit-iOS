@@ -30,4 +30,5 @@ public enum Image {
     public static let wkCalendar = Assets.wkCalendar.image
     public static let wkMenu = Assets.wkMenu.image
     public static let wkReset = Assets.wkReset.image
+    public static let wkTextFieldXButton = Assets.wkTextFieldXButton.image
 }
