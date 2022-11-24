@@ -16,7 +16,7 @@ public class WKTextField: UITextField {
     
     // MARK: UIComponenets
     
-    private let clearButton: UIButton = UIButton()
+    let clearButton: UIButton = UIButton()
     
     // MARK: Properties
     
