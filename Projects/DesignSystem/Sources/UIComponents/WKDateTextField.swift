@@ -39,7 +39,7 @@ public final class WKDateTextField: WKTextField {
         self.text = dateString
     }
     
-    public func setAction(_ closure: @escaping () -> ()) {
+    public func setAction(_ closure: @escaping () -> Void) {
         self.button.addAction( UIAction { (action: UIAction) in closure() }, for: .touchUpInside)
     }
 }
