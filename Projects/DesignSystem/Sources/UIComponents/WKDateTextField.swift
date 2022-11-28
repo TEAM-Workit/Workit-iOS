@@ -40,7 +40,7 @@ public final class WKDateTextField: WKTextField {
     }
     
     public func setAction(_ closure: @escaping () -> Void) {
-        self.button.addAction( UIAction { (action: UIAction) in closure() }, for: .touchUpInside)
+        self.button.addAction( UIAction { _ in closure() }, for: .touchUpInside)
     }
 }
 
