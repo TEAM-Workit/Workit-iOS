@@ -44,7 +44,7 @@ public final class WKDateTextField: WKSelectableTextField {
 extension WKDateTextField {
     private func setDefaultLayout() {
         self.removeClearButton()
-        self.addSubviews([calendarImageView])
+        self.addSubview(calendarImageView)
         
         self.calendarImageView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
