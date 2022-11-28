@@ -26,6 +26,6 @@ let project = Project.framework(
         .remote(url: "https://github.com/ReactiveX/RxSwift.git",
                 requirement: .upToNextMinor(from: "6.5.0")),
         .remote(url: "https://github.com/RxSwiftCommunity/RxGesture",
-                requirement: .upToNextMajor(from: "4.0.4"))
+                requirement: .upToNextMajor(from: "4.0.0"))
     ])
 
