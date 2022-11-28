@@ -109,10 +109,10 @@ public final class WKDateButton: UIView {
     /// - Parameters:
     ///    - fromDate: 시작날짜 (형식: YY.MM.DD.)
     ///    - toDate: 끝나는 날짜 (형식: YY.MM.DD. / 단일 날짜의 경우 nil)
-    public func setDate(fromDate from: String?, toDate to: String?) {
-        var date = "" + "\(from ?? "")"
-        if let to = to {
-            date += " - \(to)"
+    public func setDate(fromDate: String?, toDate: String?) {
+        var date = "" + "\(fromDate ?? "")"
+        if let toDate = toDate {
+            date += " - \(toDate)"
         }
         dateLabel.text = date
         dateLabel.sizeToFit()
