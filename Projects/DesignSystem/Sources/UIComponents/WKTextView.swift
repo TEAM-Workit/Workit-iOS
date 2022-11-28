@@ -98,9 +98,9 @@ extension WKTextView {
             .withUnretained(self)
             .subscribe(onNext: { (owner, _) in
                 if owner.text.isEmpty {
-                    owner.setPlaceholderLayout()
+                    owner.placeholderLabel.isHidden = false
                 } else {
-                    owner.placeholderLabel.removeFromSuperview()
+                    owner.placeholderLabel.isHidden = true
                 }
             })
             .disposed(by: disposeBag)
@@ -109,7 +109,7 @@ extension WKTextView {
             .withUnretained(self)
             .subscribe(onNext: { (owner, _) in
                 if owner.text.isEmpty {
-                    owner.setPlaceholderLayout()
+                    owner.placeholderLabel.isHidden = false
                 }
             })
             .disposed(by: disposeBag)
