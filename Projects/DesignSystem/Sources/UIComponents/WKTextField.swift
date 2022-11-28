@@ -16,7 +16,7 @@ public class WKTextField: UITextField {
     
     // MARK: UIComponenets
     
-    let clearButton: UIButton = UIButton()
+    private let clearButton: UIButton = UIButton()
     
     // MARK: Properties
     
@@ -54,6 +54,10 @@ public class WKTextField: UITextField {
                 owner.clearButton.isHidden = true
             }
             .disposed(by: disposeBag)
+    }
+    
+    func removeClearButton() {
+        self.clearButton.removeFromSuperview()
     }
 }
 
