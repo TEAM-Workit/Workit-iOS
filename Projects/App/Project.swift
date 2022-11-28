@@ -18,7 +18,9 @@ let project = Project.app(
         .remote(url: "https://github.com/Alamofire/Alamofire.git",
                 requirement: .upToNextMajor(from: "5.6.1")),
         .remote(url: "https://github.com/ReactiveX/RxSwift.git",
-                requirement: .upToNextMinor(from: "6.5.0"))
+                requirement: .upToNextMinor(from: "6.5.0")),
+        .remote(url: "https://github.com/RxSwiftCommunity/RxGesture",
+                requirement: .upToNextMajor(from: "4.0.4"))
     ],
     infoPlist: .file(path: "Plists/Info.plist")
 )
