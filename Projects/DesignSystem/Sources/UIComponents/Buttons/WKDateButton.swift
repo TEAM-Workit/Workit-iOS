@@ -48,13 +48,13 @@ public final class WKDateButton: UIView {
     /// - Parameters:
     ///    - from: 시작날짜 (형식: YY.MM.DD.)
     ///    - to: 끝나는 날짜 (형식: YY.MM.DD. / 단일 날짜의 경우 nil)
-    public init(from: String? = nil, to: String? = nil) {
+    public init(fromDate: String? = nil, toDate: String? = nil) {
         super.init(frame: .zero)
         
         setUI()
         setLayout()
         setGesture()
-        setDate(from: from, to: to)
+        setDate(fromDate: fromDate, toDate: toDate)
     }
     
     required init?(coder: NSCoder) {
@@ -109,7 +109,7 @@ public final class WKDateButton: UIView {
     /// - Parameters:
     ///    - from: 시작날짜 (형식: YY.MM.DD.)
     ///    - to: 끝나는 날짜 (형식: YY.MM.DD. / 단일 날짜의 경우 nil)
-    public func setDate(from: String?, to: String?) {
+    public func setDate(fromDate from: String?, toDate to: String?) {
         var date = "" + "\(from ?? "")"
         if let to = to {
             date += " - \(to)"
