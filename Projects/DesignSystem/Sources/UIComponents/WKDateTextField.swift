@@ -8,6 +8,7 @@
 
 import UIKit
 
+import RxSwift
 import SnapKit
 
 public final class WKDateTextField: WKTextField {
@@ -15,7 +16,7 @@ public final class WKDateTextField: WKTextField {
     // MARK: UIComponenets
     
     private let calendarImageView: UIImageView = UIImageView(image: Image.wkCalendar.withRenderingMode(.alwaysOriginal))
-    let selectDateButton: UIButton = UIButton(type: .system)
+    private let button: UIButton = UIButton(type: .system)
     
     // MARK: Initializer
     
@@ -31,11 +32,15 @@ public final class WKDateTextField: WKTextField {
     
     // MARK: - Methods
     
-    func setDate(date: Date) {
+    public func setDate(date: Date) {
         let dateFormatter: DateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yy.MM.dd"
         let dateString: String = dateFormatter.string(from: date)
         self.text = dateString
+    }
+    
+    public func setAction(_ closure: @escaping () -> ()) {
+        self.button.addAction( UIAction { (action: UIAction) in closure() }, for: .touchUpInside)
     }
 }
 
@@ -43,15 +48,16 @@ public final class WKDateTextField: WKTextField {
 
 extension WKDateTextField {
     private func setDefaultLayout() {
-        self.clearButton.removeFromSuperview()
-        self.addSubviews([calendarImageView, selectDateButton])
+        self.removeClearButton()
+        self.addSubviews([calendarImageView, button])
         
         self.calendarImageView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.top.bottom.right.equalToSuperview().inset(12)
+            make.top.bottom.trailing.equalToSuperview().inset(12)
             make.width.equalTo(calendarImageView.snp.height)
         }
-        self.selectDateButton.snp.makeConstraints { make in
+        
+        self.button.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
