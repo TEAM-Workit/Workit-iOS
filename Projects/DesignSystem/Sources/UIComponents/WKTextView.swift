@@ -88,10 +88,10 @@ extension WKTextView {
         }
     }
     
-    public func setPlaceholder(placeholderText: String) {
+    public func setPlaceholder(text: String) {
         self.placeholderLabel.textColor = .wkBlack30
         self.placeholderLabel.font = .b1M
-        self.placeholderLabel.text = placeholderText
+        self.placeholderLabel.text = text
         self.setPlaceholderLayout()
         
         self.rx.text
