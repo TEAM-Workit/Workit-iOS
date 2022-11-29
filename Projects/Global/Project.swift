@@ -11,4 +11,15 @@ import ProjectDescription
 let project = Project.framework(
     name: "Global",
     platform: .iOS,
-    dependencies: [])
+    dependencies: [],
+    additionalPackageDependencies: [
+        .package(product: "RxSwift"),
+        .package(product: "RxCocoa"),
+        .package(product: "RxGesture")
+    ],
+    packages: [
+        .remote(url: "https://github.com/ReactiveX/RxSwift.git",
+                requirement: .upToNextMinor(from: "6.5.0")),
+        .remote(url: "https://github.com/RxSwiftCommunity/RxGesture",
+                requirement: .upToNextMajor(from: "4.0.0"))
+    ])

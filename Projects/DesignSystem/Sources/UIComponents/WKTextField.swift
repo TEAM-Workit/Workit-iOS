@@ -55,6 +55,10 @@ public class WKTextField: UITextField {
             }
             .disposed(by: disposeBag)
     }
+    
+    func removeClearButton() {
+        self.clearButton.removeFromSuperview()
+    }
 }
 
 // MARK: - UI
