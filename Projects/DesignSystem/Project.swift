@@ -17,12 +17,15 @@ let project = Project.framework(
     additionalPackageDependencies: [
         .package(product: "RxSwift"),
         .package(product: "SnapKit"),
-        .package(product: "RxCocoa")
+        .package(product: "RxCocoa"),
+        .package(product: "RxGesture")
     ],
     packages: [
         .remote(url: "https://github.com/SnapKit/SnapKit.git",
                 requirement: .upToNextMajor(from: "5.0.1")),
         .remote(url: "https://github.com/ReactiveX/RxSwift.git",
-                requirement: .upToNextMinor(from: "6.5.0"))
+                requirement: .upToNextMinor(from: "6.5.0")),
+        .remote(url: "https://github.com/RxSwiftCommunity/RxGesture",
+                requirement: .upToNextMajor(from: "4.0.0"))
     ])
 
