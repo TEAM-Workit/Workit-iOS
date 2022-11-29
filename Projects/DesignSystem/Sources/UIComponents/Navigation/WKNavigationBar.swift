@@ -27,6 +27,7 @@ public class WKNavigationBar: UINavigationBar {
         self.shadowImage = UIImage()
         self.isTranslucent = true
         self.barTintColor = UIColor.wkWhite
+        self.tintColor = UIColor.wkBlack
     }
  
 }
