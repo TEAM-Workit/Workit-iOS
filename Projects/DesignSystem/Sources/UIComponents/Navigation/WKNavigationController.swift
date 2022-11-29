@@ -42,7 +42,7 @@ extension WKNavigationConroller: UIGestureRecognizerDelegate {
         view.addGestureRecognizer(fullAreaBackGestureRecognizer)
     }
     
-    /// navigationController의 stack이 1보다 크면서 기본 swipeGesture가 true 상태일 경우 full back gesturer가 가능하도록 합니다.
+    /// navigationController의 stack이 1보다 크면서 기본 swipeGesture가 true 상태일 경우 full back gesture가 가능하도록 합니다.
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         let isSystemSwipeBackEnabled = interactivePopGestureRecognizer?.isEnabled == true
         let isNotRootViewController = viewControllers.count > 1
