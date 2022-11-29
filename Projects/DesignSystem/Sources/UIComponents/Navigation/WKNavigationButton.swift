@@ -32,10 +32,11 @@ public final class WKNavigationButton: UIButton {
     public init(image: UIImage?) {
         super.init(frame: .zero)
         
-        self.setImage(image?
-                        .resize(to: CGSize(width: 24, height: 24))
-                        .withRenderingMode(.alwaysTemplate),
-                      for: .normal)
+        self.setImage(
+            image?.resize(to: CGSize(width: 24, height: 24))
+                .withRenderingMode(.alwaysTemplate),
+            for: .normal
+        )
     }
     
     /// - Parameters:
@@ -56,8 +57,10 @@ public final class WKNavigationButton: UIButton {
     /// 버튼의  텍스트를 설정합니다.
     /// 휴먼 에러를 방지하기 위해 이미 이미지를 세팅한 버튼인 경우 early return 해줍니다.
     /// setImage와 동시에 사용하지 않습니다.
-    public override func setTitle(_ title: String?,
-                                  for state: UIControl.State) {
+    public override func setTitle(
+        _ title: String?,
+        for state: UIControl.State
+    ) {
         if self.image(for: .normal) != nil
             || self.image(for: .highlighted) != nil
             || self.image(for: .disabled) != nil
@@ -74,8 +77,10 @@ public final class WKNavigationButton: UIButton {
     /// 버튼의  이미지를 설정합니다.
     /// 휴먼 에러를 방지하기 위해 이미 텍스트를 세팅한 버튼인 경우 early return 해줍니다.
     /// setTitle과 동시에 사용하지 않습니다.
-    public override func setImage(_ image: UIImage?,
-                                  for state: UIControl.State) {
+    public override func setImage(
+        _ image: UIImage?,
+        for state: UIControl.State
+    ) {
         if self.title(for: .normal) != nil
             || self.title(for: .highlighted) != nil
             || self.title(for: .disabled) != nil
