@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import DesignSystem
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -20,8 +21,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
 
-        let viewController = UIViewController()
-        viewController.view.backgroundColor = .yellow
+        let viewController = WKNavigationConroller(rootViewController: HomeViewController())
+        viewController.view.backgroundColor = UIColor.wkWhite
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
     }
