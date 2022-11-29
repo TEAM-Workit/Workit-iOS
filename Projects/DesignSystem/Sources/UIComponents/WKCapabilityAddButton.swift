@@ -8,7 +8,6 @@
 
 import UIKit
 
-import RxSwift
 import SnapKit
 
 public class WKCapabilityAddButton: UIButton {
