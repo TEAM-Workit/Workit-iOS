@@ -6,6 +6,7 @@
 //  Copyright © 2022 com.workit. All rights reserved.
 //
 
+import Global
 import UIKit
 
 import RxSwift
@@ -41,6 +42,8 @@ public final class WKDateButton: UIView {
     
     // MARK: - Properties
     
+    public private(set) var fromDate: Date?
+    public private(set) var toDate: Date?
     fileprivate let tapPublisher = PublishSubject<()>()
     
     // MARK: - Initializer
@@ -107,23 +110,13 @@ public final class WKDateButton: UIView {
 
     /// 컴포넌트 생성 후 Date를 다시 설정하는 함수
     /// - Parameters:
-    ///    - fromDate: 시작날짜 (형식: YY.MM.DD.)
-    ///    - toDate: 끝나는 날짜 (형식: YY.MM.DD. / 단일 날짜의 경우 nil)
+    ///    - fromDate: 시작날짜 (날짜 선택 전일 경우 nil)
+    ///    - toDate: 끝나는 날짜 (단일 날짜의 경우 nil)
     public func setDate(fromDate: Date?, toDate: Date?) {
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yy.MM.dd"
-        dateFormatter.string(from: fromDate)
-       // Date 타입으로 변환
-                
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateFormat = "yyyy.MM.dd a hh시 mm분" // 2020.08.13 오후 04시 30분
-        myDateFormatter.locale = Locale(identifier:"ko_KR") // PM, AM을 언어에 맞게 setting (ex: PM -> 오후)
-        let convertStr = myDateFormatter.string(from: convertDate!)
-        let convertNowStr = myDateFormatter.string(from: nowDate) // 현재 시간의 Date를 format에 맞춰 string으로 반환
-        
-        var date = "" + "\(fromDate ?? "")"
-        if let toDate = toDate {
+        self.fromDate = fromDate
+        self.toDate = toDate
+        var date = "" + "\(fromDate?.toYYMMDDString() ?? "날짜 선택")"
+        if let toDate = toDate?.toYYMMDDString() {
             date += " - \(toDate)"
         }
         dateLabel.text = date
