@@ -35,11 +35,11 @@ extension WKCapabilityAddButton {
         self.setTitleColor(.wkBlack45, for: .normal)
         self.setTitleColor(.wkBlack80, for: .highlighted)
         self.makeRounded(radius: 5)
+        
         self.imageView?.snp.updateConstraints { make in
             make.top.bottom.equalToSuperview().inset(6.5)
             make.leading.equalToSuperview().inset(6)
             make.width.equalTo(self.imageView?.snp.height ?? 16)
         }
-        
     }
 }
