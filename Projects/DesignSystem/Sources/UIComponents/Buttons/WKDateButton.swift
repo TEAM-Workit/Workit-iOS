@@ -12,6 +12,9 @@ import UIKit
 import RxSwift
 import SnapKit
 
+/**
+ - 사용시 가로길이, 세로길이(32)는 지정되어 있으므로 위치만 잡아주면 됩니다.
+ */
 public final class WKDateButton: UIView {
     
     enum Number {
@@ -99,6 +102,10 @@ public final class WKDateButton: UIView {
             make.leading.equalTo(calenderIconImageView.snp.trailing).offset(6)
             make.trailing.equalTo(arrowIconImageView.snp.leading).offset(-6)
             make.height.equalTo(15)
+        }
+        
+        self.snp.makeConstraints { make in
+            make.height.equalTo(32)
         }
     }
 
