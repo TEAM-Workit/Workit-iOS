@@ -11,12 +11,11 @@ import UIKit
 import RxSwift
 import SnapKit
 
-public final class WKDateTextField: WKTextField {
+public final class WKDateTextField: WKSelectableTextField {
     
     // MARK: UIComponenets
     
     private let calendarImageView: UIImageView = UIImageView(image: Image.wkCalendar.withRenderingMode(.alwaysOriginal))
-    private let button: UIButton = UIButton(type: .system)
     
     // MARK: Initializer
     
@@ -38,10 +37,6 @@ public final class WKDateTextField: WKTextField {
         let dateString: String = dateFormatter.string(from: date)
         self.text = dateString
     }
-    
-    public func setAction(_ closure: @escaping () -> Void) {
-        self.button.addAction( UIAction { _ in closure() }, for: .touchUpInside)
-    }
 }
 
 // MARK: - UI
@@ -49,16 +44,12 @@ public final class WKDateTextField: WKTextField {
 extension WKDateTextField {
     private func setDefaultLayout() {
         self.removeClearButton()
-        self.addSubviews([calendarImageView, button])
+        self.addSubview(calendarImageView)
         
         self.calendarImageView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.top.bottom.trailing.equalToSuperview().inset(12)
             make.width.equalTo(calendarImageView.snp.height)
-        }
-        
-        self.button.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
         }
     }
 }
