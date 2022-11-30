@@ -8,9 +8,9 @@
 
 import Foundation
 
-public extension Date {
+extension Date {
     /// Date 타입을 String (yy.MM.DD.)으로 변환
-    func toYYMMDDString() -> String {
+    public func toYYMMDDString() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yy.MM.dd."
         return dateFormatter.string(from: self)
