@@ -6,10 +6,15 @@
 //  Copyright © 2022 com.workit. All rights reserved.
 //
 
-import UIKit
+import UIKit.UIView
 
 extension UIView {
-    func addSubviews(_ views: [UIView]) {
+    public func addSubviews(_ views: [UIView]) {
         views.forEach { self.addSubview($0) }
+    }
+    
+    public func makeRounded(radius: CGFloat) {
+        self.clipsToBounds = true
+        self.layer.cornerRadius = radius
     }
 }
