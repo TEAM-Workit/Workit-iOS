@@ -8,7 +8,8 @@ let project = Project.app(
     dependencies: [
         .project(target: "Data", path: "../Data"),
         .project(target: "DesignSystem", path: "../DesignSystem"),
-        .project(target: "Global", path: "../Global")
+        .project(target: "Global", path: "../Global"),
+        .project(target: "Domain", path: "../Domain")
     ],
     packages: [
         .remote(url: "https://github.com/ReactorKit/ReactorKit.git",
