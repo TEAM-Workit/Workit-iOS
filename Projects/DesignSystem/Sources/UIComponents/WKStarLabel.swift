@@ -20,7 +20,6 @@ public class WKStarLabel: UILabel {
         label.textColor = UIColor.wkMainPurple
         label.font = UIFont.b1Sb
         label.textAlignment = .center
-        label.sizeToFit()
         return label
     }()
     
