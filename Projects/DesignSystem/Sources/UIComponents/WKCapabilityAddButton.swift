@@ -28,11 +28,11 @@ public class WKCapabilityAddButton: UIButton {
 
 extension WKCapabilityAddButton {
     private func setDefaultStyle() {
-        self.backgroundColor = .wkBlack8
-        self.setImage(Image.wkCapabilityPlus, for: .normal)
-        self.titleLabel?.font = .b1Sb
-        self.setTitleColor(.wkBlack45, for: .normal)
-        self.setTitleColor(.wkBlack80, for: .highlighted)
+        self.backgroundColor = UIColor.wkBlack8
+        self.setImage(Image.wkCapabilityPlus, for: UIControl.State.normal)
+        self.titleLabel?.font = UIFont.b1Sb
+        self.setTitleColor(UIColor.wkBlack45, for: UIControl.State.normal)
+        self.setTitleColor(UIColor.wkBlack80, for: UIControl.State.highlighted)
         self.makeRounded(radius: 5)
         
         self.imageView?.snp.updateConstraints { make in
