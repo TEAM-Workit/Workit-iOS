@@ -6,10 +6,10 @@
 //  Copyright © 2022 com.workit. All rights reserved.
 //
 
-import UIKit
+import UIKit.UIScrollView
 
 extension UIScrollView {
-    var scrollIndicators: (horizontal: UIView?, vertical: UIView?) {
+    public var scrollIndicators: (horizontal: UIView?, vertical: UIView?) {
         
         guard self.subviews.count >= 2 else {
             return (horizontal: nil, vertical: nil)
