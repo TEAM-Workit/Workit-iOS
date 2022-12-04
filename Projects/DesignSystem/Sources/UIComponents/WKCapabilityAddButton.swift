@@ -17,6 +17,7 @@ public class WKCapabilityAddButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.setDefaultStyle()
+        self.setDefaultLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -34,7 +35,9 @@ extension WKCapabilityAddButton {
         self.setTitleColor(UIColor.wkBlack45, for: UIControl.State.normal)
         self.setTitleColor(UIColor.wkBlack80, for: UIControl.State.highlighted)
         self.makeRounded(radius: 5)
-        
+    }
+    
+    private func setDefaultLayout() {
         self.imageView?.snp.updateConstraints { make in
             make.top.bottom.equalToSuperview().inset(6.5)
             make.leading.equalToSuperview().inset(6)
