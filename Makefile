@@ -25,9 +25,6 @@ regenerate:
 rm-upstream:
 	git remote rm upstream
 
-add-upstream:
-	git remote add upstream https://github.com/TeamFogFog/FogFog-iOS
-
 dev-sync:
 	git fetch upstream
 	git merge upstream/develop
