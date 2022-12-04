@@ -77,7 +77,8 @@ extension Project {
                 .package(product: "ReactorKit"),
                 .package(product: "SnapKit"),
                 .package(product: "Alamofire"),
-                .package(product: "RxCocoa")
+                .package(product: "RxCocoa"),
+                .package(product: "RxGesture")
             ]
         )
         

@@ -6,6 +6,7 @@
 //  Copyright © 2022 com.workit. All rights reserved.
 //
 
+import DesignSystem
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -20,8 +21,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
 
-        let viewController = UIViewController()
-        viewController.view.backgroundColor = .yellow
+        let viewController = WKNavigationConroller(rootViewController: HomeViewController())
+        viewController.view.backgroundColor = UIColor.wkWhite
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
     }
