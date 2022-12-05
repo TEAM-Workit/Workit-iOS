@@ -8,6 +8,8 @@
 
 import UIKit
 
+import SnapKit
+
 public class WKTextFieldStyleButton: UIButton {
     
     public enum Style {
