@@ -25,7 +25,7 @@ public final class WKRoundedButton: UIButton {
     override public init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.setDefaultUI(enabledColor: .wkMainPurple)
+        self.setDefaultUI(enabledColor: UIColor.wkMainPurple)
     }
     
     required init?(coder: NSCoder) {
