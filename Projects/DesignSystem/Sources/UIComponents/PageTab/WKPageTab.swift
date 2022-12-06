@@ -1,5 +1,5 @@
 //
-//  WKTopTabbar.swift
+//  WKPageTab.swift
 //  DesignSystem
 //
 //  Created by 윤예지 on 2022/12/05.
