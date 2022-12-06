@@ -82,7 +82,6 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
         self.setUI()
         self.setLayout()
         self.setStackView()
-        self.setDummy()
     }
     
     required init?(coder: NSCoder) {
@@ -175,16 +174,6 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
     
     public func setData() {
         // TODO - Project 모델 추가 후 수정 예정
-    }
-    
-    private func setDummy() {
-        projectLabel.text = "프로젝트프로젝트프로젝트프로젝트프로젝트프로젝트"
-        dateLabel.text = "20.10.20"
-        titleLabel.text = "제목제목제목TitleLabeldjfheufhaifehifhedkfjeifiejfeijfeifje"
-        descriptionLabel.text = "설명설명TitleLabeldjfheufhaifehifhe\ndfeifjlewjife"
-        tagLabel.text = "하드역량 tag"
-        etcLabel.text = "외 3건"
-        setTagUI(type: .hard)
     }
 }
 
