@@ -6,6 +6,7 @@
 //  Copyright © 2022 com.workit. All rights reserved.
 //
 
+import Global
 import UIKit
 
 import SnapKit
@@ -166,11 +167,7 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
     }
     
     private func setStackView() {
-        self.stackView.addArrangedSubview(projectView)
-        self.stackView.addArrangedSubview(line)
-        self.stackView.addArrangedSubview(titleLabel)
-        self.stackView.addArrangedSubview(descriptionLabel)
-        self.stackView.addArrangedSubview(tagView)
+        self.stackView.addArragnedSubviews(projectView, line, titleLabel, descriptionLabel, tagView)
         self.stackView.setCustomSpacing(10, after: line)
         self.stackView.setCustomSpacing(4, after: titleLabel)
         self.stackView.setCustomSpacing(16, after: descriptionLabel)
@@ -178,7 +175,6 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
     
     public func setData() {
         // TODO - Project 모델 추가 후 수정 예정
-       
     }
     
     private func setDummy() {
@@ -187,7 +183,7 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
         titleLabel.text = "어쩍우 TitleLabeldjfheufhaifehifhedkfjeifiejfeijfeifje"
         descriptionLabel.text = "어쩍우 TitleLabeldjfheufhaifehifhe\ndfeifjlewjife"
         tagLabel.text = "어쩌구역량 tag"
-        etcLabel.text = "외3건"
+        etcLabel.text = "외 3건"
         setTagUI(type: .hard)
     }
 }
