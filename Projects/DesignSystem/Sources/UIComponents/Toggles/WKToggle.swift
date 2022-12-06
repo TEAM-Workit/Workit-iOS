@@ -50,7 +50,7 @@ public class WKToggle: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        setViewHierchy()
+        setViewHierarchy()
         setDefaultConstraints()
         setLayout()
         makeViewRounded()
@@ -76,7 +76,7 @@ public class WKToggle: UIView {
 
     // MARK: - Methods
 
-    private func setViewHierchy() {
+    private func setViewHierarchy() {
         self.addSubview(containerView)
         self.containerView.addSubview(circleView)
     }
@@ -131,16 +131,6 @@ public class WKToggle: UIView {
             self.layoutIfNeeded()
             self.containerView.backgroundColor = .gray
         }
-    }
-
-}
-
-// TODO: - Global 모듈로 이동
-extension UIView {
-
-    func makeRounded(radius: CGFloat) {
-        self.clipsToBounds = true
-        self.layer.cornerRadius = radius
     }
 
 }

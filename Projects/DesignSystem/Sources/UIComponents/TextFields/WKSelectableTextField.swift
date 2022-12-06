@@ -1,5 +1,5 @@
 //
-//  WKDateTextField.swift
+//  WKSelectableTextField.swift
 //  DesignSystem
 //
 //  Created by madilyn on 2022/11/25.
@@ -8,14 +8,14 @@
 
 import UIKit
 
+import RxCocoa
 import RxSwift
 import SnapKit
 
-public final class WKDateTextField: WKTextField {
+public class WKSelectableTextField: WKTextField {
     
-    // MARK: UIComponenets
+    // MARK: UIComponents
     
-    private let calendarImageView: UIImageView = UIImageView(image: Image.wkCalendar.withRenderingMode(.alwaysOriginal))
     private let button: UIButton = UIButton(type: .system)
     
     // MARK: Initializer
@@ -23,7 +23,6 @@ public final class WKDateTextField: WKTextField {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.setDefaultLayout()
-        self.setDate(date: Date())
     }
     
     required init?(coder: NSCoder) {
@@ -32,13 +31,6 @@ public final class WKDateTextField: WKTextField {
     
     // MARK: - Methods
     
-    public func setDate(date: Date) {
-        let dateFormatter: DateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yy.MM.dd"
-        let dateString: String = dateFormatter.string(from: date)
-        self.text = dateString
-    }
-    
     public func setAction(_ closure: @escaping () -> Void) {
         self.button.addAction( UIAction { _ in closure() }, for: .touchUpInside)
     }
@@ -46,16 +38,10 @@ public final class WKDateTextField: WKTextField {
 
 // MARK: - UI
 
-extension WKDateTextField {
+extension WKSelectableTextField {
     private func setDefaultLayout() {
         self.removeClearButton()
-        self.addSubviews([calendarImageView, button])
-        
-        self.calendarImageView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.top.bottom.trailing.equalToSuperview().inset(12)
-            make.width.equalTo(calendarImageView.snp.height)
-        }
+        self.addSubview(button)
         
         self.button.snp.makeConstraints { make in
             make.edges.equalToSuperview()
