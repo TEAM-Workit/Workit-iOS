@@ -60,8 +60,8 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
     
     private let tagView = UIView()
     
-    private let tagLabel: UILabel = {
-        let label = UILabel()
+    private let tagLabel: PaddingLabel = {
+        let label = PaddingLabel(padding: UIEdgeInsets(top: 6, left: 8, bottom: 6, right: 8))
         label.font = UIFont.c2M
         label.makeRounded(radius: 5)
         return label
@@ -180,9 +180,9 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
     private func setDummy() {
         projectLabel.text = "프로젝트프로젝트프로젝트프로젝트프로젝트프로젝트"
         dateLabel.text = "20.10.20"
-        titleLabel.text = "어쩍우 TitleLabeldjfheufhaifehifhedkfjeifiejfeijfeifje"
-        descriptionLabel.text = "어쩍우 TitleLabeldjfheufhaifehifhe\ndfeifjlewjife"
-        tagLabel.text = "어쩌구역량 tag"
+        titleLabel.text = "제목제목제목TitleLabeldjfheufhaifehifhedkfjeifiejfeijfeifje"
+        descriptionLabel.text = "설명설명TitleLabeldjfheufhaifehifhe\ndfeifjlewjife"
+        tagLabel.text = "하드역량 tag"
         etcLabel.text = "외 3건"
         setTagUI(type: .hard)
     }
