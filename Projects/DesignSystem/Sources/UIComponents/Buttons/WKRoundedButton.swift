@@ -15,6 +15,7 @@ import UIKit.UIButton
 public final class WKRoundedButton: UIButton {
     
     // MARK: - Initializer
+    
     public init(enabledColor: UIColor) {
         super.init(frame: .zero)
         
