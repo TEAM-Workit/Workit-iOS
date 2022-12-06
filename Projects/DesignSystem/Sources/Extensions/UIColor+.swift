@@ -89,5 +89,8 @@ public extension UIColor {
   @nonobjc class var wkBlack80: UIColor {
     return UIColor(red: 28.0 / 255.0, green: 27.0 / 255.0, blue: 34.0 / 255.0, alpha: 0.8)
   }
-
+    
+  @nonobjc class var wkBlack5: UIColor {
+    return UIColor(red: 28.0 / 255.0, green: 27.0 / 255.0, blue: 34.0 / 255.0, alpha: 0.05)
+  }
 }
