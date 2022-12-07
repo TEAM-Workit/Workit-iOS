@@ -30,9 +30,9 @@ public final class WKPageTab: UIView {
     
     private let titleStackView: UIStackView = {
         let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.alignment = .fill
-        stackView.distribution = .fillEqually
+        stackView.axis = NSLayoutConstraint.Axis.horizontal
+        stackView.alignment = UIStackView.Alignment.fill
+        stackView.distribution = UIStackView.Distribution.fillEqually
         return stackView
     }()
     
