@@ -9,15 +9,21 @@
 import UIKit
 
 internal final class WKPageButton: UIButton {
+    
+    // MARK: - UIComponents
+    
+    private var selectedTitleColor: UIColor!
+    private var defaultTitleColor: UIColor!
 
+    // MARK: - Properties
+    
     override var isSelected: Bool {
         didSet {
             self.changeButtonStyle()
         }
     }
-    
-    private var selectedTitleColor: UIColor!
-    private var defaultTitleColor: UIColor!
+
+    // MARK: - Initializer
 
     public init(
         selectedTitleColor: UIColor = UIColor.wkMainPurple,
@@ -37,6 +43,8 @@ internal final class WKPageButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Methods
+    
     private func changeButtonStyle() {
         self.setTitleColor(isSelected ? selectedTitleColor : defaultTitleColor, for: .normal)
     }
