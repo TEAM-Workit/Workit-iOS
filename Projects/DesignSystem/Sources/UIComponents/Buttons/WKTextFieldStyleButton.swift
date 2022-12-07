@@ -6,6 +6,7 @@
 //  Copyright © 2022 com.workit. All rights reserved.
 //
 
+import Global
 import UIKit
 
 import SnapKit
@@ -42,10 +43,7 @@ public class WKTextFieldStyleButton: UIButton {
     // MARK: - Methods
     
     public func setDate(date: Date) {
-        let dateFormatter: DateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yy.MM.dd"
-        let dateString: String = dateFormatter.string(from: date)
-        self.textField.text = dateString
+        self.textField.text = date.toYYMMDDString()
     }
     
     public func setPlaceholder(text: String) {
