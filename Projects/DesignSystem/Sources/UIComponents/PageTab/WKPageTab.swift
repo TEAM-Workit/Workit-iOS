@@ -253,8 +253,8 @@ extension WKPageTab: UIPageViewControllerDelegate {
 extension WKPageTab: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let movedDistance = (scrollView.contentOffset.x - self.pageViewController.view.frame.width) / self.pageViewController.view.frame.width
-        self.indicatorView.snp.updateConstraints {
-            $0.leading.equalToSuperview().inset((movedDistance + CGFloat(self.currentIndex)) * self.indicatorView.frame.width)
+        self.indicatorView.snp.updateConstraints { make in
+            make.leading.equalToSuperview().inset((movedDistance + CGFloat(self.currentIndex)) * self.indicatorView.frame.width)
         }
     }
 }
