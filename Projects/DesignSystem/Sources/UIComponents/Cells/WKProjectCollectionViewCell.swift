@@ -166,14 +166,14 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
     }
     
     private func setStackView() {
-        self.stackView.addArragnedSubviews(projectView, line, titleLabel, descriptionLabel, tagView)
+        self.stackView.addArrangedSubviews([projectView, line, titleLabel, descriptionLabel, tagView])
         self.stackView.setCustomSpacing(10, after: line)
         self.stackView.setCustomSpacing(4, after: titleLabel)
         self.stackView.setCustomSpacing(16, after: descriptionLabel)
     }
     
     public func setData() {
-        // TODO - Project 모델 추가 후 수정 예정
+        // TODO: Project 모델 추가 후 수정 예정
     }
 }
 
