@@ -226,4 +226,14 @@ extension WriteViewController {
         }
     }
     
+    private func setLabelStyle() {
+        [
+            self.dateLabel, self.projectLabel, self.workLabel,
+            self.abilityLabel, self.abilityLabel, self.workDescriptionLabel
+        ].forEach { label in
+            label.font = .h4Sb
+            label.textColor = .wkBlack
+            label.sizeToFit()
+        }
+    }
 }
