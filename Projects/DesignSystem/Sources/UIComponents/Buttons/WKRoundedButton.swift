@@ -14,18 +14,20 @@ import UIKit.UIButton
  */
 public final class WKRoundedButton: UIButton {
     
-    // MARK: - Initializer
+    // MARK: Properties
     
-    public init(enabledColor: UIColor) {
-        super.init(frame: .zero)
-        
-        self.setDefaultUI(enabledColor: enabledColor)
+    private var enabledColor: UIColor? {
+        didSet {
+            self.setBackgroundColor(enabledColor ?? .wkMainPurple, for: .normal)
+        }
     }
+    
+    // MARK: - Initializer
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.setDefaultUI(enabledColor: UIColor.wkMainPurple)
+        self.setDefaultUI()
     }
     
     required init?(coder: NSCoder) {
@@ -39,17 +41,20 @@ public final class WKRoundedButton: UIButton {
         
         self.titleLabel?.font = UIFont.b1B
     }
+    
+    public func setEnabledColor(color: UIColor) {
+        self.enabledColor = color
+    }
 }
 
 // MARK: - UI
 
 extension WKRoundedButton {
-    private func setDefaultUI(enabledColor: UIColor) {
+    private func setDefaultUI() {
         self.makeRounded(radius: 5)
-        self.titleLabel?.font = UIFont.b1B
-        self.setTitleColor(UIColor.wkWhite, for: UIControl.State.normal)
-        self.setTitleColor(UIColor.wkBlack45, for: UIControl.State.disabled)
-        self.setBackgroundColor(enabledColor, for: UIControl.State.normal)
-        self.setBackgroundColor(UIColor.wkBlack15, for: UIControl.State.disabled)
+        self.setEnabledColor(color: .wkMainPurple)
+        self.setTitleColor(.wkWhite, for: .normal)
+        self.setTitleColor(.wkBlack45, for: .disabled)
+        self.setBackgroundColor(.wkBlack15, for: .disabled)
     }
 }
