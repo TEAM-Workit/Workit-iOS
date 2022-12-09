@@ -41,7 +41,7 @@ extension WKTextView {
     private func setDefaultStyle() {
         self.backgroundColor = .wkWhite
         self.layer.cornerRadius = 5
-        self.layer.borderColor = UIColor.wkBlack.cgColor
+        self.layer.borderColor = UIColor.wkBlack15.cgColor
         self.layer.borderWidth = 1
         self.textColor = .wkBlack
         self.font = .b1M
