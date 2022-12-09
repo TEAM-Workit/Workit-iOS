@@ -9,7 +9,7 @@
 import UIKit.UIButton
 
 extension UIButton {
-    func setBackgroundColor(_ color: UIColor, for state: UIControl.State) {
+    public func setBackgroundColor(_ color: UIColor, for state: UIControl.State) {
         let minimumSize: CGSize = CGSize(width: 1.0, height: 1.0)
         
         UIGraphicsBeginImageContext(minimumSize)
