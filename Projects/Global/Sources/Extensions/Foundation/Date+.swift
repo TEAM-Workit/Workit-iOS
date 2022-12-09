@@ -8,11 +8,33 @@
 
 import Foundation
 
+public enum DateType: String {
+    /// yy.MM.dd.
+    case dot = "yy.MM.dd."
+    /// yy-MM-dd
+    case dash = "yy-MM-dd"
+    /// yyyy-MM-dd'T'HH:mm:ss.SSS'Z
+    case full = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z"
+}
+
 extension Date {
-    /// Date 타입을 String (yy.MM.DD.)으로 변환
-    public func toYYMMDDString() -> String {
+    /// Date 타입을 String으로 변환
+    public func toString(type: DateType) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yy.MM.dd."
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        dateFormatter.timeZone = TimeZone(abbreviation: "KST")
+        dateFormatter.dateFormat = type.rawValue
         return dateFormatter.string(from: self)
+    }
+}
+
+extension String {
+    /// String 타입을 Date타입으로 변환
+    public func toDate(type: DateType) -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+        dateFormatter.dateFormat = type.rawValue
+        return dateFormatter.date(from: self)
     }
 }

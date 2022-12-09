@@ -43,7 +43,7 @@ public class WKTextFieldStyleButton: UIButton {
     // MARK: - Methods
     
     public func setDate(date: Date) {
-        self.textField.text = date.toYYMMDDString()
+        self.textField.text = date.toString(type: .dot)
     }
     
     public func setPlaceholder(text: String) {

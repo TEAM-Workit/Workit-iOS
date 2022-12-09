@@ -122,8 +122,8 @@ public final class WKDateButton: UIView {
     public func setDate(fromDate: Date?, toDate: Date?) {
         self.fromDate = fromDate
         self.toDate = toDate
-        var date = "" + "\(fromDate?.toYYMMDDString() ?? "날짜 선택")"
-        if let toDate = toDate?.toYYMMDDString() {
+        var date = "" + "\(fromDate?.toString(type: .dot) ?? "날짜 선택")"
+        if let toDate = toDate?.toString(type: .dot) {
             date += " - \(toDate)"
         }
         dateLabel.text = date
