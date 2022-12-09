@@ -96,6 +96,10 @@ final class WriteViewController: BaseViewController {
         return label
     }()
     
+    // MARK: Properties
+    
+    private var keyboardHeight: CGFloat = 0
+    
     // MARK: Initializer
     
     override func viewDidLoad() {
@@ -106,6 +110,76 @@ final class WriteViewController: BaseViewController {
         self.setWorkDescriptionTextView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.addKeyboardObserver()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        self.removeKeyboardObserver()
+    }
+    
+    // MARK: Methods
+    
+    private func setWorkDescriptionTextView() {
+        self.workDescriptionTextView.delegate = self
+    }
+    
+    private func addKeyboardObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.keyboardWillShow(_:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+    }
+    
+    private func removeKeyboardObserver() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIResponder.keyboardWillShowNotification,
+            object: nibName
+        )
+    }
+    
+    @objc
+    func keyboardWillShow(_ notification: NSNotification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            self.keyboardHeight = keyboardRectangle.height
+        }
+    }
+}
+
+// MARK: - Extension (UITextViewDelegate)
+
+extension WriteViewController: UITextViewDelegate {
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        self.scrollView.setContentOffset(
+            CGPoint(x: 0, y: self.workDescriptionLabel.frame.minY - 20),
+            animated: true
+        )
+        
+        self.scrollView.snp.updateConstraints { make in
+            make.bottom.equalToSuperview().inset(self.keyboardHeight)
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        self.scrollView.snp.updateConstraints { make in
+            make.bottom.equalToSuperview()
+        }
+        
+        self.scrollView.setContentOffset(
+            CGPoint(x: 0, y: self.scrollView.contentSize.height - self.scrollView.bounds.height),
+            animated: true
+        )
+    }
+}
+
 // MARK: - UI
 
 extension WriteViewController {
