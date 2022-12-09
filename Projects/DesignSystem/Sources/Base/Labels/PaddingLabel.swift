@@ -10,7 +10,11 @@ import UIKit
 
 public class PaddingLabel: UILabel {
     
+    // MARK: - Properties
+    
     private var padding: UIEdgeInsets
+    
+    // MARK: - Initializer
     
     init(padding: UIEdgeInsets) {
         self.padding = padding
@@ -20,6 +24,8 @@ public class PaddingLabel: UILabel {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Methods
     
     public override func drawText(in rect: CGRect) {
         super.drawText(in: rect.inset(by: padding))

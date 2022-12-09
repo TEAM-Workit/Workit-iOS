@@ -10,13 +10,7 @@ import Global
 import UIKit.UILabel
 
 public final class WKTagLabel: PaddingLabel {
-    
-    public var type: TagType {
-        didSet {
-            self.setType(type: type)
-        }
-    }
-    
+
     enum Number {
         static let top: CGFloat = 6
         static let left: CGFloat = 8
@@ -24,6 +18,14 @@ public final class WKTagLabel: PaddingLabel {
         static let right: CGFloat = 8
     }
     
+    // MARK: - Properties
+    
+    public var type: TagType {
+        didSet {
+            self.setType(type: type)
+        }
+    }
+
     // MARK: - LifeCycle
     
     init(type: TagType = .hard) {

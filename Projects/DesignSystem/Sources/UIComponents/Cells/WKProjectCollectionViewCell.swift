@@ -69,7 +69,7 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    // MARK: - LifeCycle
+    // MARK: - Initializer
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -159,10 +159,4 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
     public func setData() {
         // TODO: Project 모델 추가 후 수정 예정
     }
-}
-
-// 임시 태그 타입
-public enum TagType {
-    case hard
-    case soft
 }
