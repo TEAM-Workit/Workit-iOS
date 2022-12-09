@@ -60,12 +60,7 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
     
     private let tagView = UIView()
     
-    private let tagLabel: PaddingLabel = {
-        let label = PaddingLabel(padding: UIEdgeInsets(top: 6, left: 8, bottom: 6, right: 8))
-        label.font = UIFont.c2M
-        label.makeRounded(radius: 5)
-        return label
-    }()
+    private let tagLabel = WKTagLabel()
     
     private let etcLabel: UILabel = {
         let label = UILabel()
@@ -107,17 +102,6 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
         self.layer.shadowOpacity = 1
         self.layer.shadowRadius = 10
         self.layer.masksToBounds = false
-    }
-    
-    private func setTagUI(type: TagType) {
-        switch type {
-        case .hard:
-            self.tagLabel.backgroundColor = UIColor.wkSubPurple15
-            self.tagLabel.textColor = UIColor.wkMainPurple
-        case .soft:
-            self.tagLabel.backgroundColor = UIColor.wkSubNavy20
-            self.tagLabel.textColor = UIColor.wkMainNavy
-        }
     }
     
     private func setLayout() {
@@ -178,7 +162,7 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
 }
 
 // 임시 태그 타입
-enum TagType {
+public enum TagType {
     case hard
     case soft
 }
