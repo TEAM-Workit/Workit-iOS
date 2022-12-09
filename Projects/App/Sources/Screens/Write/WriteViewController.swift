@@ -121,6 +121,7 @@ extension WriteViewController {
     
     private func setSubviews() {
         self.view.addSubviews([navigationBar, scrollView])
+        self.scrollView.addSubview(contentView)
         self.contentView.addSubviews([
             dateLabel, dateButton,
             projectLabel, projectButton,
@@ -139,8 +140,6 @@ extension WriteViewController {
             make.top.equalTo(self.navigationBar.snp.bottom)
             make.leading.trailing.bottom.equalToSuperview()
         }
-        
-        self.scrollView.addSubview(contentView)
         
         self.contentView.snp.makeConstraints { make in
             make.width.equalToSuperview()
