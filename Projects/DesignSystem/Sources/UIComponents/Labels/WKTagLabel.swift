@@ -22,7 +22,7 @@ public final class WKTagLabel: PaddingLabel {
     
     public var type: TagType {
         didSet {
-            self.setType(type: type)
+            self.setColor(type: type)
         }
     }
 
@@ -50,7 +50,7 @@ public final class WKTagLabel: PaddingLabel {
         self.makeRounded(radius: 5)
     }
     
-    private func setType(type: TagType) {
+    private func setColor(type: TagType) {
         switch type {
         case .hard:
             self.backgroundColor = .wkSubPurple15
