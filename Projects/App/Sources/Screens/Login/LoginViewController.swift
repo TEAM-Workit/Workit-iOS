@@ -97,7 +97,7 @@ final class LoginViewController: UIViewController {
 
         view.backgroundColor = .wkWhite
     }
-    
+
     // MARK: - Methods
 
     private func setLayout() {
