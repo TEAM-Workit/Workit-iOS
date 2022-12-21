@@ -21,6 +21,8 @@ final class LoginViewController: UIViewController {
     enum Text {
         static let workitDescription = "사회초년생을 위한 커리어 기록"
         static let agreeMessage = "로그인 시 이용약관과 개인정보 처리 방침에 동의하게 됩니다."
+        static let termOfService = "이용약관"
+        static let privacyPolicy = "개인정보 처리 방침"
     }
 
     // MARK: - UIComponenets
@@ -58,6 +60,7 @@ final class LoginViewController: UIViewController {
         label.font = .b3R
         label.textAlignment = .center
         label.textColor = .wkBlack65
+        label.changeFont(targetStrings: [Text.termOfService, Text.privacyPolicy], font: .b3Sb)
         return label
     }()
 
@@ -94,11 +97,7 @@ final class LoginViewController: UIViewController {
 
         view.backgroundColor = .wkWhite
     }
-
-    // MARK: - Bind (ReactorKit)
-
-    // MARK: - Actions
-
+    
     // MARK: - Methods
 
     private func setLayout() {
