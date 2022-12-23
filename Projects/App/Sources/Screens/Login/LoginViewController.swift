@@ -12,7 +12,7 @@ import UIKit
 import ReactorKit
 import SnapKit
 
-final class LoginViewController: UIViewController {
+final class LoginViewController: BaseViewController {
 
     enum Number {
         static let deviceHeight: CGFloat = UIScreen.main.bounds.height
@@ -94,13 +94,11 @@ final class LoginViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = .wkWhite
     }
 
     // MARK: - Methods
 
-    private func setLayout() {
+    override func setLayout() {
         self.view.addSubviews([self.logoStackView, self.loginButtonStackView])
 
         self.logoStackView.snp.makeConstraints { make in
