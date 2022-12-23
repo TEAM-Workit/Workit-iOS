@@ -17,6 +17,14 @@ public class WKTextView: UITextView {
     // MARK: UIComponenets
     
     private let placeholderLabel: UILabel = UILabel()
+    private let toolBar: UIToolbar = UIToolbar()
+    private let doneButton: UIButton = {
+        let button: UIButton = UIButton(type: .system)
+        button.setTitle("완료", for: .normal)
+        button.setTitleColor(.wkMainPurple, for: .normal)
+        button.titleLabel?.font = .h4Sb
+        return button
+    }()
     
     // MARK: Properties
     
@@ -28,10 +36,32 @@ public class WKTextView: UITextView {
         super.init(frame: frame, textContainer: textContainer)
         self.setDefaultStyle()
         self.setActiveStyle()
+        self.setToolBar()
+        self.setDoneButtonAction()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+    }
+    
+    // MARK: Methods
+    
+    private func setToolBar() {
+        let barButtonItem: UIBarButtonItem = UIBarButtonItem(customView: self.doneButton)
+        let leftSpaceItem: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        
+        self.toolBar.items = [leftSpaceItem, barButtonItem]
+        self.toolBar.sizeToFit()
+        self.inputAccessoryView = self.toolBar
+    }
+    
+    private func setDoneButtonAction() {
+        self.doneButton.rx.tap
+            .withUnretained(self)
+            .subscribe(onNext: { (owner, _) in
+                owner.endEditing(true)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -41,7 +71,7 @@ extension WKTextView {
     private func setDefaultStyle() {
         self.backgroundColor = .wkWhite
         self.layer.cornerRadius = 5
-        self.layer.borderColor = UIColor.wkBlack.cgColor
+        self.layer.borderColor = UIColor.wkBlack15.cgColor
         self.layer.borderWidth = 1
         self.textColor = .wkBlack
         self.font = .b1M

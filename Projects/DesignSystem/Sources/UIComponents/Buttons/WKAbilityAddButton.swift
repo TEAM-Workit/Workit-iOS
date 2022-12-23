@@ -1,5 +1,5 @@
 //
-//  WKCapabilityAddButton.swift
+//  WKAbilityAddButton.swift
 //  DesignSystem
 //
 //  Created by madilyn on 2022/11/28.
@@ -11,7 +11,7 @@ import UIKit
 
 import SnapKit
 
-public class WKCapabilityAddButton: UIButton {
+public class WKAbilityAddButton: UIButton {
     
     // MARK: Initializer
     
@@ -28,7 +28,7 @@ public class WKCapabilityAddButton: UIButton {
 
 // MARK: - UI
 
-extension WKCapabilityAddButton {
+extension WKAbilityAddButton {
     private func setDefaultStyle() {
         self.backgroundColor = UIColor.wkBlack8
         self.setImage(Image.wkCapabilityPlus, for: UIControl.State.normal)
