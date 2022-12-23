@@ -152,6 +152,16 @@ final class WriteViewController: BaseViewController {
             self.keyboardHeight = keyboardRectangle.height
         }
     }
+    
+    override func setLayout() {
+        self.setSubviews()
+        self.setBackgroundLayout()
+        self.setDateLayout()
+        self.setProjectLayout()
+        self.setWorkLayout()
+        self.setAbilityLayout()
+        self.setWorkDescriptionLayout()
+    }
 }
 
 // MARK: - Extension (UITextViewDelegate)
@@ -178,20 +188,14 @@ extension WriteViewController: UITextViewDelegate {
             animated: true
         )
     }
+
+
 }
 
 // MARK: - UI
 
 extension WriteViewController {
-    override func setLayout() {
-        self.setSubviews()
-        self.setBackgroundLayout()
-        self.setDateLayout()
-        self.setProjectLayout()
-        self.setWorkLayout()
-        self.setAbilityLayout()
-        self.setWorkDescriptionLayout()
-    }
+
     
     private func setSubviews() {
         self.view.addSubviews([navigationBar, scrollView])
