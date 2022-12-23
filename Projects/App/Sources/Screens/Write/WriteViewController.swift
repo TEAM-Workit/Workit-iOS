@@ -193,8 +193,6 @@ extension WriteViewController: UITextViewDelegate {
 // MARK: - UI
 
 extension WriteViewController {
-
-    
     private func setSubviews() {
         self.view.addSubviews([navigationBar, scrollView])
         self.scrollView.addSubview(contentView)
