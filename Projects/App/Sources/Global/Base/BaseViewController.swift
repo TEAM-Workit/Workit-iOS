@@ -18,6 +18,10 @@ class BaseViewController: UIViewController {
         
         self.setBackgroundColor()
     }
+    
+    // MARK: Methods
+    
+    func setLayout() { }
 }
 
 // MARK: - UI
@@ -25,10 +29,5 @@ class BaseViewController: UIViewController {
 extension BaseViewController {
     private func setBackgroundColor() {
         self.view.backgroundColor = .wkWhite
-    }
-    
-    @objc
-    func setLayout() {
-        
     }
 }
