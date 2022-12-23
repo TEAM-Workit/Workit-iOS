@@ -14,8 +14,18 @@ import SnapKit
 final class MyWorkitHeaderView: UICollectionReusableView {
 
     enum Text {
-        static let myWorkit = "마이 워킷"
+        static let myWorkit: String = "마이 워킷"
     }
+
+    // MARK: - UIComponenets
+
+    private let backgroundRadiusView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .wkWhite
+        view.makeRounded(radius: 20)
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        return view
+    }()
 
     private let myWorkitLabel: UILabel = {
         let label = UILabel()
@@ -27,9 +37,12 @@ final class MyWorkitHeaderView: UICollectionReusableView {
 
     private let dateButton = WKDateButton(fromDate: Date())
 
+    // MARK: - Initializer
+
     override init(frame: CGRect) {
         super.init(frame: frame)
 
+        setBackgroundColor()
         setLayout()
     }
 
@@ -37,15 +50,26 @@ final class MyWorkitHeaderView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setLayout() {
-        self.addSubviews([myWorkitLabel, dateButton])
+    // MARK: - Methods
 
-        myWorkitLabel.snp.makeConstraints { make in
+    private func setBackgroundColor() {
+        self.backgroundColor = .wkMainPurple
+    }
+
+    private func setLayout() {
+        self.addSubviews([backgroundRadiusView])
+        self.backgroundRadiusView.addSubviews([myWorkitLabel, dateButton])
+
+        self.backgroundRadiusView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+
+        self.myWorkitLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(32)
             make.leading.equalToSuperview().inset(20)
         }
 
-        dateButton.snp.makeConstraints { make in
+        self.dateButton.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(28)
             make.trailing.equalToSuperview().inset(20)
         }

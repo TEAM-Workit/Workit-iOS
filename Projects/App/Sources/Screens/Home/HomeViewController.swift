@@ -42,14 +42,27 @@ final class HomeViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.backgroundColor = .clear
+        collectionView.showsVerticalScrollIndicator = false
         collectionView.register(cell: WKEmptyCollectionViewCell.self)
         collectionView.register(cell: WKProjectCollectionViewCell.self)
         collectionView.registerHeader(MyWorkitHeaderView.self)
         return collectionView
     }()
 
+    // MARK: - Properties
+
     var dataSource: DiffableDataSource!
 
+    init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - LifeCycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -59,6 +72,8 @@ final class HomeViewController: UIViewController {
         setDataSource()
         applySnapshot(workits: Workit.getData())
     }
+    
+    // MARK: - Methods
 
     private func setUI() {
         self.view.backgroundColor = .wkMainPurple
@@ -77,7 +92,8 @@ final class HomeViewController: UIViewController {
         self.view.addSubviews([collectionView])
 
         self.collectionView.snp.makeConstraints { make in
-            make.edges.equalTo(self.view.safeAreaLayoutGuide)
+            make.top.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
+            make.bottom.equalToSuperview()
         }
     }
 
@@ -102,14 +118,12 @@ final class HomeViewController: UIViewController {
                 config.backgroundColor = .wkWhite
                 let section = NSCollectionLayoutSection.list(
                     using: config,
-                    layoutEnvironment: layoutEnvironment
-                )
+                    layoutEnvironment: layoutEnvironment)
                 section.interGroupSpacing = 12
-                section.contentInsets = .init(top: 20, leading: 20, bottom: 0, trailing: 20)
+                section.contentInsets = .init(top: 20, leading: 20, bottom: 104, trailing: 20)
                 let headerSize = NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(1.0),
-                    heightDimension: .absolute(45)
-                )
+                    heightDimension: .absolute(66))
                 let header = NSCollectionLayoutBoundarySupplementaryItem(
                     layoutSize: headerSize,
                     elementKind: UICollectionView.elementKindSectionHeader,
@@ -129,7 +143,7 @@ final class HomeViewController: UIViewController {
     }
 
     private func setDataSource() {
-        dataSource = DiffableDataSource(
+        self.dataSource = DiffableDataSource(
             collectionView: collectionView,
             cellProvider: { collectionView, indexPath, itemIdentifier in
                 switch itemIdentifier {
@@ -143,17 +157,17 @@ final class HomeViewController: UIViewController {
                 }
             })
 
-        dataSource.supplementaryViewProvider = { (collectionView, _, indexPath) -> UICollectionReusableView in
+        self.dataSource.supplementaryViewProvider = { (collectionView, _, indexPath) -> UICollectionReusableView in
             let header: MyWorkitHeaderView = collectionView.dequeueHeaderView(for: indexPath)
             return header
         }
     }
 
-    private func applySnapshot(workits: [Workit]) {
+    internal func applySnapshot(workits: [Workit]) {
         var snapshot = Snapshot()
         snapshot.appendSections([.empty, .myWorkit])
         snapshot.appendItems([Item.empty], toSection: .empty)
         snapshot.appendItems(workits.map { Item.workit($0) }, toSection: .myWorkit)
-        dataSource.apply(snapshot)
+        self.dataSource.apply(snapshot)
     }
 }
