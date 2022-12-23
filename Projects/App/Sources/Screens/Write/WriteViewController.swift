@@ -188,8 +188,6 @@ extension WriteViewController: UITextViewDelegate {
             animated: true
         )
     }
-
-
 }
 
 // MARK: - UI
