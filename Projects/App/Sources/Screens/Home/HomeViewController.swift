@@ -42,8 +42,9 @@ final class HomeViewController: UIViewController {
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.backgroundColor = .clear
-        collectionView.register(WKEmptyCollectionViewCell.self)
-        collectionView.register(WKProjectCollectionViewCell.self)
+        collectionView.register(cell: WKEmptyCollectionViewCell.self)
+        collectionView.register(cell: WKProjectCollectionViewCell.self)
+        collectionView.registerHeader(MyWorkitHeaderView.self)
         return collectionView
     }()
 
@@ -105,6 +106,16 @@ final class HomeViewController: UIViewController {
                 )
                 section.interGroupSpacing = 12
                 section.contentInsets = .init(top: 20, leading: 20, bottom: 0, trailing: 20)
+                let headerSize = NSCollectionLayoutSize(
+                    widthDimension: .fractionalWidth(1.0),
+                    heightDimension: .absolute(45)
+                )
+                let header = NSCollectionLayoutBoundarySupplementaryItem(
+                    layoutSize: headerSize,
+                    elementKind: UICollectionView.elementKindSectionHeader,
+                    alignment: .top)
+                section.boundarySupplementaryItems = [header]
+                header.pinToVisibleBounds = true
                 return section
             case .none:
                 fatalError()
@@ -131,6 +142,11 @@ final class HomeViewController: UIViewController {
                     return cell
                 }
             })
+
+        dataSource.supplementaryViewProvider = { (collectionView, _, indexPath) -> UICollectionReusableView in
+            let header: MyWorkitHeaderView = collectionView.dequeueHeaderView(for: indexPath)
+            return header
+        }
     }
 
     private func applySnapshot(workits: [Workit]) {
