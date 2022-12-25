@@ -78,7 +78,8 @@ extension Project {
                 .package(product: "SnapKit"),
                 .package(product: "Alamofire"),
                 .package(product: "RxCocoa"),
-                .package(product: "RxGesture")
+                .package(product: "RxGesture"),
+                .package(product: "HorizonCalendar")
             ]
         )
         
