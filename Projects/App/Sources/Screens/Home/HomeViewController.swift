@@ -39,6 +39,10 @@ final class HomeViewController: UIViewController {
         case workit(Workit)
     }
 
+    // MARK: - UIComponenets
+
+    private let bannerView = HomeBannerView()
+
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.backgroundColor = .clear
@@ -52,6 +56,8 @@ final class HomeViewController: UIViewController {
     // MARK: - Properties
 
     var dataSource: DiffableDataSource!
+
+    // MARK: - Initializer
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -89,7 +95,13 @@ final class HomeViewController: UIViewController {
     }
 
     private func setLayout() {
-        self.view.addSubviews([collectionView])
+        self.view.addSubviews([bannerView, collectionView])
+
+        self.bannerView.snp.makeConstraints { make in
+            make.top.equalTo(self.view.safeAreaLayoutGuide)
+            make.leading.equalToSuperview().inset(20)
+            make.trailing.equalToSuperview()
+        }
 
         self.collectionView.snp.makeConstraints { make in
             make.top.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
