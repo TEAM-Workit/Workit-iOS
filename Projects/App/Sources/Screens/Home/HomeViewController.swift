@@ -56,13 +56,13 @@ final class HomeViewController: UIViewController {
     init() {
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - LifeCycle
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -72,7 +72,7 @@ final class HomeViewController: UIViewController {
         setDataSource()
         applySnapshot(workits: Workit.getData())
     }
-    
+
     // MARK: - Methods
 
     private func setUI() {
@@ -112,6 +112,7 @@ final class HomeViewController: UIViewController {
                         heightDimension: .absolute(200)),
                     subitems: [item])
                 return NSCollectionLayoutSection(group: group)
+
             case .myWorkit:
                 var config = UICollectionLayoutListConfiguration(appearance: .plain)
                 config.showsSeparators = false
@@ -131,6 +132,7 @@ final class HomeViewController: UIViewController {
                 section.boundarySupplementaryItems = [header]
                 header.pinToVisibleBounds = true
                 return section
+
             case .none:
                 fatalError()
             }
