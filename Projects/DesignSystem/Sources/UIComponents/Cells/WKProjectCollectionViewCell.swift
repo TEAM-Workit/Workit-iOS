@@ -17,7 +17,9 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
     
     private let stackView: UIStackView = {
         let stackView = UIStackView()
-        stackView.axis = NSLayoutConstraint.Axis.vertical
+        stackView.axis = .vertical
+        stackView.distribution = .fill
+        stackView.alignment = .fill
         return stackView
     }()
     
@@ -34,6 +36,7 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = UIFont.c2M
         label.textColor = UIColor.wkBlack30
+        label.textAlignment = .right
         return label
     }()
     
@@ -60,7 +63,7 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
     
     private let tagView = UIView()
     
-    private let tagLabel = WKTagLabel()
+    private let tagLabel = WKTagLabel(type: .hard)
     
     private let etcLabel: UILabel = {
         let label = UILabel()
@@ -75,8 +78,8 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         
         self.setUI()
-        self.setLayout()
         self.setStackView()
+        self.setLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -106,11 +109,11 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
     
     private func setLayout() {
         self.addSubviews([stackView])
-        self.projectView.addSubviews([projectLabel, dateLabel])
+        self.projectView.addSubviews([dateLabel, projectLabel])
         self.tagView.addSubviews([tagLabel, etcLabel])
-        
+
         self.stackView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+            make.top.equalToSuperview().priority(.medium)
             make.leading.trailing.equalToSuperview().inset(14)
             make.bottom.equalToSuperview().inset(14)
         }
@@ -129,6 +132,7 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
         self.tagLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.centerY.equalToSuperview()
+            make.bottom.equalToSuperview()
         }
         
         self.etcLabel.snp.makeConstraints { make in
@@ -142,6 +146,10 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
         
         self.line.snp.makeConstraints { make in
             make.height.equalTo(1)
+        }
+        
+        self.titleLabel.snp.makeConstraints { make in
+            make.height.equalTo(24)
         }
         
         self.tagView.snp.makeConstraints { make in
