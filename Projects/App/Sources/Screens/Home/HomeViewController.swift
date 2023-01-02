@@ -9,21 +9,6 @@
 import DesignSystem
 import UIKit
 
-struct Workit: Hashable {
-    let uuid = UUID()
-    let title: String
-
-    static func getData() -> [Workit] {
-        return [Workit(title: "zz"),
-                Workit(title: "zz"),
-                Workit(title: "zz"),
-                Workit(title: "zz"),
-                Workit(title: "zz"),
-                Workit(title: "zz"),
-                Workit(title: "zz")]
-    }
-}
-
 final class HomeViewController: UIViewController {
 
     typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, Item>
@@ -32,6 +17,17 @@ final class HomeViewController: UIViewController {
     enum Section: Int {
         case empty
         case myWorkit
+
+        init(rawValue: Int) {
+            switch rawValue {
+            case 0:
+                self = .empty
+            case 1:
+                self = .myWorkit
+            default:
+                fatalError()
+            }
+        }
     }
 
     enum Item: Hashable {
@@ -144,9 +140,6 @@ final class HomeViewController: UIViewController {
                 section.boundarySupplementaryItems = [header]
                 header.pinToVisibleBounds = true
                 return section
-
-            case .none:
-                fatalError()
             }
         }
         let config = UICollectionViewCompositionalLayoutConfiguration()
@@ -183,5 +176,21 @@ final class HomeViewController: UIViewController {
         snapshot.appendItems([Item.empty], toSection: .empty)
         snapshot.appendItems(workits.map { Item.workit($0) }, toSection: .myWorkit)
         self.dataSource.apply(snapshot)
+    }
+}
+
+/// 임시 모델 (삭제예정)
+struct Workit: Hashable {
+    let uuid = UUID()
+    let title: String
+
+    static func getData() -> [Workit] {
+        return [Workit(title: "zz"),
+                Workit(title: "zz"),
+                Workit(title: "zz"),
+                Workit(title: "zz"),
+                Workit(title: "zz"),
+                Workit(title: "zz"),
+                Workit(title: "zz")]
     }
 }
