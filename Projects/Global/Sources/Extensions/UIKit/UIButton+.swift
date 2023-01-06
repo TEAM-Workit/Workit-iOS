@@ -24,4 +24,8 @@ extension UIButton {
         self.clipsToBounds = true
         self.setBackgroundImage(colorImage, for: state)
     }
+    
+    public func setAction(_ closure: @escaping () -> Void) {
+        self.addAction( UIAction { _ in closure() }, for: UIControl.Event.touchUpInside)
+    }
 }
