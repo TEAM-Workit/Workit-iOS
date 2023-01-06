@@ -48,6 +48,7 @@ public final class WKPickDateBottomViewController: UIViewController {
         
         self.setLayout()
         self.setDoneButtonAction()
+        self.setBackgroundViewAction()
     }
     
     public override func viewDidAppear(_ animated: Bool) {
@@ -58,14 +59,19 @@ public final class WKPickDateBottomViewController: UIViewController {
     
     // MARK: Methods
     
-    func setBackgroundViewAction(target: UIViewController, action: Selector) {
-        let tapGesture = UITapGestureRecognizer(target: target, action: action)
+    private func setBackgroundViewAction() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.backgroundTapAction(_:)))
         self.view.addGestureRecognizer(tapGesture)
     }
     
     private func setDoneButtonAction() {
         self.doneButton.setAction { [weak self] in
             self?.dismiss(animated: true)
+    @objc
+    func backgroundTapAction(_ gesture: UITapGestureRecognizer) {
+        self.dismiss(animated: true)
+    }
+    
         }
     }
 }
