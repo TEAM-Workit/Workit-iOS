@@ -71,7 +71,7 @@ public final class WKPickDateBottomViewController: UIViewController {
         self.dismiss(animated: true)
     }
     
-    public func setDoneButtonAction(action: @escaping () -> ()) {
+    public func setDoneButtonAction(action: @escaping () -> Void) {
         self.doneButton.setAction {
             action()
         }
