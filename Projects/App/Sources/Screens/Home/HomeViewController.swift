@@ -9,7 +9,7 @@
 import DesignSystem
 import UIKit
 
-final class HomeViewController: UIViewController {
+final class HomeViewController: BaseViewController {
 
     typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, Item>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Item>
@@ -68,11 +68,11 @@ final class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setNavigationBar()
-        setUI()
-        setLayout()
-        setDataSource()
-        applySnapshot(workits: Workit.getData())
+        self.setNavigationBar()
+        self.setUI()
+        self.setLayout()
+        self.setDataSource()
+        self.applySnapshot(workits: Workit.getData())
     }
 
     // MARK: - Methods
@@ -90,7 +90,7 @@ final class HomeViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = barbuttonitem
     }
 
-    private func setLayout() {
+    override func setLayout() {
         self.view.addSubviews([bannerView, collectionView])
 
         self.bannerView.snp.makeConstraints { make in
