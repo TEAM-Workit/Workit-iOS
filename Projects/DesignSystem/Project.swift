@@ -18,7 +18,8 @@ let project = Project.framework(
         .package(product: "RxSwift"),
         .package(product: "SnapKit"),
         .package(product: "RxCocoa"),
-        .package(product: "RxGesture")
+        .package(product: "RxGesture"),
+        .package(product: "HorizonCalendar")
     ],
     packages: [
         .remote(url: "https://github.com/SnapKit/SnapKit.git",
@@ -26,6 +27,8 @@ let project = Project.framework(
         .remote(url: "https://github.com/ReactiveX/RxSwift.git",
                 requirement: .upToNextMinor(from: "6.5.0")),
         .remote(url: "https://github.com/RxSwiftCommunity/RxGesture",
-                requirement: .upToNextMajor(from: "4.0.0"))
+                requirement: .upToNextMajor(from: "4.0.0")),
+        .remote(url: "https://github.com/airbnb/HorizonCalendar.git",
+                requirement: .upToNextMajor(from: "1.0.0"))
     ])
 
