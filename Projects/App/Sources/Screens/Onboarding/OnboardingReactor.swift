@@ -53,9 +53,7 @@ final class OnboardingReactor: Reactor {
         var onboardings: [Onboarding]
     }
 
-    enum Mutation {
-        
-    }
+    enum Mutation { }
 
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
