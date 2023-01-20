@@ -10,13 +10,14 @@ import DesignSystem
 import UIKit
 
 import ReactorKit
+import RxCocoa
 import RxSwift
 import SnapKit
 
 final class OnboardingViewController: BaseViewController, View {
     
-    enum Text {
-        static let next = "다음"
+    enum Number {
+        static let onboardingPageCount = 3
     }
 
     typealias Reactor = OnboardingReactor
@@ -25,29 +26,26 @@ final class OnboardingViewController: BaseViewController, View {
     
     // MARK: - UIComponenets
 
-    private let nextButton: WKRoundedButton = {
-        let button = WKRoundedButton()
-        button.setTitle(Text.next, for: .normal)
-        return button
-    }()
+    private let nextButton = WKRoundedButton()
 
     private let dotView: UIView = {
         let view = UIView()
-        view.backgroundColor = .red
         return view
     }()
 
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.backgroundColor = .clear
+        collectionView.isScrollEnabled = false
         collectionView.register(cell: OnboardingCollectionViewCell.self)
         return collectionView
     }()
-
+    
     // MARK: - Properties
     
     var disposeBag = DisposeBag()
     var dataSource: OnboardingDataSource!
+    private let scrollPublisher = PublishSubject<(Int)>()
 
     // MARK: - Initializer
     
@@ -76,9 +74,21 @@ final class OnboardingViewController: BaseViewController, View {
     }
 
     private func bindAction(reactor: OnboardingReactor) {
-        rx.viewWillAppear
+        self.rx.viewWillAppear
             .take(1)
             .map { _ in Reactor.Action.viewWillAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        self.scrollPublisher
+            .distinctUntilChanged()
+            .observe(on:MainScheduler.asyncInstance)
+            .map { Reactor.Action.collectionViewScrolled($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        self.nextButton.rx.tap
+            .map { _ in Reactor.Action.nextButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
@@ -91,8 +101,28 @@ final class OnboardingViewController: BaseViewController, View {
                 owner.applyOnboardingSnapshot(onboardings: onboardings)
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.page }
+            .withUnretained(self)
+            .bind { owner, page in
+                owner.collectionView.scrollToItem(
+                    at: IndexPath(item: page, section: 0),
+                    at: .centeredHorizontally,
+                    animated: true)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.buttonTitle }
+            .distinctUntilChanged()
+            .withUnretained(self)
+            .bind { owner, title in
+                owner.nextButton.setTitle(title, for: .normal)
+            }
+            .disposed(by: disposeBag)
     }
-    
+
     // MARK: - Methods
 
     override func setLayout() {
@@ -112,7 +142,8 @@ final class OnboardingViewController: BaseViewController, View {
         }
 
         self.collectionView.snp.makeConstraints { make in
-            make.top.leading.trailing.equalToSuperview()
+            make.top.equalTo(self.view.safeAreaLayoutGuide)
+            make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(self.dotView.snp.top)
         }
     }
@@ -129,19 +160,25 @@ final class OnboardingViewController: BaseViewController, View {
             layoutSize: groupSize,
             subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
-        section.orthogonalScrollingBehavior = .groupPaging
+        section.orthogonalScrollingBehavior = .paging
+        section.visibleItemsInvalidationHandler = { [weak self] (items, offset, env) -> Void in
+            self?.scrollPublisher
+                .onNext(Int((offset.x / env.container.contentSize.width).rounded(.toNearestOrAwayFromZero)))
+        }
         let layout = UICollectionViewCompositionalLayout(section: section)
         return layout
     }
-    
+
     private func setCollectionViewDataSource() {
-        dataSource = OnboardingDataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
-            let cell: OnboardingCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
-            cell.setData(onboarding: itemIdentifier)
-            return cell
-        })
+        dataSource = OnboardingDataSource(
+            collectionView: collectionView,
+            cellProvider: { collectionView, indexPath, itemIdentifier in
+                let cell: OnboardingCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
+                cell.setData(onboarding: itemIdentifier)
+                return cell
+            })
     }
-    
+
     internal func applyOnboardingSnapshot(onboardings: [Onboarding]) {
         var snapshot = OnboardingSnapshot()
         snapshot.appendSections([0])
