@@ -12,7 +12,7 @@ struct Onboarding: Hashable {
     let title: String
     let subtitle: String
     let image: UIImage
-    
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(title)
         hasher.combine(subtitle)

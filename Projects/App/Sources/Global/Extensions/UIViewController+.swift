@@ -5,7 +5,8 @@
 //  Created by 김혜수 on 2022/11/09.
 //  Copyright © 2022 com.workit. All rights reserved.
 //
-//  This source is from https://github.com/devxoul/RxViewController/blob/master/Sources/RxViewController/UIViewController%2BRx.swift
+//  This source is from
+// https://github.com/devxoul/RxViewController/blob/master/Sources/RxViewController/UIViewController%2BRx.swift
 // Copyright © devxoul
 
 #if os(iOS) || os(tvOS)

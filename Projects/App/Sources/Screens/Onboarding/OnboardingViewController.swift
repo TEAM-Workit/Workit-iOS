@@ -28,10 +28,7 @@ final class OnboardingViewController: BaseViewController, View {
 
     private let nextButton = WKRoundedButton()
 
-    private let dotView: UIView = {
-        let view = UIView()
-        return view
-    }()
+    private let pageControl = OnboardingPageControl()
 
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
@@ -82,7 +79,7 @@ final class OnboardingViewController: BaseViewController, View {
         
         self.scrollPublisher
             .distinctUntilChanged()
-            .observe(on:MainScheduler.asyncInstance)
+            .observe(on: MainScheduler.asyncInstance)
             .map { Reactor.Action.collectionViewScrolled($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -110,6 +107,7 @@ final class OnboardingViewController: BaseViewController, View {
                     at: IndexPath(item: page, section: 0),
                     at: .centeredHorizontally,
                     animated: true)
+                owner.pageControl.setPage(page: page)
             }
             .disposed(by: disposeBag)
         
@@ -126,7 +124,7 @@ final class OnboardingViewController: BaseViewController, View {
     // MARK: - Methods
 
     override func setLayout() {
-        self.view.addSubviews([nextButton, dotView, collectionView])
+        self.view.addSubviews([nextButton, pageControl, collectionView])
 
         self.nextButton.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(20)
@@ -134,7 +132,7 @@ final class OnboardingViewController: BaseViewController, View {
             make.height.equalTo(48)
         }
 
-        self.dotView.snp.makeConstraints { make in
+        self.pageControl.snp.makeConstraints { make in
             make.bottom.equalTo(self.nextButton.snp.top).offset(-28)
             make.width.equalTo(65)
             make.height.equalTo(10)
@@ -144,7 +142,7 @@ final class OnboardingViewController: BaseViewController, View {
         self.collectionView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide)
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(self.dotView.snp.top)
+            make.bottom.equalTo(self.pageControl.snp.top)
         }
     }
 
@@ -161,7 +159,7 @@ final class OnboardingViewController: BaseViewController, View {
             subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .paging
-        section.visibleItemsInvalidationHandler = { [weak self] (items, offset, env) -> Void in
+        section.visibleItemsInvalidationHandler = { [weak self] (_, offset, env) -> Void in
             self?.scrollPublisher
                 .onNext(Int((offset.x / env.container.contentSize.width).rounded(.toNearestOrAwayFromZero)))
         }
