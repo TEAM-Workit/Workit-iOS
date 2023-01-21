@@ -76,7 +76,7 @@ extension Project {
             dependencies: dependencies + [
                 .package(product: "ReactorKit"),
                 .package(product: "SnapKit"),
-                .package(product: "Alamofire"),
+                .package(product: "RxAlamofire"),
                 .package(product: "RxCocoa"),
                 .package(product: "RxGesture"),
                 .package(product: "HorizonCalendar")

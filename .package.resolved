@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire.git",
       "state" : {
-        "revision" : "8dd85aee02e39dd280c75eef88ffdb86eed4b07b",
-        "version" : "5.6.2"
+        "revision" : "78424be314842833c04bc3bef5b72e85fff99204",
+        "version" : "5.6.4"
       }
     },
     {
@@ -19,12 +19,30 @@
       }
     },
     {
+      "identity" : "ohhttpstubs",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AliSoftware/OHHTTPStubs.git",
+      "state" : {
+        "revision" : "12f19662426d0434d6c330c6974d53e2eb10ecd9",
+        "version" : "9.1.0"
+      }
+    },
+    {
       "identity" : "reactorkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ReactorKit/ReactorKit.git",
       "state" : {
         "revision" : "8fa33f09c6f6621a2aa536d739956d53b84dd139",
         "version" : "3.2.0"
+      }
+    },
+    {
+      "identity" : "rxalamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/RxSwiftCommunity/RxAlamofire.git",
+      "state" : {
+        "revision" : "9535b58695b91fb67f56d58d6fd0c76462d7743a",
+        "version" : "6.1.2"
       }
     },
     {
