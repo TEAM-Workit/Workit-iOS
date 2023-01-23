@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
 
-        let viewController = WKNavigationConroller(rootViewController: HomeViewController())
+        let viewController = WKTabbarController()
         viewController.view.backgroundColor = UIColor.wkWhite
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
