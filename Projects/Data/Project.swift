@@ -11,5 +11,12 @@ import ProjectDescription
 let project = Project.framework(
     name: "Data",
     platform: .iOS,
-    dependencies: [])
+    dependencies: [],
+    additionalPackageDependencies: [
+        .package(product: "RxAlamofire")
+    ],
+    packages: [
+        .remote(url: "https://github.com/RxSwiftCommunity/RxAlamofire.git",
+                requirement: .upToNextMinor(from: "6.1.0"))
+    ])
 
