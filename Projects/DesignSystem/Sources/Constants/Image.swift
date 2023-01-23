@@ -34,4 +34,6 @@ public enum Image {
     public static let wkCapabilityPlus = Assets.wkCapabilityPlus.image
     public static let wkBackButton = Assets.wkArrowBig.image
     public static let wkArrowSmall = Assets.wkArrowSmall.image
+    public static let wkWrite = Assets.wkWrite.image
+    public static let wkHomeTab = Assets.property1HomeProperty2Selected.image
 }
