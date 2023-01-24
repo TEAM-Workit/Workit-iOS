@@ -9,7 +9,7 @@
 import DesignSystem
 import UIKit
 
-class ProjectViewController: UIViewController, PageTabProtocol  {
+class ProjectViewController: UIViewController, PageTabProtocol {
 
     var pageTitle: String {
         return "프로젝트로 보기"

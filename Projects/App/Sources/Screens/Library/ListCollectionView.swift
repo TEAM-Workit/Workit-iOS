@@ -49,13 +49,14 @@ class ListCollectionView: UIView {
     }
     
     private func createLayout() -> UICollectionViewLayout {
-        let sectionProvider = { (
-            sectionIndex: Int,
-            layoutEnvironment: NSCollectionLayoutEnvironment)
+        let sectionProvider = { ( sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment)
             -> NSCollectionLayoutSection? in
-            return ListLayout.create(layoutEnvironment: layoutEnvironment)
+            switch sectionIndex {
+            default:
+                return ListLayout.create(layoutEnvironment: layoutEnvironment)
+            }
         }
-        
+
         let config = UICollectionViewCompositionalLayoutConfiguration()
         let layout = UICollectionViewCompositionalLayout(
             sectionProvider: sectionProvider,
