@@ -15,12 +15,12 @@ final class LibraryViewController: BaseViewController {
     private let pageTab = WKPageTab()
     
     override func viewDidLoad() {
-        setPageTab()
-        setLayout()
+        self.setPageTab()
+        self.setLayout()
     }
     
     func setPageTab() {
-        pageTab.setup(viewControllers: viewControllers, target: self)
+        self.pageTab.setup(viewControllers: viewControllers, target: self)
     }
     
     override func setLayout() {
