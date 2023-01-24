@@ -15,6 +15,8 @@ final class LibraryCollectionViewCell: UICollectionViewCell {
         static let totalRecord = "총 ${count}개의 기록"
     }
     
+    // MARK: - UIComponents
+    
     private let recordLabel = WKTagLabel()
     
     private let titleLabel: UILabel = {
@@ -23,6 +25,8 @@ final class LibraryCollectionViewCell: UICollectionViewCell {
         label.textColor = UIColor.black
         return label
     }()
+    
+    // MARK: - Initalizer
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,6 +38,8 @@ final class LibraryCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Methods
     
     private func setUI() {
         self.recordLabel.type = .hard

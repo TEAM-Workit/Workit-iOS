@@ -11,13 +11,22 @@ import UIKit
 
 final class LibraryViewController: BaseViewController {
     
+    // MARK: - Properties
+    
     private let viewControllers: [PageTabProtocol] = [AbilityViewController(), ProjectViewController()]
+    
+    // MARK: - UIComponenets
+    
     private let pageTab = WKPageTab()
+    
+    // MARK: - LifeCycle
     
     override func viewDidLoad() {
         self.setPageTab()
         self.setLayout()
     }
+    
+    // MARK: - Methods
     
     func setPageTab() {
         self.pageTab.setup(viewControllers: viewControllers, target: self)

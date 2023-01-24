@@ -11,16 +11,24 @@ import UIKit
 
 class ProjectViewController: UIViewController, PageTabProtocol {
 
+    // MARK: - Properties
+    
     var pageTitle: String {
         return "프로젝트로 보기"
     }
     
+    // MARK: - UIComponents
+    
     private var collectionView = ListCollectionView()
+    
+    // MARK: - LifeCycle
     
     override func viewDidLoad() {
         self.setLayout()
         self.applySnapshot()
     }
+    
+    // MARK: - Methods
     
     private func setLayout() {
         self.view.addSubview(collectionView)
