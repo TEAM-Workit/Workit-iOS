@@ -68,7 +68,10 @@ final class WriteViewController: BaseViewController {
         return label
     }()
     
-    private let abilityCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+    private let abilityCollectionView: UICollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: UICollectionViewLayout()
+    )
     
     private let abilityAddButton: WKAbilityAddButton = {
         let button: WKAbilityAddButton = WKAbilityAddButton()
@@ -108,6 +111,7 @@ final class WriteViewController: BaseViewController {
         self.setLayout()
         self.setLabelStyle()
         self.setWorkDescriptionTextView()
+        self.setAbilityAddButtonAction()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -126,6 +130,13 @@ final class WriteViewController: BaseViewController {
     
     private func setWorkDescriptionTextView() {
         self.workDescriptionTextView.delegate = self
+    }
+    
+    private func setAbilityAddButtonAction() {
+        self.abilityAddButton.setAction { [weak self] in
+            let bottomViewController: PickAbilityBottomViewController = PickAbilityBottomViewController()
+            self?.present(bottomViewController, animated: true)
+        }
     }
     
     private func addKeyboardObserver() {
