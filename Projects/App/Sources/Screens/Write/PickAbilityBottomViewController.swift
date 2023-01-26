@@ -11,6 +11,7 @@ import Global
 import UIKit
 
 import SnapKit
+// swiftlint:disable trailing_whitespace
 final class PickAbilityBottomViewController: BaseViewController {
     
     // MARK: - UIComponents
@@ -53,8 +54,9 @@ final class PickAbilityBottomViewController: BaseViewController {
     
     private let hardAbilityTableView: UITableView = {
         let tableView: UITableView = UITableView()
-        tableView.rowHeight = 30
+        tableView.rowHeight = 39
         tableView.separatorStyle = .none
+        tableView.allowsMultipleSelection = true
         return tableView
     }()
     
@@ -68,10 +70,43 @@ final class PickAbilityBottomViewController: BaseViewController {
     
     private let softAbilityTableView: UITableView = {
         let tableView: UITableView = UITableView()
-        tableView.rowHeight = 30
+        tableView.rowHeight = 39
         tableView.separatorStyle = .none
+        tableView.allowsMultipleSelection = true
         return tableView
     }()
+    
+    private let doneButton: WKRoundedButton = {
+        let button: WKRoundedButton = WKRoundedButton()
+        button.setEnabledColor(color: .wkMainNavy)
+        button.setTitle("선택 완료", for: .normal)
+        return button
+    }()
+    
+    private let hardWhiteBlurView: UIView = UIView()
+    private let softWhiteBlurView: UIView = UIView()
+    
+    // MARK: Properties
+    
+    private var hardAbilityList: [WriteAbility] = [
+        WriteAbility(abilityId: 1, abilityName: "지표 분석을 통한 인사이트 도출", abilityType: "HARD"),
+        WriteAbility(abilityId: 2, abilityName: "지표 지표를 개선한 경험 도출", abilityType: "HARD"),
+        WriteAbility(abilityId: 3, abilityName: "지표 지표를 개선한 경험한 인사이트 도출", abilityType: "HARD"),
+        WriteAbility(abilityId: 4, abilityName: "Product 전체 프로세스에 대한 경험", abilityType: "HARD"),
+        WriteAbility(abilityId: 5, abilityName: "트 도출", abilityType: "HARD")
+    ]
+    
+    private var softAbilityList: [WriteAbility] = [
+        WriteAbility(abilityId: 6, abilityName: "지표 분석을 통한 인사이트 도출", abilityType: "SOFT"),
+        WriteAbility(abilityId: 7, abilityName: "지표 지표를 개선한 경험 도출", abilityType: "SOFT"),
+        WriteAbility(abilityId: 8, abilityName: "지표 지표를 개선한 경험한 인사이트 도출", abilityType: "SOFT"),
+        WriteAbility(abilityId: 9, abilityName: "Product 전체 프로세스에 대한 경험", abilityType: "SOFT"),
+        WriteAbility(abilityId: 10, abilityName: "트 도출", abilityType: "SOFT")
+    ]
+    
+    private var selectedAbilityList: [WriteAbility] = []
+    private let hardCellReuseIdentifier: String = "hardCell"
+    private let softCellReuseIdentifier: String = "softCell"
     
     // MARK: Initializer
     
@@ -91,7 +126,10 @@ final class PickAbilityBottomViewController: BaseViewController {
         super.viewDidLoad()
         
         self.setLayout()
-        self.setBackgroundViewAction()
+        self.setCloseButtonAction()
+        self.setDoneButtonAction()
+        self.setTableView()
+        self.setDoneButtonEnabled()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -100,17 +138,113 @@ final class PickAbilityBottomViewController: BaseViewController {
         self.updateBottomViewUI()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        self.setWhiteBlurGradient()
+    }
+    
     // MARK: Methods
     
     override func setLayout() {
         self.setBottomViewLayout()
         self.setTitleLayout()
         self.setSelectAbilityLayout()
+        self.setDoneButtonLayout()
+        self.setWhiteBlurViewLayout()
     }
     
-    private func setBackgroundViewAction() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.backgroundTapAction(_:)))
-        self.view.addGestureRecognizer(tapGesture)
+    private func setCloseButtonAction() {
+        self.closeButton.setAction { [weak self] in
+            self?.dismiss(animated: true)
+        }
+    }
+    
+    private func setDoneButtonAction() {
+        self.doneButton.setAction { [weak self] in
+            
+            self?.dismiss(animated: true)
+        }
+    }
+    
+    private func setTableView() {
+        self.hardAbilityTableView.delegate = self
+        self.hardAbilityTableView.dataSource = self
+        self.softAbilityTableView.delegate = self
+        self.softAbilityTableView.dataSource = self
+        
+        self.hardAbilityTableView.register(
+            cell: SelectAbilityTableViewCell.self,
+            forCellReuseIdentifier: self.hardCellReuseIdentifier
+        )
+        self.softAbilityTableView.register(
+            cell: SelectAbilityTableViewCell.self,
+            forCellReuseIdentifier: self.softCellReuseIdentifier
+        )
+    }
+    
+    private func setDoneButtonEnabled() {
+        self.doneButton.isEnabled = !self.selectedAbilityList.isEmpty
+        debugPrint(#function, self.selectedAbilityList)
+    }
+    
+    private func setWhiteBlurGradient() {
+        self.hardWhiteBlurView.isUserInteractionEnabled = false
+        self.hardWhiteBlurView.setGradient(
+            firstColor: .wkWhite.withAlphaComponent(0),
+            secondColor: .wkWhite
+        )
+        
+        self.softWhiteBlurView.setGradient(
+            firstColor: .wkWhite.withAlphaComponent(0),
+            secondColor: .wkWhite
+        )
+    }
+    
+    func setSelectedAbilityList(abilityList: [WriteAbility]) {
+        // TODO: 리스폰스에 있는 ability id를 보고 구현...
+    }
+}
+
+// MARK: - Extension (UITableViewDataSource)
+extension PickAbilityBottomViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if tableView == hardAbilityTableView {
+            return hardAbilityList.count
+        } else {
+            return softAbilityList.count
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if tableView == hardAbilityTableView {
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: self.hardCellReuseIdentifier
+            ) as? SelectAbilityTableViewCell
+            else { return UITableViewCell() }
+            
+            cell.setData(
+                data: self.hardAbilityList[indexPath.row],
+                isHard: true
+            )
+            
+            return cell
+        } else {
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: self.softCellReuseIdentifier
+            ) as? SelectAbilityTableViewCell
+            else { return UITableViewCell() }
+            
+            cell.setData(
+                data: self.softAbilityList[indexPath.row],
+                isHard: false
+            )
+            
+            return cell
+        }
+    }
+}
+
     }
     
     @objc
@@ -139,8 +273,8 @@ extension PickAbilityBottomViewController {
             delay: 0.0,
             options: .curveEaseInOut,
             animations: {
-            self.view.layoutIfNeeded()
-        })
+                self.view.layoutIfNeeded()
+            })
     }
     
     private func setBottomViewLayout() {
@@ -198,6 +332,32 @@ extension PickAbilityBottomViewController {
             make.top.equalTo(self.softAbilityLabel.snp.bottom).offset(11)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(150)
+        }
+    }
+    
+    private func setDoneButtonLayout() {
+        self.bottomView.addSubview(doneButton)
+        
+        self.doneButton.snp.makeConstraints { make in
+            make.top.equalTo(self.softAbilityTableView.snp.bottom).offset(58)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(48)
+        }
+    }
+    
+    private func setWhiteBlurViewLayout() {
+        self.bottomView.addSubviews([hardWhiteBlurView, softWhiteBlurView])
+        
+        self.hardWhiteBlurView.snp.makeConstraints { make in
+            make.bottom.equalTo(self.hardAbilityTableView).offset(6)
+            make.leading.trailing.equalTo(self.hardAbilityTableView)
+            make.height.equalTo(self.hardAbilityTableView.snp.height).multipliedBy(0.2)
+        }
+        
+        self.softWhiteBlurView.snp.makeConstraints { make in
+            make.bottom.equalTo(self.softAbilityTableView).offset(6)
+            make.leading.trailing.equalTo(self.softAbilityTableView)
+            make.height.equalTo(self.softAbilityTableView.snp.height).multipliedBy(0.2)
         }
     }
 }
