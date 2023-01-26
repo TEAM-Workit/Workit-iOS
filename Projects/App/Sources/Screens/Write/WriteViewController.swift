@@ -102,8 +102,9 @@ final class WriteViewController: BaseViewController {
     // MARK: Properties
     
     private var keyboardHeight: CGFloat = 0
+    private var selectedAbilityList: [WriteAbility] = []
     
-    // MARK: Initializer
+    // MARK: View Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -135,6 +136,7 @@ final class WriteViewController: BaseViewController {
     private func setAbilityAddButtonAction() {
         self.abilityAddButton.setAction { [weak self] in
             let bottomViewController: PickAbilityBottomViewController = PickAbilityBottomViewController()
+            bottomViewController.delegate = self
             self?.present(bottomViewController, animated: true)
         }
     }
@@ -172,6 +174,14 @@ final class WriteViewController: BaseViewController {
         self.setWorkLayout()
         self.setAbilityLayout()
         self.setWorkDescriptionLayout()
+    }
+}
+
+// MARK: - Extension (SendSelectedAbilityListDelegate)
+extension WriteViewController: SendSelectedAbilityListDelegate {
+    func sendUpdate(abilityList: [WriteAbility]) {
+        self.selectedAbilityList = abilityList
+        debugPrint(self.selectedAbilityList)
     }
 }
 

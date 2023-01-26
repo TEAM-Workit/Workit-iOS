@@ -12,6 +12,12 @@ import UIKit
 
 import SnapKit
 // swiftlint:disable trailing_whitespace
+
+// MARK: - Protocols
+protocol SendSelectedAbilityListDelegate {
+    func sendUpdate(abilityList: [WriteAbility])
+}
+
 final class PickAbilityBottomViewController: BaseViewController {
     
     // MARK: - UIComponents
@@ -107,6 +113,7 @@ final class PickAbilityBottomViewController: BaseViewController {
     private var selectedAbilityList: [WriteAbility] = []
     private let hardCellReuseIdentifier: String = "hardCell"
     private let softCellReuseIdentifier: String = "softCell"
+    var delegate: SendSelectedAbilityListDelegate?
     
     // MARK: Initializer
     
@@ -162,7 +169,7 @@ final class PickAbilityBottomViewController: BaseViewController {
     
     private func setDoneButtonAction() {
         self.doneButton.setAction { [weak self] in
-            
+            self?.delegate?.sendUpdate(abilityList: self?.selectedAbilityList ?? [])
             self?.dismiss(animated: true)
         }
     }
@@ -185,11 +192,12 @@ final class PickAbilityBottomViewController: BaseViewController {
     
     private func setDoneButtonEnabled() {
         self.doneButton.isEnabled = !self.selectedAbilityList.isEmpty
-        debugPrint(#function, self.selectedAbilityList)
     }
     
     private func setWhiteBlurGradient() {
         self.hardWhiteBlurView.isUserInteractionEnabled = false
+        self.softWhiteBlurView.isUserInteractionEnabled = false
+        
         self.hardWhiteBlurView.setGradient(
             firstColor: .wkWhite.withAlphaComponent(0),
             secondColor: .wkWhite
