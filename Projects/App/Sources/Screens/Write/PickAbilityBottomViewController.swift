@@ -245,11 +245,35 @@ extension PickAbilityBottomViewController: UITableViewDataSource {
     }
 }
 
+// MARK: - Extension (UITableViewDelegate)
+extension PickAbilityBottomViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) as? SelectAbilityTableViewCell {
+            cell.isSelected = true
+        }
+        self.selectedAbilityList.append(
+            tableView == self.hardAbilityTableView ? hardAbilityList[indexPath.row] : softAbilityList[indexPath.row]
+        )
+        self.setDoneButtonEnabled()
     }
     
-    @objc
-    func backgroundTapAction(_ gesture: UITapGestureRecognizer) {
-        self.dismiss(animated: true)
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) as? SelectAbilityTableViewCell {
+            cell.isSelected = false
+            
+            var selectedAbility: WriteAbility = WriteAbility()
+            if tableView == self.hardAbilityTableView {
+                selectedAbility = hardAbilityList[indexPath.row]
+            } else {
+                selectedAbility = softAbilityList[indexPath.row]
+            }
+            if let selectedIndex = selectedAbilityList.firstIndex(
+                where: { $0.abilityId == selectedAbility.abilityId }
+            ) {
+                self.selectedAbilityList.remove(at: selectedIndex)
+            }
+        }
+        self.setDoneButtonEnabled()
     }
 }
 
