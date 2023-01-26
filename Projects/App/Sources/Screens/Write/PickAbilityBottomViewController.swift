@@ -13,7 +13,7 @@ import UIKit
 import SnapKit
 
 // MARK: - Protocols
-protocol SendSelectedAbilityListDelegate {
+protocol SendSelectedAbilityListDelegate: AnyObject {
     func sendUpdate(abilityList: [WriteAbility])
 }
 
@@ -112,7 +112,7 @@ final class PickAbilityBottomViewController: BaseViewController {
     private var selectedAbilityList: [WriteAbility] = []
     private let hardCellReuseIdentifier: String = "hardCell"
     private let softCellReuseIdentifier: String = "softCell"
-    var delegate: SendSelectedAbilityListDelegate?
+    weak var delegate: SendSelectedAbilityListDelegate?
     
     // MARK: Initializer
     
