@@ -35,4 +35,6 @@ public enum Image {
     public static let wkBackButton = Assets.wkArrowBig.image
     public static let wkArrowSmall = Assets.wkArrowSmall.image
     public static let imgWorkitTextLogo = Assets.imgWorkitTextLogo.image
+    public static let wkSkillChooseCheck = Assets.wkSkillChooseCheck.image
+    public static let wkSkillChoosePlus = Assets.wkSkillChoosePlus.image
 }
