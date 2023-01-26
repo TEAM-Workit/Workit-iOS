@@ -11,7 +11,6 @@ import Global
 import UIKit
 
 import SnapKit
-// swiftlint:disable trailing_whitespace
 
 // MARK: - Protocols
 protocol SendSelectedAbilityListDelegate {
