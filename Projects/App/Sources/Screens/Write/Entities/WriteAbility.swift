@@ -8,7 +8,8 @@
 
 import Foundation
 
-struct WriteAbilityEntity {
+public struct WriteAbility: Codable {
     var abilityId: Int = 0
     var abilityName: String = ""
+    var abilityType: String = ""
 }
