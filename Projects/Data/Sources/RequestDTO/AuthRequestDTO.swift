@@ -19,4 +19,13 @@ public struct AuthRequestDTO: Encodable {
 public enum SocialType: String {
     case APPLE
     case KAKAO
+    
+    public init(rawValue: String) {
+        switch rawValue {
+        case "KAKAO": self = .KAKAO
+        case "APPLE": self = .APPLE
+        default:
+            fatalError("KAKAO, APPLE이 아님")
+        }
+    }
 }
