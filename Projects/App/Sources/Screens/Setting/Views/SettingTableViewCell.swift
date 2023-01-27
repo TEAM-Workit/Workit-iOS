@@ -9,6 +9,8 @@
 import DesignSystem
 import UIKit
 
+import SnapKit
+
 class SettingTableViewCell: UITableViewCell {
     
     // MARK: - UIComponents
