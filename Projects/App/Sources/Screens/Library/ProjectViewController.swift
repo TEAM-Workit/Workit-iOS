@@ -8,7 +8,7 @@
 
 import DesignSystem
 import UIKit
-// swiftlint:disable trailing_whitespace
+
 class ProjectViewController: BaseViewController, PageTabProtocol {
     
     typealias DiffableDataSource = UICollectionViewDiffableDataSource<Int, Item>

@@ -9,7 +9,6 @@
 import DesignSystem
 import UIKit
 
-// swiftlint:disable trailing_whitespace
 class DetailViewController: BaseViewController {
     
     typealias DiffableDataSource = UICollectionViewDiffableDataSource<Int, Item>
