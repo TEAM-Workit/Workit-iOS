@@ -15,7 +15,7 @@ public enum AuthRouter {
     case postAuth(socialType: SocialType, request: AuthRequestDTO)
 }
 
-extension AuthRouter: BaseRequestConvertible {
+extension AuthRouter: AuthBaseRequestConvertible {
     
     var method: HTTPMethod {
         switch self {
@@ -49,7 +49,7 @@ extension AuthRouter: BaseRequestConvertible {
         case .postAuth:
             request = try JSONEncoding.default.encode(request, with: parameters)
         }
-        
+      
         return request
     }
 }

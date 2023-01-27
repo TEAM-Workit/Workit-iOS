@@ -23,3 +23,16 @@ extension BaseRequestConvertible {
                 "Authorization": SecretKey.testAccessToken]
     }
 }
+
+protocol AuthBaseRequestConvertible: URLRequestConvertible { }
+
+extension AuthBaseRequestConvertible {
+    
+    var baseURL: URL {
+        return URL(string: SecretKey.baseURL)!
+    }
+    
+    var headers: [String: String] {
+        return ["Content-Type": "application/json"]
+    }
+}
