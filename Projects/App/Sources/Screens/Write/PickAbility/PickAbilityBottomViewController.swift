@@ -14,7 +14,10 @@ import SnapKit
 
 // MARK: - Protocols
 protocol SendSelectedAbilityListDelegate: AnyObject {
-    func sendUpdate(abilityList: [WriteAbility])
+    func sendUpdate(
+        hardAbilityList: [WriteAbility],
+        softAbilityList: [WriteAbility]
+    )
 }
 
 final class PickAbilityBottomViewController: BaseViewController {
@@ -109,9 +112,12 @@ final class PickAbilityBottomViewController: BaseViewController {
         WriteAbility(abilityId: 10, abilityName: "트 도출", abilityType: "SOFT")
     ]
     
-    private var selectedAbilityList: [WriteAbility] = []
+    private var selectedHardAbilityList: [WriteAbility] = []
+    private var selectedSoftAbilityList: [WriteAbility] = []
+    
     private let hardCellReuseIdentifier: String = "hardCell"
     private let softCellReuseIdentifier: String = "softCell"
+    
     weak var delegate: SendSelectedAbilityListDelegate?
     
     // MARK: Initializer
@@ -168,7 +174,10 @@ final class PickAbilityBottomViewController: BaseViewController {
     
     private func setDoneButtonAction() {
         self.doneButton.setAction { [weak self] in
-            self?.delegate?.sendUpdate(abilityList: self?.selectedAbilityList ?? [])
+            self?.delegate?.sendUpdate(
+                hardAbilityList: self?.selectedHardAbilityList ?? [],
+                softAbilityList: self?.selectedSoftAbilityList ?? []
+            )
             self?.dismiss(animated: true)
         }
     }
@@ -190,7 +199,7 @@ final class PickAbilityBottomViewController: BaseViewController {
     }
     
     private func setDoneButtonEnabled() {
-        self.doneButton.isEnabled = !self.selectedAbilityList.isEmpty
+        self.doneButton.isEnabled = !self.selectedHardAbilityList.isEmpty || !self.selectedSoftAbilityList.isEmpty
     }
     
     private func setWhiteBlurGradient() {
@@ -258,9 +267,11 @@ extension PickAbilityBottomViewController: UITableViewDelegate {
         if let cell = tableView.cellForRow(at: indexPath) as? SelectAbilityTableViewCell {
             cell.isSelected = true
         }
-        self.selectedAbilityList.append(
-            tableView == self.hardAbilityTableView ? hardAbilityList[indexPath.row] : softAbilityList[indexPath.row]
-        )
+        if tableView == self.hardAbilityTableView {
+            self.selectedHardAbilityList.append(hardAbilityList[indexPath.row])
+        } else {
+            self.selectedSoftAbilityList.append(softAbilityList[indexPath.row])
+        }
         self.setDoneButtonEnabled()
     }
     
@@ -271,14 +282,22 @@ extension PickAbilityBottomViewController: UITableViewDelegate {
             var selectedAbility: WriteAbility = WriteAbility()
             if tableView == self.hardAbilityTableView {
                 selectedAbility = hardAbilityList[indexPath.row]
+                
+                if let selectedIndex = selectedHardAbilityList.firstIndex(
+                    where: { $0.abilityId == selectedAbility.abilityId }
+                ) {
+                    self.selectedHardAbilityList.remove(at: selectedIndex)
+                }
             } else {
                 selectedAbility = softAbilityList[indexPath.row]
+                
+                if let selectedIndex = selectedSoftAbilityList.firstIndex(
+                    where: { $0.abilityId == selectedAbility.abilityId }
+                ) {
+                    self.selectedSoftAbilityList.remove(at: selectedIndex)
+                }
             }
-            if let selectedIndex = selectedAbilityList.firstIndex(
-                where: { $0.abilityId == selectedAbility.abilityId }
-            ) {
-                self.selectedAbilityList.remove(at: selectedIndex)
-            }
+
         }
         self.setDoneButtonEnabled()
     }
