@@ -63,7 +63,7 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
     
     private let tagView = UIView()
     
-    private let tagLabel = WKTagLabel(type: .hard)
+   private let tagLabel = WKTagLabel()
     
     private let etcLabel: UILabel = {
         let label = UILabel()
