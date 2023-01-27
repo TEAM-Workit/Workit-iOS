@@ -9,8 +9,16 @@
 import DesignSystem
 import UIKit
 
-class AbilityViewController: UIViewController, PageTabProtocol {
-
+// swiftlint:disable trailing_whitespace
+class AbilityViewController: BaseViewController, PageTabProtocol {
+    
+    typealias DiffableDataSource = UICollectionViewDiffableDataSource<Int, Item>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Int, Item>
+    
+    enum Item: Hashable {
+        case library(Record)
+    }
+    
     // MARK: - Properties
     
     var pageTitle: String {
@@ -19,30 +27,65 @@ class AbilityViewController: UIViewController, PageTabProtocol {
     
     // MARK: - UIComponents
     
-    private var collectionView = ListCollectionView()
+    private var listCollectionView = ListCollectionView()
 
+    private var dataSource: DiffableDataSource!
+    
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
         self.setLayout()
-        self.applySnapshot()
+        self.setDelegate()
+        self.registerCell()
+        self.setDataSource()
+        self.applySnapshot(record: Record.getData())
     }
     
     // MARK: - Methods
     
-    private func setLayout() {
-        self.view.addSubview(collectionView)
+    override func setLayout() {
+        self.view.addSubview(listCollectionView)
         
-        self.collectionView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
+        self.listCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             make.leading.bottom.trailing.equalToSuperview()
         }
     }
     
-    private func applySnapshot() {
-        self.collectionView.applySnapshot(record: Record.getData())
+    private func setDelegate() {
+        self.listCollectionView.collectionView.delegate = self
     }
     
+    private func registerCell() {
+        self.listCollectionView.collectionView.register(cell: LibraryCollectionViewCell.self)
+    }
+    
+    private func setDataSource() {
+        self.dataSource = DiffableDataSource(
+            collectionView: listCollectionView.collectionView,
+            cellProvider: { collectionView, indexPath, itemIdentifier in
+                switch itemIdentifier {
+                case .library(let item):
+                    let cell: LibraryCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
+                    cell.setData(record: item)
+                    return cell
+                }
+            })
+    }
+    
+    internal func applySnapshot(record: [Record]) {
+        var snapshot = Snapshot()
+        snapshot.appendSections([0])
+        snapshot.appendItems(record.map { Item.library($0) }, toSection: 0)
+        self.dataSource.apply(snapshot)
+    }
+}
+
+extension AbilityViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let detailViewController = DetailViewController(previousView: .ability)
+        self.navigationController?.pushViewController(detailViewController, animated: true)
+    }
 }
 
 // 임시 모델
