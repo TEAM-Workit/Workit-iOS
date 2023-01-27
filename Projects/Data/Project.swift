@@ -11,7 +11,9 @@ import ProjectDescription
 let project = Project.framework(
     name: "Data",
     platform: .iOS,
-    dependencies: [],
+    dependencies: [
+        .project(target: "Global", path: "../Global")
+    ],
     additionalPackageDependencies: [
         .package(product: "RxAlamofire"),
         .package(product: "Alamofire")

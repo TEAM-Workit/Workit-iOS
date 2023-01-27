@@ -6,6 +6,8 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Global
+
 import RxAlamofire
 import RxSwift
 

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Global
 
 import Alamofire
 

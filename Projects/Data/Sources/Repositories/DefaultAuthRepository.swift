@@ -7,13 +7,16 @@
 //
 
 import Domain
+import Global
 
 import RxSwift
 
-final class DefaultAuthRepository: AuthRepository {
-    func postSocialAuth(socialType: String, socialToken: String, nickName: String?) -> Observable<AuthToken> {
+public final class DefaultAuthRepository: AuthRepository {
+    
+    public init() { }
+    
+    public func postSocialAuth(socialType: SocialType, socialToken: String, nickName: String?) -> Observable<AuthToken> {
         let requestDTO: AuthRequestDTO = AuthRequestDTO(socialToken: socialToken, nickName: nickName)
-        let socialType: SocialType = SocialType(rawValue: socialType)
         return NetworkService.shared.auth.postSocialAuth(socialType: socialType, request: requestDTO)
             .compactMap { $0.data }
             .map { $0.toDomain() }

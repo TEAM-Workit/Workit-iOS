@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Global
 
 import RxSwift
 
@@ -14,15 +15,15 @@ protocol AuthUseCase {
     func postSocialLogin(requestValue: PostSocialLoginRequestValue) -> Observable<AuthToken>
 }
 
-final class DefaultAuthUseCase: AuthUseCase {
+public final class DefaultAuthUseCase: AuthUseCase {
     
     private let authRepository: AuthRepository
     
-    init(authRepository: AuthRepository) {
+    public init(authRepository: AuthRepository) {
         self.authRepository = authRepository
     }
     
-    func postSocialLogin(requestValue: PostSocialLoginRequestValue) -> Observable<AuthToken> {
+    public func postSocialLogin(requestValue: PostSocialLoginRequestValue) -> Observable<AuthToken> {
         return authRepository.postSocialAuth(
             socialType: requestValue.socialType,
             socialToken: requestValue.socialId,
@@ -30,8 +31,14 @@ final class DefaultAuthUseCase: AuthUseCase {
     }
 }
 
-struct PostSocialLoginRequestValue {
-    let socialType: String
+public struct PostSocialLoginRequestValue {
+    let socialType: SocialType
     let socialId: String
     let nickName: String?
+    
+    public init(socialType: SocialType, socialId: String, nickName: String?) {
+        self.socialType = socialType
+        self.socialId = socialId
+        self.nickName = nickName
+    }
 }

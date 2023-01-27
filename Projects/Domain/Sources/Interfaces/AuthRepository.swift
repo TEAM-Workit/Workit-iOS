@@ -6,8 +6,10 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Global
+
 import RxSwift
 
 public protocol AuthRepository {
-    func postSocialAuth(socialType: String, socialToken: String, nickName: String?) -> Observable<AuthToken>
+    func postSocialAuth(socialType: SocialType, socialToken: String, nickName: String?) -> Observable<AuthToken>
 }
