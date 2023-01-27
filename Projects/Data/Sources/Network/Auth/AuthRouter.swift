@@ -53,4 +53,3 @@ extension AuthRouter: AuthBaseRequestConvertible {
         return request
     }
 }
-
