@@ -59,8 +59,4 @@ class ListCollectionView: UIView {
         return layout
     }
     
-    private func setDataSource() {
-        self.collectionView.register(cell: cellType)
-    }
-    
 }
