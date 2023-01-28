@@ -20,7 +20,7 @@ public final class WKTagLabel: PaddingLabel {
     
     // MARK: - Properties
     
-    public var type: TagType {
+  public var type: TagType = .hard {
         didSet {
             self.setColor(type: type)
         }
@@ -28,8 +28,7 @@ public final class WKTagLabel: PaddingLabel {
 
     // MARK: - LifeCycle
     
-    init(type: TagType = .hard) {
-        self.type = type
+    public init() {
         super.init(padding: UIEdgeInsets(
             top: Number.top,
             left: Number.left,
