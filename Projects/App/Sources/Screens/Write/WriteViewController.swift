@@ -213,9 +213,21 @@ final class WriteViewController: BaseViewController {
 
 // MARK: - Extension (SendSelectedAbilityListDelegate)
 extension WriteViewController: SendSelectedAbilityListDelegate {
-    func sendUpdate(abilityList: [WriteAbility]) {
-        self.selectedAbilityList = abilityList
-        debugPrint(self.selectedAbilityList)
+    func sendUpdate(hardAbilityList: [WriteAbility], softAbilityList: [WriteAbility]) {
+        self.selectedHardAbilityList = hardAbilityList
+        self.selectedSoftAbilityList = softAbilityList
+        
+        self.updateAbilityCollectionViewHeight()
+        
+        self.hardAbilityCollectionView.layoutIfNeeded()
+        self.softAbilityCollectionView.layoutIfNeeded()
+        
+        DispatchQueue.main.async {
+            self.hardAbilityCollectionView.reloadData()
+            self.softAbilityCollectionView.reloadData()
+        }
+    }
+}
 
 extension WriteViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
