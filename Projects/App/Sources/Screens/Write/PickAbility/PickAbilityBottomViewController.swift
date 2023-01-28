@@ -12,6 +12,8 @@ import UIKit
 
 import SnapKit
 
+// swiftlint:disable file_length
+
 // MARK: - Protocols
 protocol SendSelectedAbilityListDelegate: AnyObject {
     func sendUpdate(
