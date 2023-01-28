@@ -49,6 +49,10 @@ public class WKTextFieldStyleButton: UIButton {
     public func setPlaceholder(text: String) {
         self.textField.placeholder = text
     }
+    
+    public func setText(text: String) {
+        self.textField.text = text
+    }
 }
 
 // MARK: - UI
