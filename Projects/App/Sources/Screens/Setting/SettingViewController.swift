@@ -14,7 +14,7 @@ import SnapKit
 
 class SettingViewController: UIViewController {
     
-    enum Setting: CaseIterable {
+    enum Setting: Int, CaseIterable {
         case project
         case service
         case inquiry
@@ -62,6 +62,9 @@ class SettingViewController: UIViewController {
         
         self.setTableView()
         self.setLayout()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         self.setNavigationBar()
     }
     
@@ -107,6 +110,25 @@ extension SettingViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch Setting(rawValue: indexPath.row) {
+        case .project:
+            let projectViewController = ProjectCreateViewController()
+            self.navigationController?.pushViewController(projectViewController, animated: true)
+            return
+        case .service:
+            return
+        case .inquiry:
+            return
+        case .policy:
+            return
+        case .logout:
+            return
+        case .none:
+            return
+        }
     }
     
 }
