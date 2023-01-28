@@ -119,6 +119,7 @@ final class WriteViewController: BaseViewController {
         self.setWorkDescriptionTextView()
         self.setAbilityAddButtonAction()
         self.setAbilityCollectionView()
+        self.setProjectButtonAction()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -210,6 +211,13 @@ final class WriteViewController: BaseViewController {
         }
         self.softAbilityCollectionView.snp.updateConstraints { make in
             make.height.equalTo(self.selectedSoftAbilityList.isEmpty ? 0 : 29)
+        }
+    }
+    
+    private func setProjectButtonAction() {
+        self.projectButton.setAction { [weak self] in
+            let selectProjectBottomViewController: SelectProjectBottomViewController = SelectProjectBottomViewController()
+            self?.present(selectProjectBottomViewController, animated: true)
         }
     }
 }
