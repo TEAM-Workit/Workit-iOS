@@ -68,7 +68,10 @@ final class WriteViewController: BaseViewController {
         return label
     }()
     
-    private let abilityCollectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
+    private let abilityCollectionView: UICollectionView = UICollectionView(
+        frame: .zero,
+        collectionViewLayout: UICollectionViewLayout()
+    )
     
     private let abilityAddButton: WKAbilityAddButton = {
         let button: WKAbilityAddButton = WKAbilityAddButton()
@@ -99,8 +102,9 @@ final class WriteViewController: BaseViewController {
     // MARK: Properties
     
     private var keyboardHeight: CGFloat = 0
+    private var selectedAbilityList: [WriteAbility] = []
     
-    // MARK: Initializer
+    // MARK: View Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -108,6 +112,7 @@ final class WriteViewController: BaseViewController {
         self.setLayout()
         self.setLabelStyle()
         self.setWorkDescriptionTextView()
+        self.setAbilityAddButtonAction()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -126,6 +131,14 @@ final class WriteViewController: BaseViewController {
     
     private func setWorkDescriptionTextView() {
         self.workDescriptionTextView.delegate = self
+    }
+    
+    private func setAbilityAddButtonAction() {
+        self.abilityAddButton.setAction { [weak self] in
+            let bottomViewController: PickAbilityBottomViewController = PickAbilityBottomViewController()
+            bottomViewController.delegate = self
+            self?.present(bottomViewController, animated: true)
+        }
     }
     
     private func addKeyboardObserver() {
@@ -161,6 +174,14 @@ final class WriteViewController: BaseViewController {
         self.setWorkLayout()
         self.setAbilityLayout()
         self.setWorkDescriptionLayout()
+    }
+}
+
+// MARK: - Extension (SendSelectedAbilityListDelegate)
+extension WriteViewController: SendSelectedAbilityListDelegate {
+    func sendUpdate(abilityList: [WriteAbility]) {
+        self.selectedAbilityList = abilityList
+        debugPrint(self.selectedAbilityList)
     }
 }
 
