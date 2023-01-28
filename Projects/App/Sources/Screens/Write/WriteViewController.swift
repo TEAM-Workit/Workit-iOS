@@ -216,6 +216,70 @@ extension WriteViewController: SendSelectedAbilityListDelegate {
     func sendUpdate(abilityList: [WriteAbility]) {
         self.selectedAbilityList = abilityList
         debugPrint(self.selectedAbilityList)
+
+extension WriteViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch collectionView {
+        case self.hardAbilityCollectionView:
+            return self.selectedHardAbilityList.count
+        case self.softAbilityCollectionView:
+            return self.selectedSoftAbilityList.count
+        default: return 0
+        }
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        
+        switch collectionView {
+        case self.hardAbilityCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "hardCell",
+                for: indexPath
+            ) as? WKWriteAbilityCollectionViewCell
+            else { return UICollectionViewCell() }
+            
+            cell.setData(data: self.selectedHardAbilityList[indexPath.row])
+            
+            return cell
+        case self.softAbilityCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "softCell",
+                for: indexPath
+            ) as? WKWriteAbilityCollectionViewCell
+            else { return UICollectionViewCell() }
+            
+            cell.setData(data: self.selectedSoftAbilityList[indexPath.row])
+            
+            return cell
+        default: return UICollectionViewCell()
+        }
+    }
+}
+
+// MARK: - Extension (UICollectionViewDelegateFlowLayout)
+
+extension WriteViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        let sizingCell = WKWriteAbilityCollectionViewCell()
+        
+        switch collectionViewLayout {
+        case self.hardAbilityFlowLayout:
+            sizingCell.setData(data: selectedHardAbilityList[indexPath.row])
+        case self.softAbilityFlowLayout:
+            sizingCell.setData(data: selectedSoftAbilityList[indexPath.row])
+        default: return .zero
+        }
+        
+        let cellWidth = sizingCell.titleLabelWidth() + 20
+        let cellHeight = 29
+        return CGSize(width: cellWidth, height: CGFloat(cellHeight))
     }
 }
 
