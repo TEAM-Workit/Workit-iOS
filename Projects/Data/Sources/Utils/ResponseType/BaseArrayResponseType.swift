@@ -8,8 +8,8 @@
 
 public struct BaseArrayResponseType<T: Decodable>: Decodable {
     let status: Int
-    let message: String?
-    let success: Bool?
+    let message: String
+    let success: Bool
     let data: [T]?
 
     var statusCase: StatusCase? {
