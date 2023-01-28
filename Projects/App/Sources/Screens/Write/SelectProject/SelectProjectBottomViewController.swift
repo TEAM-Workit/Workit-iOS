@@ -12,6 +12,12 @@ import UIKit
 
 import SnapKit
 
+// MARK: - Protocols
+
+protocol SendSelectedProjectDelegate: AnyObject {
+    func sendUpdate(selectedProjectTitle: String)
+}
+
 final class SelectProjectBottomViewController: BaseViewController {
     
     // MARK: - UIComponents
@@ -81,6 +87,9 @@ final class SelectProjectBottomViewController: BaseViewController {
         RecentProject(id: 3, title: "솝텀 ㅋㅋ 프로젝트"),
         RecentProject(id: 4, title: "워킷 짱")
     ]
+    
+    weak var delegate: SendSelectedProjectDelegate?
+    
     // MARK: Initializer
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -103,6 +112,7 @@ final class SelectProjectBottomViewController: BaseViewController {
         self.setDoneButtonAction()
         self.setRecentProjectCollectionView()
         self.setDoneButtonEnabled()
+        self.setProjectTextFeild()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -128,7 +138,10 @@ final class SelectProjectBottomViewController: BaseViewController {
     
     private func setDoneButtonAction() {
         self.doneButton.setAction { [weak self] in
-            self?.dismiss(animated: true)
+            if let title = self?.projectTextField.text as? String {
+                self?.delegate?.sendUpdate(selectedProjectTitle: title)
+                self?.dismiss(animated: true)
+            }
         }
     }
     
@@ -140,6 +153,13 @@ final class SelectProjectBottomViewController: BaseViewController {
     }
     
     private func setDoneButtonEnabled() {
+        self.doneButton.isEnabled = self.projectTextField.isEntered
+    }
+    
+    func setSelectedAbilityList(abilityList: [WriteAbility]) {
+        // TODO: 리스폰스에 있는 ability id를 보고 구현...
+    }
+    
     private func setProjectTextFeild() {
         self.projectTextField.delegate = self
         self.projectTextField.setClearButtonAction { [weak self] in
@@ -188,6 +208,22 @@ extension SelectProjectBottomViewController: UICollectionViewDelegateFlowLayout 
         self.setDoneButtonEnabled()
     }
 }
+
+// MARK: - Extension (UITextFieldDelegate)
+
+extension SelectProjectBottomViewController: UITextFieldDelegate {
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        self.projectTextField.isEntered = false
+        self.setDoneButtonEnabled()
+        self.recentProjectCollectionView.reloadData()
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = self.projectTextField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let changedText = currentText.replacingCharacters(in: stringRange, with: string)
+        return changedText.count <= 20
     }
 }
 
