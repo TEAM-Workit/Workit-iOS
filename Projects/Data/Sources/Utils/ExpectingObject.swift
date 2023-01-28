@@ -22,7 +22,7 @@ extension Observable where Element == (HTTPURLResponse, Any) {
                     print(response.statusCode)
                     print(response.headers)
                     print(object)
-                    print(value..)
+                    print(value)
                     print("-----------------------------")
                     return object
                 } else {
