@@ -44,6 +44,22 @@ final class SelectProjectBottomViewController: BaseViewController {
         return textField
     }()
     
+    private let recentProjectLabel: UILabel = {
+        let label: UILabel = UILabel()
+        label.text = "최근 프로젝트"
+        label.font = .b3Sb
+        label.textColor = .wkBlack45
+        label.sizeToFit()
+        return label
+    }()
+    
+    private let recentProjectCollectionView: UICollectionView = {
+        let collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.layoutMargins = .zero
+        collectionView.collectionViewLayout = WriteLeftAlignedCollectionViewFlowLayout()
+        return collectionView
+    }()
+    
     private let doneButton: WKRoundedButton = {
         let button: WKRoundedButton = WKRoundedButton()
         button.setEnabledColor(color: .wkMainNavy)
@@ -51,6 +67,20 @@ final class SelectProjectBottomViewController: BaseViewController {
         return button
     }()
     
+    // MARK: Properties
+    
+    private var recentProjectList: [RecentProject] = [
+        RecentProject(id: 1, title: "카카카카카카카카카카카카카카카카카카카카"),
+        RecentProject(id: 2, title: "어쩌구 프로젝트"),
+        RecentProject(id: 3, title: "솝텀 프로젝트"),
+        RecentProject(id: 4, title: "워킷"),
+        RecentProject(id: 2, title: "어쩌구 프로젝트"),
+        RecentProject(id: 3, title: "솝텀 프로젝트"),
+        RecentProject(id: 4, title: "워킷"),
+        RecentProject(id: 2, title: "어쩌구 프로젝트"),
+        RecentProject(id: 3, title: "솝텀 ㅋㅋ 프로젝트"),
+        RecentProject(id: 4, title: "워킷 짱")
+    ]
     // MARK: Initializer
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -71,6 +101,7 @@ final class SelectProjectBottomViewController: BaseViewController {
         self.setLayout()
         self.setCloseButtonAction()
         self.setDoneButtonAction()
+        self.setRecentProjectCollectionView()
         self.setDoneButtonEnabled()
     }
     
@@ -101,6 +132,12 @@ final class SelectProjectBottomViewController: BaseViewController {
         }
     }
     
+    private func setRecentProjectCollectionView() {
+        self.recentProjectCollectionView.delegate = self
+        self.recentProjectCollectionView.dataSource = self
+        
+        self.recentProjectCollectionView.register(cell: WKWriteRecentProjectCollectionViewCell.self)
+    }
     
     private func setDoneButtonEnabled() {
     private func setProjectTextFeild() {
@@ -111,8 +148,46 @@ final class SelectProjectBottomViewController: BaseViewController {
             self?.setDoneButtonEnabled()
         }
     }
+}
+
+// MARK: - Extension (UICollectionViewDataSource)
+
+extension SelectProjectBottomViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.recentProjectList.count
     }
     
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: WKWriteRecentProjectCollectionViewCell.className,
+            for: indexPath
+        ) as? WKWriteRecentProjectCollectionViewCell
+        else { return UICollectionViewCell() }
+        cell.setData(data: self.recentProjectList[indexPath.row])
+        
+        return cell
+    }
+}
+
+// MARK: - Extension (UICollectionViewDelegateFlowLayout)
+
+extension SelectProjectBottomViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let sizingCell = WKWriteRecentProjectCollectionViewCell()
+        sizingCell.setData(data: self.recentProjectList[indexPath.row])
+        
+        let cellWidth = sizingCell.titleLabelWidth() + 24
+        let cellHeight = 29
+        return CGSize(width: cellWidth, height: CGFloat(cellHeight))
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        self.projectTextField.endEditing(true)
+        self.projectTextField.text = self.recentProjectList[indexPath.row].title
+        self.projectTextField.isEntered = true
+        self.setDoneButtonEnabled()
+    }
+}
     }
 }
 
@@ -168,13 +243,26 @@ extension SelectProjectBottomViewController {
     
     private func setProjectLayout() {
         self.bottomView.addSubviews([
-            projectTextField
+            projectTextField,
+            recentProjectLabel,
+            recentProjectCollectionView
         ])
         
         self.projectTextField.snp.makeConstraints { make in
             make.top.equalTo(self.titleLabel.snp.bottom).offset(34)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(44)
+        }
+        
+        self.recentProjectLabel.snp.makeConstraints { make in
+            make.top.equalTo(self.projectTextField.snp.bottom).offset(30)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
+        
+        self.recentProjectCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(self.recentProjectLabel.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(200)
         }
     }
     
