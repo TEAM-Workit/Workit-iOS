@@ -38,6 +38,12 @@ final class SelectProjectBottomViewController: BaseViewController {
         return button
     }()
     
+    private let projectTextField: WKTextField = {
+        let textField: WKTextField = WKTextField()
+        textField.placeholder = "프로젝트 생성 또는 검색"
+        return textField
+    }()
+    
     private let doneButton: WKRoundedButton = {
         let button: WKRoundedButton = WKRoundedButton()
         button.setEnabledColor(color: .wkMainNavy)
@@ -79,6 +85,7 @@ final class SelectProjectBottomViewController: BaseViewController {
     override func setLayout() {
         self.setBottomViewLayout()
         self.setTitleLayout()
+        self.setProjectLayout()
         self.setDoneButtonLayout()
     }
     
@@ -148,6 +155,18 @@ extension SelectProjectBottomViewController {
             make.centerY.equalTo(self.titleLabel)
             make.trailing.equalToSuperview().inset(20)
             make.width.height.equalTo(24)
+        }
+    }
+    
+    private func setProjectLayout() {
+        self.bottomView.addSubviews([
+            projectTextField
+        ])
+        
+        self.projectTextField.snp.makeConstraints { make in
+            make.top.equalTo(self.titleLabel.snp.bottom).offset(34)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(44)
         }
     }
     
