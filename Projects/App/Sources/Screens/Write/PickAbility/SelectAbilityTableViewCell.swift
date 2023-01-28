@@ -11,7 +11,7 @@ import Global
 import UIKit
 
 import SnapKit
-// swiftlint:disable trailing_whitespace
+
 final class SelectAbilityTableViewCell: UITableViewCell {
     
     // MARK: UIComponents
