@@ -123,6 +123,7 @@ final class WriteViewController: BaseViewController {
         super.viewWillAppear(animated)
         
         self.addKeyboardObserver()
+        self.updateAbilityCollectionViewHeight()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
