@@ -68,10 +68,8 @@ final class WriteViewController: BaseViewController {
         return label
     }()
     
-    private let abilityCollectionView: UICollectionView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: UICollectionViewLayout()
-    )
+    private var hardAbilityCollectionView: WKWriteAbilityCollectionView = WKWriteAbilityCollectionView()
+    private var softAbilityCollectionView: WKWriteAbilityCollectionView = WKWriteAbilityCollectionView()
     
     private let abilityAddButton: WKAbilityAddButton = {
         let button: WKAbilityAddButton = WKAbilityAddButton()
@@ -99,10 +97,15 @@ final class WriteViewController: BaseViewController {
         return label
     }()
     
+    private let hardAbilityFlowLayout: WriteAbilityCollectionViewFlowLayout = WriteAbilityCollectionViewFlowLayout()
+    private let softAbilityFlowLayout: WriteAbilityCollectionViewFlowLayout = WriteAbilityCollectionViewFlowLayout()
+    
     // MARK: Properties
     
     private var keyboardHeight: CGFloat = 0
-    private var selectedAbilityList: [WriteAbility] = []
+    
+    private var selectedHardAbilityList: [WriteAbility] = []
+    private var selectedSoftAbilityList: [WriteAbility] = []
     
     // MARK: View Life Cycle
     
@@ -113,6 +116,7 @@ final class WriteViewController: BaseViewController {
         self.setLabelStyle()
         self.setWorkDescriptionTextView()
         self.setAbilityAddButtonAction()
+        self.setAbilityCollectionView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -175,6 +179,36 @@ final class WriteViewController: BaseViewController {
         self.setAbilityLayout()
         self.setWorkDescriptionLayout()
     }
+    
+    private func setAbilityCollectionView() {
+        self.hardAbilityCollectionView.collectionViewLayout = self.hardAbilityFlowLayout
+        self.softAbilityCollectionView.collectionViewLayout = self.softAbilityFlowLayout
+        
+        self.hardAbilityCollectionView.dataSource = self
+        self.softAbilityCollectionView.dataSource = self
+        
+        self.hardAbilityCollectionView.delegate = self
+        self.softAbilityCollectionView.delegate = self
+        
+        self.hardAbilityCollectionView.register(
+            cell: WKWriteAbilityCollectionViewCell.self,
+            forCellWithReuseIdentifier: "hardCell"
+        )
+        self.softAbilityCollectionView.register(
+            cell: WKWriteAbilityCollectionViewCell.self,
+            forCellWithReuseIdentifier: "softCell"
+        )
+    }
+    
+    private func updateAbilityCollectionViewHeight() {
+        self.hardAbilityCollectionView.snp.updateConstraints { make in
+            make.top.equalTo(self.abilityLabel.snp.bottom).offset(self.selectedHardAbilityList.isEmpty ? 0 : 8)
+            make.height.equalTo(self.selectedHardAbilityList.isEmpty ? 0 : 29)
+        }
+        self.softAbilityCollectionView.snp.updateConstraints { make in
+            make.height.equalTo(self.selectedSoftAbilityList.isEmpty ? 0 : 29)
+        }
+    }
 }
 
 // MARK: - Extension (SendSelectedAbilityListDelegate)
@@ -221,7 +255,7 @@ extension WriteViewController {
             dateLabel, dateButton,
             projectLabel, projectButton,
             workLabel, workTextField,
-            abilityLabel, abilityCollectionView, abilityAddButton,
+            abilityLabel, hardAbilityCollectionView, softAbilityCollectionView, abilityAddButton,
             workDescriptionLabel, workDescriptionTextView, workDescriptionCountLabel
         ])
     }
@@ -286,14 +320,20 @@ extension WriteViewController {
             make.leading.equalToSuperview().inset(20)
         }
         
-        self.abilityCollectionView.snp.makeConstraints { make in
+        self.hardAbilityCollectionView.snp.makeConstraints { make in
             make.top.equalTo(self.abilityLabel.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(0)
         }
         
+        self.softAbilityCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(self.hardAbilityCollectionView.snp.bottom).offset(8)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(0)
+        }
+        
         self.abilityAddButton.snp.makeConstraints { make in
-            make.top.equalTo(self.abilityCollectionView.snp.bottom).offset(8)
+            make.top.equalTo(self.softAbilityCollectionView.snp.bottom).offset(8)
             make.leading.equalToSuperview().inset(20)
             make.width.equalTo(111)
             make.height.equalTo(29)
