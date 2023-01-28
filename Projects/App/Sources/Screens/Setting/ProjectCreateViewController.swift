@@ -132,7 +132,7 @@ final class ProjectCreateViewController: BaseViewController {
             })
         
         let headerRegistration = UICollectionView.SupplementaryRegistration
-        <ProjectHeaderReusableView>(elementKind: Text.headerIdentifier) { supplementaryView, elementKind, indexPath in
+        <ProjectHeaderReusableView>(elementKind: Text.headerIdentifier) { supplementaryView, _, indexPath in
             supplementaryView.title.text = Section.allCases[indexPath.section].title
         }
         
