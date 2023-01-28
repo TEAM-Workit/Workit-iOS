@@ -38,9 +38,9 @@ final class SelectProjectBottomViewController: BaseViewController {
         return button
     }()
     
-    private let projectTextField: WKTextField = {
-        let textField: WKTextField = WKTextField()
-        textField.placeholder = "프로젝트 생성 또는 검색"
+    private let projectTextField: WKProjectSearchTextField = {
+        let textField: WKProjectSearchTextField = WKProjectSearchTextField()
+        textField.placeholder = "프로젝트 생성 또는 검색 (최대 20자)"
         return textField
     }()
     
@@ -103,6 +103,14 @@ final class SelectProjectBottomViewController: BaseViewController {
     
     
     private func setDoneButtonEnabled() {
+    private func setProjectTextFeild() {
+        self.projectTextField.delegate = self
+        self.projectTextField.setClearButtonAction { [weak self] in
+            self?.projectTextField.isEntered = false
+            self?.recentProjectCollectionView.reloadData()
+            self?.setDoneButtonEnabled()
+        }
+    }
     }
     
     }
