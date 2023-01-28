@@ -217,12 +217,14 @@ final class WriteViewController: BaseViewController {
     private func setProjectButtonAction() {
         self.projectButton.setAction { [weak self] in
             let selectProjectBottomViewController: SelectProjectBottomViewController = SelectProjectBottomViewController()
+            selectProjectBottomViewController.delegate = self
             self?.present(selectProjectBottomViewController, animated: true)
         }
     }
 }
 
 // MARK: - Extension (SendSelectedAbilityListDelegate)
+
 extension WriteViewController: SendSelectedAbilityListDelegate {
     func sendUpdate(hardAbilityList: [WriteAbility], softAbilityList: [WriteAbility]) {
         self.selectedHardAbilityList = hardAbilityList
@@ -237,6 +239,14 @@ extension WriteViewController: SendSelectedAbilityListDelegate {
             self.hardAbilityCollectionView.reloadData()
             self.softAbilityCollectionView.reloadData()
         }
+    }
+}
+
+// MARK: - Extension (SendSelectedAbilityListDelegate)
+
+extension WriteViewController: SendSelectedProjectDelegate {
+    func sendUpdate(selectedProjectTitle: String) {
+        self.projectButton.setText(text: selectedProjectTitle)
     }
 }
 
