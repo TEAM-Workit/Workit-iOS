@@ -15,15 +15,11 @@ public struct Work: Hashable {
     public let abilities: [Ability]
     
     public var firstAbilityTag: Ability? {
-        get {
-            return abilities.first
-        }
+        return abilities.first
     }
     
     public var etcAbilityCount: Int {
-        get {
-            return abilities.count - 1
-        }
+        return abilities.count - 1
     }
   
     public init(
