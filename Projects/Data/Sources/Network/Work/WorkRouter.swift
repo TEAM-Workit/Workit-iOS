@@ -11,7 +11,10 @@ import Foundation
 import Alamofire
 
 public enum WorkRouter {
+    /// 전체 워킷 보기
     case fetchWorks
+    /// 전체 워킷 보기 (기간별)
+    case fetchWorksDate(start: Date, end: Date)
 }
 
 extension WorkRouter: BaseRequestConvertible {
@@ -20,6 +23,8 @@ extension WorkRouter: BaseRequestConvertible {
         switch self {
         case .fetchWorks:
             return .get
+        case .fetchWorksDate:
+            return .get
         }
     }
     
@@ -27,6 +32,8 @@ extension WorkRouter: BaseRequestConvertible {
         switch self {
         case .fetchWorks:
             return URLConstant.work
+        case .fetchWorksDate:
+            return URLConstant.work + "/date"
         }
     }
     
@@ -34,6 +41,9 @@ extension WorkRouter: BaseRequestConvertible {
         switch self {
         case .fetchWorks:
             return nil
+        case let .fetchWorksDate(start, end):
+            return ["start": start.toString(type: .fullYearDash),
+                    "end": end.toString(type: .fullYearDash)]
         }
     }
     
@@ -47,6 +57,8 @@ extension WorkRouter: BaseRequestConvertible {
         switch self {
         case .fetchWorks:
            break
+        case .fetchWorksDate:
+            request = try URLEncoding.queryString.encode(request, with: parameters)
         }
       
         return request

@@ -7,6 +7,7 @@
 //
 
 import Domain
+import Foundation.NSDate
 
 import ReactorKit
 
@@ -18,7 +19,10 @@ final class HomeReactor: Reactor {
     
     init(workUseCase: DefaultWorkUseCase) {
         self.workUseCase = workUseCase
-        initialState = .init(works: [])
+        initialState = .init(
+            works: [],
+            startDate: Date(),
+            endDate: Date())
     }
     
     enum Action {
@@ -27,6 +31,8 @@ final class HomeReactor: Reactor {
     
     struct State {
         var works: [Work]
+        var startDate: Date
+        var endDate: Date
     }
     
     enum Mutation {
@@ -36,8 +42,11 @@ final class HomeReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewWillAppear:
-            return workUseCase.fetchWorks()
-                .map { Mutation.setProjects($0) }
+            // TODO: BottomSheet 연결 후 currentState로 변경
+            return workUseCase.fetchWorksDate(
+                start: "2023.01.28".toDate(type: .fullYearDash) ?? .now,
+                end: currentState.endDate)
+            .map { Mutation.setProjects($0) }
         }
     }
     

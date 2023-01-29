@@ -12,6 +12,7 @@ import RxSwift
 
 public protocol WorkUseCase {
     func fetchWorks() -> Observable<[Work]>
+    func fetchWorksDate(start: Date, end: Date) -> Observable<[Work]>
 }
 
 public final class DefaultWorkUseCase: WorkUseCase {
@@ -24,5 +25,9 @@ public final class DefaultWorkUseCase: WorkUseCase {
     
     public func fetchWorks() -> Observable<[Work]> {
         return workRepository.fetchWorks()
+    }
+    
+    public func fetchWorksDate(start: Date, end: Date) -> Observable<[Work]> {
+        return workRepository.fetchWorksDate(start: start, end: end)
     }
 }

@@ -6,8 +6,11 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Foundation.NSDate
+
 import RxSwift
 
 public protocol WorkRepository {
     func fetchWorks() -> Observable<[Work]>
+    func fetchWorksDate(start: Date, end: Date) -> Observable<[Work]>
 }

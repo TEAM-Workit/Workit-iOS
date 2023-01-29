@@ -7,6 +7,7 @@
 //
 
 import Domain
+import Foundation.NSDate
 
 import RxSwift
 
@@ -16,6 +17,12 @@ public final class DefaultWorkRepository: WorkRepository {
     
     public func fetchWorks() -> Observable<[Work]> {
         return NetworkService.shared.work.fetchWorks()
+            .compactMap { $0.data }
+            .map { $0.toDomain() }
+    }
+    
+    public func fetchWorksDate(start: Date, end: Date) -> Observable<[Work]> {
+        return NetworkService.shared.work.fetchWorksDate(start: start, end: end)
             .compactMap { $0.data }
             .map { $0.toDomain() }
     }
