@@ -77,7 +77,6 @@ class ProjectViewController: BaseViewController, PageTabProtocol, View {
             .disposed(by: disposeBag)
     }
     
-    
     // MARK: - Methods
     
     override func setLayout() {
