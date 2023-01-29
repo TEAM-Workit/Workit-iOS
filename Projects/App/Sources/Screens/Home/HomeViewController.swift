@@ -104,6 +104,15 @@ final class HomeViewController: BaseViewController, View {
                 owner.applySnapshot(works: works)
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.username }
+            .distinctUntilChanged()
+            .withUnretained(self)
+            .bind { owner, name in
+                owner.bannerView.setName(name: name)
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Methods
