@@ -7,9 +7,16 @@
 //
 
 import DesignSystem
+import Domain
 import UIKit
 
-final class HomeViewController: BaseViewController {
+import ReactorKit
+import RxSwift
+
+final class HomeViewController: BaseViewController, View {
+    var disposeBag = DisposeBag()
+    
+    typealias Reactor = HomeReactor
 
     typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, Item>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Item>
@@ -32,11 +39,11 @@ final class HomeViewController: BaseViewController {
 
     enum Item: Hashable {
         case empty
-        case workit(Workit)
+        case workit(Work)
     }
 
     // MARK: - UIComponenets
-
+    
     private let bannerView = HomeBannerView()
 
     private lazy var collectionView: UICollectionView = {
@@ -57,6 +64,8 @@ final class HomeViewController: BaseViewController {
 
     init() {
         super.init(nibName: nil, bundle: nil)
+        
+        self.setDataSource()
     }
 
     required init?(coder: NSCoder) {
@@ -67,12 +76,34 @@ final class HomeViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.setNavigationBar()
-        self.setUI()
         self.setLayout()
-        self.setDataSource()
-        self.applySnapshot(workits: Workit.getData())
+        self.setUI()
+    }
+    
+    func bind(reactor: HomeReactor) {
+        bindAction(reactor: reactor)
+        bindState(reactor: reactor)
+    }
+    
+    private func bindAction(reactor: HomeReactor) {
+        rx.viewWillAppear
+            .take(1)
+            .map { _ in Reactor.Action.viewWillAppear }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindState(reactor: HomeReactor) {
+        reactor.state
+            .map { $0.works }
+            .distinctUntilChanged()
+            .withUnretained(self)
+            .bind { owner, works in
+                owner.applySnapshot(works: works)
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Methods
@@ -157,9 +188,18 @@ final class HomeViewController: BaseViewController {
                 case .empty:
                     let cell: WKEmptyCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
                     return cell
-                case .workit:
+                    
+                case .workit(let workItem):
                     let cell: WKProjectCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
-                    cell.setData()
+                    let workData: WKCellModel = WKCellModel(
+                        projectTitle: workItem.project.title,
+                        date: workItem.date.toDate(type: .dot) ?? Date(),
+                        title: workItem.title,
+                        description: workItem.description,
+                        firstTag: workItem.firstAbilityTag?.name ?? "",
+                        firstTagType: workItem.firstAbilityTag?.type ?? .hard,
+                        otherCount: workItem.etcAbilityCount)
+                    cell.setData(work: workData)
                     return cell
                 }
             })
@@ -170,16 +210,15 @@ final class HomeViewController: BaseViewController {
         }
     }
 
-    internal func applySnapshot(workits: [Workit]) {
+    internal func applySnapshot(works: [Work]) {
         var snapshot = Snapshot()
         snapshot.appendSections([.empty, .myWorkit])
         snapshot.appendItems([Item.empty], toSection: .empty)
-        snapshot.appendItems(workits.map { Item.workit($0) }, toSection: .myWorkit)
+        snapshot.appendItems(works.map { Item.workit($0) }, toSection: .myWorkit)
         self.dataSource.apply(snapshot)
     }
 }
 
-/// 임시 모델 (삭제예정)
 struct Workit: Hashable {
     let uuid = UUID()
     let title: String
