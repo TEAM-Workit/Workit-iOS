@@ -9,7 +9,13 @@
 import Global
 
 public struct Ability {
-    let id: Int
-    let name: Int
-    let type: TagType
+    public let id: Int
+    public let name: String
+    public let type: TagType
+    
+    public init(id: Int, name: String, type: String) {
+        self.id = id
+        self.name = name
+        self.type = TagType(rawValue: type)
+    }
 }
