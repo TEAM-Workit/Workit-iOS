@@ -6,7 +6,18 @@
 //  Copyright © 2022 com.workit. All rights reserved.
 //
 
-public enum TagType {
+public enum TagType: String {
     case hard
     case soft
+    
+    public init(rawValue: String) {
+        switch rawValue {
+        case "HARD":
+            self = .hard
+        case "SOFT":
+            self = .soft
+        default:
+            fatalError("HARD, SOFT 아님")
+        }
+    }
 }

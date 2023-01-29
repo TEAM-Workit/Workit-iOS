@@ -87,7 +87,7 @@ class DetailViewController: BaseViewController {
                 switch itemIdentifier {
                 case .library:
                     let cell: WKProjectCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
-                    cell.setData()
+                 //   cell.setData()
                     return cell
                 }
             })
