@@ -15,10 +15,20 @@ public final class DefaultCollectionRepository: CollectionRepository {
     
     public init() { }
     
-    public func fetchProjects() -> Observable<LibraryItem> {
+    public func fetchProjects() -> Observable<[LibraryItem]> {
         return NetworkService.shared.collection.fetchProjects()
             .compactMap { $0.data }
-            .map { $0.toDomain() }
+            .map { libraryItems in
+                return libraryItems.map { $0.toDomain() }
+            }
+    }
+    
+    public func fetchAbilities() -> Observable<[LibraryItem]> {
+        return NetworkService.shared.collection.fetchAbilites()
+            .compactMap { $0.data }
+            .map { libraryItems in
+                return libraryItems.map { $0.toDomain() }
+            }
     }
     
 }

@@ -12,12 +12,18 @@ import RxAlamofire
 import RxSwift
 
 public protocol CollectionService {
-    func fetchProjects() -> Observable<BaseResponseType<CollectionResponseDTO>>
+    func fetchProjects() -> Observable<BaseResponseType<[ProjectResponseDTO]>>
+    func fetchAbilites() -> Observable<BaseResponseType<[AbilityResponseDTO]>>
 }
 
 public final class DefaultCollectionService: CollectionService {
-    public func fetchProjects() -> RxSwift.Observable<BaseResponseType<CollectionResponseDTO>> {
-        return RxAlamofire.requestJSON(CollcetionRouter.fetchProjects)
-            .expectingObject(ofType: BaseResponseType<CollectionResponseDTO>.self)
+    public func fetchAbilites() -> RxSwift.Observable<BaseResponseType<[AbilityResponseDTO]>> {
+        return RxAlamofire.requestJSON(CollectionRouter.fetchAbilites)
+            .expectingObject(ofType: BaseResponseType<[AbilityResponseDTO]>.self)
+    }
+    
+    public func fetchProjects() -> RxSwift.Observable<BaseResponseType<[ProjectResponseDTO]>> {
+        return RxAlamofire.requestJSON(CollectionRouter.fetchProjects)
+            .expectingObject(ofType: BaseResponseType<[ProjectResponseDTO]>.self)
     }
 }

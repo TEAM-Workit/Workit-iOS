@@ -11,5 +11,6 @@ import Global
 import RxSwift
 
 public protocol CollectionRepository {
-    func fetchProjects() -> Observable<LibraryItem>
+    func fetchProjects() -> Observable<[LibraryItem]>
+    func fetchAbilities() -> Observable<[LibraryItem]>
 }

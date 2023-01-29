@@ -8,14 +8,20 @@
 
 import Foundation
 
-public struct LibraryItem {
-    let id: Int
-    let name: String
-    let count: Int
+public struct LibraryItem: Hashable {
+    public let id: Int
+    public let name: String
+    public let count: Int
     
     public init(id: Int, name: String, count: Int) {
         self.id = id
         self.name = name
         self.count = count
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(name)
+        hasher.combine(count)
     }
 }

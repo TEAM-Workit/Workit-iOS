@@ -11,8 +11,9 @@ import Global
 
 import RxSwift
 
-protocol CollectionUseCase {
-    func projects() -> Observable<LibraryItem>
+public protocol CollectionUseCase {
+    func projects() -> Observable<[LibraryItem]>
+    func abilities() -> Observable<[LibraryItem]>
 }
 
 public final class DefaultCollectionUseCase: CollectionUseCase {
@@ -22,7 +23,11 @@ public final class DefaultCollectionUseCase: CollectionUseCase {
         self.collectionRepository = collectionRepository
     }
 
-    func projects() -> RxSwift.Observable<LibraryItem> {
+    public func projects() -> RxSwift.Observable<[LibraryItem]> {
         return collectionRepository.fetchProjects()
+    }
+    
+    public func abilities() -> Observable<[LibraryItem]> {
+        return collectionRepository.fetchAbilities()
     }
 }

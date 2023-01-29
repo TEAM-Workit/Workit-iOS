@@ -11,29 +11,32 @@ import Global
 
 import Alamofire
 
-public enum CollcetionRouter {
+public enum CollectionRouter {
     case fetchProjects
+    case fetchAbilites
 }
 
-extension CollcetionRouter: BaseRequestConvertible {
+extension CollectionRouter: BaseRequestConvertible {
     
     var method: HTTPMethod {
         switch self {
-        case .fetchProjects:
+        case .fetchProjects, .fetchAbilites:
             return .get
         }
     }
     
     var path: String {
         switch self {
-        case let .fetchProjects:
+        case .fetchProjects:
             return URLConstant.project + "/collection"
+        case .fetchAbilites:
+            return URLConstant.ability + "/collection"
         }
     }
     
     var parameters: Parameters? {
         switch self {
-        case let .fetchProjects:
+        case .fetchProjects, .fetchAbilites:
             return nil
         }
     }
@@ -46,7 +49,7 @@ extension CollcetionRouter: BaseRequestConvertible {
         request.headers = HTTPHeaders(headers)
         
         switch self {
-        case .fetchProjects:
+        case .fetchProjects, .fetchAbilites:
             request = try JSONEncoding.default.encode(request, with: parameters)
         }
       
