@@ -12,6 +12,8 @@ import UIKit
 
 import SnapKit
 
+// swiftlint:disable file_length
+
 final class WriteViewController: BaseViewController {
     
     // MARK: - UIComponents
@@ -68,10 +70,8 @@ final class WriteViewController: BaseViewController {
         return label
     }()
     
-    private let abilityCollectionView: UICollectionView = UICollectionView(
-        frame: .zero,
-        collectionViewLayout: UICollectionViewLayout()
-    )
+    private var hardAbilityCollectionView: WKWriteAbilityCollectionView = WKWriteAbilityCollectionView()
+    private var softAbilityCollectionView: WKWriteAbilityCollectionView = WKWriteAbilityCollectionView()
     
     private let abilityAddButton: WKAbilityAddButton = {
         let button: WKAbilityAddButton = WKAbilityAddButton()
@@ -99,10 +99,15 @@ final class WriteViewController: BaseViewController {
         return label
     }()
     
+    private let hardAbilityFlowLayout: WriteAbilityCollectionViewFlowLayout = WriteAbilityCollectionViewFlowLayout()
+    private let softAbilityFlowLayout: WriteAbilityCollectionViewFlowLayout = WriteAbilityCollectionViewFlowLayout()
+    
     // MARK: Properties
     
     private var keyboardHeight: CGFloat = 0
-    private var selectedAbilityList: [WriteAbility] = []
+    
+    private var selectedHardAbilityList: [WriteAbility] = []
+    private var selectedSoftAbilityList: [WriteAbility] = []
     
     // MARK: View Life Cycle
     
@@ -113,12 +118,14 @@ final class WriteViewController: BaseViewController {
         self.setLabelStyle()
         self.setWorkDescriptionTextView()
         self.setAbilityAddButtonAction()
+        self.setAbilityCollectionView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         self.addKeyboardObserver()
+        self.updateAbilityCollectionViewHeight()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -175,13 +182,119 @@ final class WriteViewController: BaseViewController {
         self.setAbilityLayout()
         self.setWorkDescriptionLayout()
     }
+    
+    private func setAbilityCollectionView() {
+        self.hardAbilityCollectionView.collectionViewLayout = self.hardAbilityFlowLayout
+        self.softAbilityCollectionView.collectionViewLayout = self.softAbilityFlowLayout
+        
+        self.hardAbilityCollectionView.dataSource = self
+        self.softAbilityCollectionView.dataSource = self
+        
+        self.hardAbilityCollectionView.delegate = self
+        self.softAbilityCollectionView.delegate = self
+        
+        self.hardAbilityCollectionView.register(
+            cell: WKWriteAbilityCollectionViewCell.self,
+            forCellWithReuseIdentifier: "hardCell"
+        )
+        self.softAbilityCollectionView.register(
+            cell: WKWriteAbilityCollectionViewCell.self,
+            forCellWithReuseIdentifier: "softCell"
+        )
+    }
+    
+    private func updateAbilityCollectionViewHeight() {
+        self.hardAbilityCollectionView.snp.updateConstraints { make in
+            make.top.equalTo(self.abilityLabel.snp.bottom).offset(self.selectedHardAbilityList.isEmpty ? 0 : 8)
+            make.height.equalTo(self.selectedHardAbilityList.isEmpty ? 0 : 29)
+        }
+        self.softAbilityCollectionView.snp.updateConstraints { make in
+            make.height.equalTo(self.selectedSoftAbilityList.isEmpty ? 0 : 29)
+        }
+    }
 }
 
 // MARK: - Extension (SendSelectedAbilityListDelegate)
 extension WriteViewController: SendSelectedAbilityListDelegate {
-    func sendUpdate(abilityList: [WriteAbility]) {
-        self.selectedAbilityList = abilityList
-        debugPrint(self.selectedAbilityList)
+    func sendUpdate(hardAbilityList: [WriteAbility], softAbilityList: [WriteAbility]) {
+        self.selectedHardAbilityList = hardAbilityList
+        self.selectedSoftAbilityList = softAbilityList
+        
+        self.updateAbilityCollectionViewHeight()
+        
+        self.hardAbilityCollectionView.layoutIfNeeded()
+        self.softAbilityCollectionView.layoutIfNeeded()
+        
+        DispatchQueue.main.async {
+            self.hardAbilityCollectionView.reloadData()
+            self.softAbilityCollectionView.reloadData()
+        }
+    }
+}
+
+extension WriteViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch collectionView {
+        case self.hardAbilityCollectionView:
+            return self.selectedHardAbilityList.count
+        case self.softAbilityCollectionView:
+            return self.selectedSoftAbilityList.count
+        default: return 0
+        }
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        
+        switch collectionView {
+        case self.hardAbilityCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "hardCell",
+                for: indexPath
+            ) as? WKWriteAbilityCollectionViewCell
+            else { return UICollectionViewCell() }
+            
+            cell.setData(data: self.selectedHardAbilityList[indexPath.row])
+            
+            return cell
+        case self.softAbilityCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "softCell",
+                for: indexPath
+            ) as? WKWriteAbilityCollectionViewCell
+            else { return UICollectionViewCell() }
+            
+            cell.setData(data: self.selectedSoftAbilityList[indexPath.row])
+            
+            return cell
+        default: return UICollectionViewCell()
+        }
+    }
+}
+
+// MARK: - Extension (UICollectionViewDelegateFlowLayout)
+
+extension WriteViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        let sizingCell = WKWriteAbilityCollectionViewCell()
+        
+        switch collectionViewLayout {
+        case self.hardAbilityFlowLayout:
+            sizingCell.setData(data: selectedHardAbilityList[indexPath.row])
+        case self.softAbilityFlowLayout:
+            sizingCell.setData(data: selectedSoftAbilityList[indexPath.row])
+        default: return .zero
+        }
+        
+        let cellWidth = sizingCell.titleLabelWidth() + 20
+        let cellHeight = 29
+        return CGSize(width: cellWidth, height: CGFloat(cellHeight))
     }
 }
 
@@ -221,7 +334,7 @@ extension WriteViewController {
             dateLabel, dateButton,
             projectLabel, projectButton,
             workLabel, workTextField,
-            abilityLabel, abilityCollectionView, abilityAddButton,
+            abilityLabel, hardAbilityCollectionView, softAbilityCollectionView, abilityAddButton,
             workDescriptionLabel, workDescriptionTextView, workDescriptionCountLabel
         ])
     }
@@ -286,14 +399,20 @@ extension WriteViewController {
             make.leading.equalToSuperview().inset(20)
         }
         
-        self.abilityCollectionView.snp.makeConstraints { make in
+        self.hardAbilityCollectionView.snp.makeConstraints { make in
             make.top.equalTo(self.abilityLabel.snp.bottom).offset(12)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(0)
         }
         
+        self.softAbilityCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(self.hardAbilityCollectionView.snp.bottom).offset(8)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(0)
+        }
+        
         self.abilityAddButton.snp.makeConstraints { make in
-            make.top.equalTo(self.abilityCollectionView.snp.bottom).offset(8)
+            make.top.equalTo(self.softAbilityCollectionView.snp.bottom).offset(8)
             make.leading.equalToSuperview().inset(20)
             make.width.equalTo(111)
             make.height.equalTo(29)
