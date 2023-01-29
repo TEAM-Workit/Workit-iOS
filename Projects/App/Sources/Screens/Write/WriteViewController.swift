@@ -119,6 +119,7 @@ final class WriteViewController: BaseViewController {
         self.setWorkDescriptionTextView()
         self.setAbilityAddButtonAction()
         self.setAbilityCollectionView()
+        self.setProjectButtonAction()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -212,9 +213,18 @@ final class WriteViewController: BaseViewController {
             make.height.equalTo(self.selectedSoftAbilityList.isEmpty ? 0 : 29)
         }
     }
+    
+    private func setProjectButtonAction() {
+        self.projectButton.setAction { [weak self] in
+            let selectProjectBottomViewController: SelectProjectBottomViewController = SelectProjectBottomViewController()
+            selectProjectBottomViewController.delegate = self
+            self?.present(selectProjectBottomViewController, animated: true)
+        }
+    }
 }
 
 // MARK: - Extension (SendSelectedAbilityListDelegate)
+
 extension WriteViewController: SendSelectedAbilityListDelegate {
     func sendUpdate(hardAbilityList: [WriteAbility], softAbilityList: [WriteAbility]) {
         self.selectedHardAbilityList = hardAbilityList
@@ -229,6 +239,14 @@ extension WriteViewController: SendSelectedAbilityListDelegate {
             self.hardAbilityCollectionView.reloadData()
             self.softAbilityCollectionView.reloadData()
         }
+    }
+}
+
+// MARK: - Extension (SendSelectedAbilityListDelegate)
+
+extension WriteViewController: SendSelectedProjectDelegate {
+    func sendUpdate(selectedProjectTitle: String) {
+        self.projectButton.setText(text: selectedProjectTitle)
     }
 }
 
