@@ -6,16 +6,19 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Domain
 import DesignSystem
 import UIKit
 
-class AbilityViewController: BaseViewController, PageTabProtocol {
+import ReactorKit
+
+class AbilityViewController: BaseViewController, PageTabProtocol, View {
     
     typealias DiffableDataSource = UICollectionViewDiffableDataSource<Int, Item>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Int, Item>
     
     enum Item: Hashable {
-        case library(Record)
+        case library(LibraryItem)
     }
     
     // MARK: - Properties
@@ -23,6 +26,8 @@ class AbilityViewController: BaseViewController, PageTabProtocol {
     var pageTitle: String {
         return "역량으로 보기"
     }
+    
+    var disposeBag = DisposeBag()
     
     // MARK: - UIComponents
     
@@ -37,7 +42,32 @@ class AbilityViewController: BaseViewController, PageTabProtocol {
         self.setDelegate()
         self.registerCell()
         self.setDataSource()
-        self.applySnapshot(record: Record.getData())
+    }
+    
+    // MARK: - Bind (Reactorkit)
+    
+    public func bind(reactor: AbilityReactor) {
+        bindAction(reactor: reactor)
+        bindState(reactor: reactor)
+    }
+    
+    public func bindAction(reactor: AbilityReactor) {
+        self.rx.viewDidLoad
+            .map { _ in Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+    
+    public func bindState(reactor: AbilityReactor) {
+        reactor.state
+            .map { $0.abilities }
+            .withUnretained(self)
+            .bind { owner, abilities in
+                if !abilities.isEmpty {
+                    owner.applySnapshot(record: abilities)
+                }
+            }
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Methods
@@ -72,7 +102,7 @@ class AbilityViewController: BaseViewController, PageTabProtocol {
             })
     }
     
-    internal func applySnapshot(record: [Record]) {
+    internal func applySnapshot(record: [LibraryItem]) {
         var snapshot = Snapshot()
         snapshot.appendSections([0])
         snapshot.appendItems(record.map { Item.library($0) }, toSection: 0)
@@ -84,22 +114,5 @@ extension AbilityViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detailViewController = DetailViewController(previousView: .ability)
         self.navigationController?.pushViewController(detailViewController, animated: true)
-    }
-}
-
-// 임시 모델
-struct Record: Hashable {
-    let uuid = UUID()
-    let count: Int
-    let title: String
-    
-    static func getData() -> [Record] {
-        return [
-            Record(count: 0, title: "디자이너, 개발자와 긴밀한 소통과 협력"),
-            Record(count: 2, title: "디자이너, 개발자와 긴밀한 소통과 협력"),
-            Record(count: 5, title: "디자이너, 개발자와 긴밀한 소통과 협력"),
-            Record(count: 4, title: "디자이너, 개발자와 긴밀한 소통과 협력"),
-            Record(count: 0, title: "디자이너, 개발자와 긴밀한 소통과 협력")
-        ]
     }
 }
