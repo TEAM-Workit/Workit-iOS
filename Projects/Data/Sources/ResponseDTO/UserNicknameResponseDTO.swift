@@ -6,6 +6,6 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
-public struct UserNicknameResponseDTO {
+public struct UserNicknameResponseDTO: Decodable {
     let nickname: String
 }
