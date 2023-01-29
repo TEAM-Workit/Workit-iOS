@@ -17,4 +17,11 @@ extension UIView {
         self.clipsToBounds = true
         self.layer.cornerRadius = radius
     }
+    
+    public func setGradient(firstColor: UIColor, secondColor: UIColor) {
+        let gradient: CAGradientLayer = CAGradientLayer()
+        gradient.colors = [firstColor.cgColor, secondColor.cgColor]
+        gradient.frame = bounds
+        layer.addSublayer(gradient)
+    }
 }

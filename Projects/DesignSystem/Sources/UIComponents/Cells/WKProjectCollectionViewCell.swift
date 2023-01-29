@@ -164,7 +164,33 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
         self.stackView.setCustomSpacing(16, after: descriptionLabel)
     }
     
-    public func setData() {
-        // TODO: Project 모델 추가 후 수정 예정
+    public func setData(work: WKCellModel) {
+        projectLabel.text = work.projectTitle
+        dateLabel.text = work.date.toString(type: .dot)
+        titleLabel.text = work.title
+        descriptionLabel.text = work.description
+        tagLabel.text = work.firstTag
+        tagLabel.type = work.firstTagType
+        etcLabel.text = "외 \(work.otherCount)건"
+    }
+}
+
+public struct WKCellModel {
+    let projectTitle: String
+    let date: Date
+    let title: String
+    let description: String
+    let firstTag: String
+    let firstTagType: TagType
+    let otherCount: Int
+    
+    public init(projectTitle: String, date: Date, title: String, description: String, firstTag: String, firstTagType: TagType, otherCount: Int) {
+        self.projectTitle = projectTitle
+        self.date = date
+        self.title = title
+        self.description = description
+        self.firstTag = firstTag
+        self.firstTagType = firstTagType
+        self.otherCount = otherCount
     }
 }

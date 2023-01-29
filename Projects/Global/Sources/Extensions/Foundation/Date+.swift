@@ -13,6 +13,8 @@ public enum DateType: String {
     case dot = "yy.MM.dd."
     /// yy-MM-dd
     case dash = "yy-MM-dd"
+    /// yyyy-MM-dd
+    case fullYearDash = "yyyy-MM-dd"
     /// yyyy-MM-dd'T'HH:mm:ss.SSS'Z
     case full = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z"
 }
