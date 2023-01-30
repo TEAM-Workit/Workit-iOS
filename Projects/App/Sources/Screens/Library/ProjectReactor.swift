@@ -12,14 +12,14 @@ import ReactorKit
 
 final class ProjectReactor: Reactor {
     
-    var initialState: State = .init()
+    var initialState: State
     
     enum Action {
         case viewDidLoad
     }
     
     struct State {
-        var projects: [LibraryItem] = []
+        var projects: [LibraryItem]
     }
     
     enum Mutation {
@@ -30,6 +30,8 @@ final class ProjectReactor: Reactor {
     
     init(libraryUseCase: CollectionUseCase) {
         self.libraryUseCase = libraryUseCase
+        
+        self.initialState = .init(projects: [])
     }
     
     func mutate(action: Action) -> Observable<Mutation> {

@@ -68,11 +68,10 @@ class ProjectViewController: BaseViewController, PageTabProtocol, View {
     public func bindState(reactor: ProjectReactor) {
         reactor.state
             .map { $0.projects }
+            .filter { !$0.isEmpty }
             .withUnretained(self)
             .bind { owner, projects in
-                if !projects.isEmpty {
-                    owner.applySnapshot(record: projects)
-                }
+                owner.applySnapshot(record: projects)
             }
             .disposed(by: disposeBag)
     }

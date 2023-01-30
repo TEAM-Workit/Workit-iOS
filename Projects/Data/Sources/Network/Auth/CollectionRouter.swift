@@ -50,7 +50,7 @@ extension CollectionRouter: BaseRequestConvertible {
         
         switch self {
         case .fetchProjects, .fetchAbilites:
-            request = try JSONEncoding.default.encode(request, with: parameters)
+            break
         }
       
         return request
