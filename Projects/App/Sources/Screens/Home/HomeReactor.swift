@@ -19,8 +19,8 @@ final class HomeReactor: Reactor {
     private let userUseCase: UserUseCase
     
     init(
-        workUseCase: DefaultWorkUseCase,
-        userUseCase: DefaultUserUseCase
+        workUseCase: WorkUseCase,
+        userUseCase: UserUseCase
     ) {
         self.workUseCase = workUseCase
         self.userUseCase = userUseCase
