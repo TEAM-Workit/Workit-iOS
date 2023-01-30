@@ -6,38 +6,74 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Domain
 import DesignSystem
 import UIKit
 
-class ProjectViewController: BaseViewController, PageTabProtocol {
+import ReactorKit
+
+class ProjectViewController: BaseViewController, PageTabProtocol, View {
     
     typealias DiffableDataSource = UICollectionViewDiffableDataSource<Int, Item>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Int, Item>
     
     enum Item: Hashable {
-        case library(Record)
+        case library(LibraryItem)
     }
+    // MARK: - UIComponents
     
+    private var listCollectionView = ListCollectionView()
+
     // MARK: - Properties
     
     var pageTitle: String {
         return "프로젝트로 보기"
     }
-    
-    // MARK: - UIComponents
-    
-    private var listCollectionView = ListCollectionView()
-
     private var dataSource: DiffableDataSource!
     
+    var disposeBag = DisposeBag()
+    
     // MARK: - LifeCycle
+    
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        self.setDataSource()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         self.setLayout()
         self.setDelegate()
         self.registerCell()
         self.setDataSource()
-        self.applySnapshot(record: Record.getData())
+    }
+    
+    // MARK: - Bind (Reactorkit)
+    
+    public func bind(reactor: ProjectReactor) {
+        bindAction(reactor: reactor)
+        bindState(reactor: reactor)
+    }
+    
+    public func bindAction(reactor: ProjectReactor) {
+        self.rx.viewDidLoad
+            .map { _ in Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+    
+    public func bindState(reactor: ProjectReactor) {
+        reactor.state
+            .map { $0.projects }
+            .filter { !$0.isEmpty }
+            .withUnretained(self)
+            .bind { owner, projects in
+                owner.applySnapshot(record: projects)
+            }
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Methods
@@ -72,7 +108,7 @@ class ProjectViewController: BaseViewController, PageTabProtocol {
             })
     }
     
-    internal func applySnapshot(record: [Record]) {
+    internal func applySnapshot(record: [LibraryItem]) {
         var snapshot = Snapshot()
         snapshot.appendSections([0])
         snapshot.appendItems(record.map { Item.library($0) }, toSection: 0)

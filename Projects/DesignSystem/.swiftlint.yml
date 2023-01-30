@@ -5,12 +5,8 @@ disabled_rules:
 - nesting
 - todo
 
-included:
-- Projects/
 excluded:
-- Tuist/
-- Projects/DesignSystem/Project.swift
-- Projects/Data/Project.swift
+- /Project.swift
 
 identifier_name:
   excluded:

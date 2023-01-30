@@ -6,6 +6,7 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Domain
 import DesignSystem
 import UIKit
 
@@ -76,9 +77,9 @@ final class LibraryCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    public func setData(record: Record) {
+    public func setData(record: LibraryItem) {
         self.recordLabel.text = Text.totalRecord.replacingOccurrences(of: "${count}", with: "\(record.count)")
-        self.titleLabel.text = record.title
+        self.titleLabel.text = record.name
     }
     
 }
