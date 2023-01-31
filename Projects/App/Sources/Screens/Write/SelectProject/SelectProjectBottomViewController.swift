@@ -12,6 +12,8 @@ import UIKit
 
 import SnapKit
 
+// swiftlint:disable file_length
+
 // MARK: - Protocols
 
 protocol SendSelectedProjectDelegate: AnyObject {
@@ -19,6 +21,10 @@ protocol SendSelectedProjectDelegate: AnyObject {
 }
 
 final class SelectProjectBottomViewController: BaseViewController {
+    
+    enum Section: CaseIterable {
+        case project
+    }
     
     // MARK: - UIComponents
     
@@ -59,6 +65,17 @@ final class SelectProjectBottomViewController: BaseViewController {
         return label
     }()
     
+    private let searchProjectTableView: UITableView = {
+        let tableView: UITableView = UITableView()
+        tableView.separatorInset = .zero
+        tableView.makeRounded(radius: 5)
+        tableView.layer.borderWidth = 1
+        tableView.layer.borderColor = UIColor.wkBlack30.cgColor
+        tableView.rowHeight = 44
+        tableView.register(cell: SearchProjectTableViewCell.self)
+        return tableView
+    }()
+    
     private let recentProjectCollectionView: UICollectionView = {
         let collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.layoutMargins = .zero
@@ -76,19 +93,34 @@ final class SelectProjectBottomViewController: BaseViewController {
     // MARK: Properties
     
     private var recentProjectList: [RecentProject] = [
-        RecentProject(id: 1, title: "카카카카카카카카카카카카카카카카카카카카"),
-        RecentProject(id: 2, title: "어쩌구 프로젝트"),
-        RecentProject(id: 3, title: "솝텀 프로젝트"),
-        RecentProject(id: 4, title: "워킷"),
-        RecentProject(id: 2, title: "어쩌구 프로젝트"),
-        RecentProject(id: 3, title: "솝텀 프로젝트"),
-        RecentProject(id: 4, title: "워킷"),
-        RecentProject(id: 2, title: "어쩌구 프로젝트"),
-        RecentProject(id: 3, title: "솝텀 ㅋㅋ 프로젝트"),
-        RecentProject(id: 4, title: "워킷 짱")
+        RecentProject(id: 0, title: "카카카카카카카카카카카카카카카카카카카카"),
+        RecentProject(id: 1, title: "어쩌구 프로젝트"),
+        RecentProject(id: 2, title: "솝텀 프로젝트"),
+        RecentProject(id: 3, title: "워킷"),
+        RecentProject(id: 4, title: "어쩌구 프로젝트"),
+        RecentProject(id: 5, title: "솝텀 프로젝트"),
+        RecentProject(id: 6, title: "워킷")
+    ]
+    
+    private var allProjectList: [SearchProjectTableViewCellModel] = [
+        SearchProjectTableViewCellModel(id: 0, title: "카카카카카카카카카카카카카카카카카카카카"),
+        SearchProjectTableViewCellModel(id: 1, title: "어쩌구 프로젝트"),
+        SearchProjectTableViewCellModel(id: 2, title: "솝텀 프로젝트"),
+        SearchProjectTableViewCellModel(id: 3, title: "워킷"),
+        SearchProjectTableViewCellModel(id: 4, title: "어쩌구 프로젝트"),
+        SearchProjectTableViewCellModel(id: 5, title: "솝텀 프로젝트"),
+        SearchProjectTableViewCellModel(id: 6, title: "워킷"),
+        SearchProjectTableViewCellModel(id: 7, title: "워킷프로젝트"),
+        SearchProjectTableViewCellModel(id: 8, title: "뮤멘트"),
+        SearchProjectTableViewCellModel(id: 9, title: "플젝"),
+        SearchProjectTableViewCellModel(id: 10, title: "프로젝트"),
+        SearchProjectTableViewCellModel(id: 11, title: "워킷프로젝트"),
+        SearchProjectTableViewCellModel(id: 12, title: "뮤멘트")
     ]
     
     weak var delegate: SendSelectedProjectDelegate?
+    var searchProjectDataSource: UITableViewDiffableDataSource<Section, SearchProjectTableViewCellModel>!
+    var searchProjectSnapshot: NSDiffableDataSourceSnapshot<Section, SearchProjectTableViewCellModel>!
     
     // MARK: Initializer
     
@@ -112,6 +144,7 @@ final class SelectProjectBottomViewController: BaseViewController {
         self.setDoneButtonAction()
         self.setRecentProjectCollectionView()
         self.setDoneButtonEnabled()
+        self.setSearchProjectTableView()
         self.setProjectTextFeild()
     }
     
@@ -128,6 +161,7 @@ final class SelectProjectBottomViewController: BaseViewController {
         self.setTitleLayout()
         self.setProjectLayout()
         self.setDoneButtonLayout()
+        self.setSerachProjectTableViewLayout()
     }
     
     private func setCloseButtonAction() {
@@ -167,6 +201,26 @@ final class SelectProjectBottomViewController: BaseViewController {
             self?.recentProjectCollectionView.reloadData()
             self?.setDoneButtonEnabled()
         }
+    private func setSearchProjectTableView() {
+        self.searchProjectTableView.delegate = self
+        self.searchProjectDataSource = UITableViewDiffableDataSource<Section, SearchProjectTableViewCellModel>(
+            tableView: self.searchProjectTableView,
+            cellProvider: { tableView, indexPath, _ in
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: SearchProjectTableViewCell.className,
+                    for: indexPath
+                ) as? SearchProjectTableViewCell else { return UITableViewCell() }
+                cell.setData(data: self.filteredProjectList[indexPath.row])
+                if self.filteredProjectList[indexPath.row].id == -1 {
+                    cell.setCreateUI()
+                } else {
+                    cell.setUI()
+                }
+                return cell
+            })
+        self.searchProjectDataSource.defaultRowAnimation = .fade
+        self.searchProjectTableView.dataSource = self.searchProjectDataSource
+    }
     }
 }
 
@@ -309,6 +363,16 @@ extension SelectProjectBottomViewController {
             make.bottom.equalTo(self.view.snp.bottom).inset(32)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(48)
+        }
+    }
+    
+    private func setSerachProjectTableViewLayout() {
+        self.bottomView.addSubview(searchProjectTableView)
+        
+        self.searchProjectTableView.snp.makeConstraints { make in
+            make.top.equalTo(self.projectTextField.snp.bottom).offset(8)
+            make.leading.trailing.equalTo(self.projectTextField)
+            make.height.equalTo(44)
         }
     }
 }
