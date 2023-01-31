@@ -322,6 +322,28 @@ extension SelectProjectBottomViewController: UICollectionViewDelegateFlowLayout 
     }
 }
 
+// MARK: - Extension (UITableViewDelegate)
+
+extension SelectProjectBottomViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if self.filteredProjectList[indexPath.row].id == -1 {
+            // TODO: 프로젝트 생성 request
+        }
+        
+        self.projectTextField.endEditing(true)
+        self.projectTextField.text = self.filteredProjectList[indexPath.row].title
+        self.projectTextField.isEntered = true
+        
+        for index in 0..<recentProjectList.count
+        where self.recentProjectList[index].id == self.filteredProjectList[indexPath.row].id {
+            self.recentProjectCollectionView.selectItem(at: IndexPath(row: index, section: 0), animated: true, scrollPosition: .top)
+        }
+        
+        self.setDoneButtonEnabled()
+    }
+}
+
 // MARK: - Extension (UITextFieldDelegate)
 
 extension SelectProjectBottomViewController: UITextFieldDelegate {
@@ -329,6 +351,11 @@ extension SelectProjectBottomViewController: UITextFieldDelegate {
         self.projectTextField.isEntered = false
         self.setDoneButtonEnabled()
         self.recentProjectCollectionView.reloadData()
+        return true
+    }
+    
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        self.searchProjectTableView.isHidden = true
         return true
     }
     
