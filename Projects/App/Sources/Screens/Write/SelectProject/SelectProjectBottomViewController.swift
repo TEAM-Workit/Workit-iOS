@@ -10,6 +10,8 @@ import DesignSystem
 import Global
 import UIKit
 
+import RxCocoa
+import RxSwift
 import SnapKit
 
 // swiftlint:disable file_length
@@ -118,9 +120,13 @@ final class SelectProjectBottomViewController: BaseViewController {
         SearchProjectTableViewCellModel(id: 12, title: "뮤멘트")
     ]
     
+    private var filteredProjectList: [SearchProjectTableViewCellModel] = []
+    
     weak var delegate: SendSelectedProjectDelegate?
     var searchProjectDataSource: UITableViewDiffableDataSource<Section, SearchProjectTableViewCellModel>!
     var searchProjectSnapshot: NSDiffableDataSourceSnapshot<Section, SearchProjectTableViewCellModel>!
+    
+    private let disposeBag: DisposeBag = DisposeBag()
     
     // MARK: Initializer
     
@@ -146,6 +152,7 @@ final class SelectProjectBottomViewController: BaseViewController {
         self.setDoneButtonEnabled()
         self.setSearchProjectTableView()
         self.setProjectTextFeild()
+        self.setSearchProjectSnapshot(keyword: "")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -199,8 +206,21 @@ final class SelectProjectBottomViewController: BaseViewController {
         self.projectTextField.setClearButtonAction { [weak self] in
             self?.projectTextField.isEntered = false
             self?.recentProjectCollectionView.reloadData()
+            self?.searchProjectTableView.isHidden = true
             self?.setDoneButtonEnabled()
         }
+        
+        self.projectTextField.rx.text
+            .orEmpty
+            .distinctUntilChanged()
+            .withUnretained(self)
+            .subscribe(onNext: { (owner, changedText) in
+                owner.searchProjectTableView.isHidden = changedText.isEmpty
+                owner.setSearchProjectSnapshot(keyword: changedText)
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
     private func setSearchProjectTableView() {
         self.searchProjectTableView.delegate = self
         self.searchProjectDataSource = UITableViewDiffableDataSource<Section, SearchProjectTableViewCellModel>(
@@ -221,6 +241,45 @@ final class SelectProjectBottomViewController: BaseViewController {
         self.searchProjectDataSource.defaultRowAnimation = .fade
         self.searchProjectTableView.dataSource = self.searchProjectDataSource
     }
+    
+    private func setSearchProjectSnapshot(keyword: String) {
+        var filtered = self.allProjectList.filter { project in
+            project.title.contains(keyword)
+        }
+        
+        self.filteredProjectList = []
+        
+        if !filtered.contains(where: { project in
+            return project.title == keyword
+        }) {
+            self.filteredProjectList.append(SearchProjectTableViewCellModel(id: -1, title: keyword))
+        }
+        
+        self.filteredProjectList += filtered
+        self.searchProjectSnapshot = NSDiffableDataSourceSnapshot<Section, SearchProjectTableViewCellModel>()
+        self.searchProjectSnapshot.appendSections([.project])
+        
+        if self.projectTextField.text == nil {
+            filtered = self.allProjectList
+        }
+        
+        self.searchProjectSnapshot.appendItems(self.filteredProjectList)
+        debugPrint(self.filteredProjectList)
+        self.searchProjectDataSource.apply(self.searchProjectSnapshot)
+        
+        self.updateSearchProjectTableViewHeight()
+    }
+    
+    private func updateSearchProjectTableViewHeight() {
+        if self.filteredProjectList.count <= 4 {
+            self.searchProjectTableView.snp.updateConstraints { make in
+                make.height.equalTo(44 * self.filteredProjectList.count)
+            }
+        } else {
+            self.searchProjectTableView.snp.updateConstraints { make in
+                make.height.equalTo(44 * 4)
+            }
+        }
     }
 }
 
