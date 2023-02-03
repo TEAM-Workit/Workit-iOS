@@ -19,6 +19,8 @@ final class CalendarBottomSheetViewController: BaseViewController {
         static let reset = "초기화"
     }
     
+    // MARK: - UIComponenets
+   
     private let bottomBackgroundView: UIView = {
         let view = UIView()
         view.backgroundColor = .wkWhite
@@ -27,8 +29,6 @@ final class CalendarBottomSheetViewController: BaseViewController {
     }()
     
     private let topView = CalendarBottomSheetTopView()
-    
-    lazy var calendarView = CalendarView(initialContent: makeContent())
     
     private let okButton: WKRoundedButton = {
         let button = WKRoundedButton()
@@ -46,36 +46,125 @@ final class CalendarBottomSheetViewController: BaseViewController {
         return button
     }()
     
+    lazy var calendarView = CalendarView(initialContent: makeContent())
+    
+    // MARK: - Properties
+    
+    private var calendarSelection: CalendarSelection?
+    lazy var calendar = Calendar.current
+    lazy var dayDateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.calendar = calendar
+        dateFormatter.locale = calendar.locale
+        dateFormatter.dateFormat = DateFormatter.dateFormat(
+            fromTemplate: "EEEE, MMM d, yyyy",
+            options: 0,
+            locale: calendar.locale ?? Locale.current)
+        return dateFormatter
+    }()
+    
+    lazy var dayItemClosure: (Day) -> AnyCalendarItemModel = { [weak self, calendar, dayDateFormatter] day in
+        var invariantViewProperties = DayView.InvariantViewProperties.baseInteractive
+        
+        let isSelectedStyle: Bool
+        switch self?.calendarSelection {
+        case .singleDay(let selectedDay):
+            isSelectedStyle = day == selectedDay
+        case .dayRange(let selectedDayRange):
+            isSelectedStyle = day == selectedDayRange.lowerBound || day == selectedDayRange.upperBound
+        case .none:
+            isSelectedStyle = false
+        }
+        
+        if isSelectedStyle {
+            invariantViewProperties.backgroundShapeDrawingConfig.borderColor = .black
+            invariantViewProperties.backgroundShapeDrawingConfig.fillColor = .black
+            invariantViewProperties.textColor = .white
+        }
+        invariantViewProperties.font = .b1M
+        let date = calendar.date(from: day.components)
+        return DayView.calendarItemModel(
+            invariantViewProperties: invariantViewProperties,
+            viewModel: .init(
+                dayText: "\(day.day)",
+                accessibilityLabel: date.map { dayDateFormatter.string(from: $0) },
+                accessibilityHint: nil))
+    }
+    
+    // MARK: - Initializer
+    
     init() {
         super.init(nibName: nil, bundle: nil)
         
         self.setLayout()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.view.backgroundColor = .wkBlack30
+    
+        calendarView.daySelectionHandler = { [weak self] calendarDay in
+            guard let self = self else { return }
+            
+            switch self.calendarSelection {
+            case .singleDay(let selectedDay):
+                if calendarDay > selectedDay {
+                    self.calendarSelection = .dayRange(selectedDay...calendarDay)
+                } else {
+                    self.calendarSelection = .singleDay(calendarDay)
+                }
+            case .none, .dayRange:
+                self.calendarSelection = .singleDay(calendarDay)
+            }
+            self.calendarView.setContent(self.makeContent())
+        }
     }
     
-    private func makeContent() -> CalendarViewContent {
-      let calendar = Calendar.current
-
-      let startDate = calendar.date(from: DateComponents(year: 2020, month: 01, day: 01))!
-      let endDate = calendar.date(from: DateComponents(year: 2021, month: 12, day: 31))!
-
-      return CalendarViewContent(
-        calendar: calendar,
-        visibleDateRange: startDate...endDate,
-        monthsLayout: .horizontal(options: HorizontalMonthsLayoutOptions(
-            scrollingBehavior: .paginatedScrolling(
-                .init(
-                    restingPosition: .atIncrementsOfCalendarWidth,
-                    restingAffinity: .atPositionsAdjacentToPrevious)))))
+    // MARK: - Methods
+    
+    func makeContent() -> CalendarViewContent {
+        let startDate = calendar.date(from: DateComponents(year: 2020, month: 01, day: 01))!
+        let endDate = calendar.date(from: DateComponents(year: 2021, month: 12, day: 31))!
+        let calendarSelection = self.calendarSelection
+        let dateRanges: Set<ClosedRange<Date>>
+        if case .dayRange(let dayRange) = calendarSelection,
+            let lowerBound = calendar.date(from: dayRange.lowerBound.components),
+            let upperBound = calendar.date(from: dayRange.upperBound.components) {
+            dateRanges = [lowerBound...upperBound]
+        } else {
+            dateRanges = []
+        }
+        
+        return CalendarViewContent(
+            calendar: calendar,
+            visibleDateRange: startDate...endDate,
+            monthsLayout: .horizontal(options: .init()))
+        .interMonthSpacing(24)
+        .verticalDayMargin(8)
+        .horizontalDayMargin(8)
+        .monthHeaderItemProvider({ month in
+            var invariantViewProperties = MonthHeaderView.InvariantViewProperties.base
+            invariantViewProperties.font = .h4B
+            return MonthHeaderView.calendarItemModel(
+                invariantViewProperties: invariantViewProperties,
+                viewModel: .init(
+                    monthText: "\(month.components.year ?? 0)년 \(month.month)월",
+                    accessibilityLabel: nil))
+        })
+        .dayItemProvider(dayItemClosure)
+        .dayRangeItemProvider(for: dateRanges) { dayRangeLayoutContext in
+            DayRangeIndicatorView.calendarItemModel(
+                invariantViewProperties: .init(),
+                viewModel: .init(
+                    framesOfDaysToHighlight: dayRangeLayoutContext.daysAndFrames.map { $0.frame }))
+        }
     }
     
     internal override func setLayout() {
@@ -110,5 +199,16 @@ final class CalendarBottomSheetViewController: BaseViewController {
             make.width.equalTo(85)
             make.height.equalTo(35)
         }
+    }
+}
+
+// MARK: - Extension
+
+extension CalendarItemViewRepresentable {
+    public static func calendarItemModel(
+        invariantViewProperties: InvariantViewProperties,
+        viewModel: ViewModel
+    ) -> CalendarItemModel<Self> {
+        CalendarItemModel<Self>(invariantViewProperties: invariantViewProperties, viewModel: viewModel)
     }
 }
