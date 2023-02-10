@@ -29,10 +29,18 @@ public class WKProjectSearchTextField: WKTextField {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        self.setUI()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+    }
+    
+    private func setUI() {
+        self.autocorrectionType = .no
+        self.autocapitalizationType = .none
+        self.spellCheckingType = .no
     }
     
     private func setEnteredStyle() {

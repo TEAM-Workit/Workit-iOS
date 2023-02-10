@@ -10,7 +10,11 @@ import DesignSystem
 import Global
 import UIKit
 
+import RxCocoa
+import RxSwift
 import SnapKit
+
+// swiftlint:disable file_length
 
 // MARK: - Protocols
 
@@ -19,6 +23,10 @@ protocol SendSelectedProjectDelegate: AnyObject {
 }
 
 final class SelectProjectBottomViewController: BaseViewController {
+    
+    enum Section: CaseIterable {
+        case project
+    }
     
     // MARK: - UIComponents
     
@@ -59,6 +67,17 @@ final class SelectProjectBottomViewController: BaseViewController {
         return label
     }()
     
+    private let searchProjectTableView: UITableView = {
+        let tableView: UITableView = UITableView()
+        tableView.separatorInset = .zero
+        tableView.makeRounded(radius: 5)
+        tableView.layer.borderWidth = 1
+        tableView.layer.borderColor = UIColor.wkBlack30.cgColor
+        tableView.rowHeight = 44
+        tableView.register(cell: SearchProjectTableViewCell.self)
+        return tableView
+    }()
+    
     private let recentProjectCollectionView: UICollectionView = {
         let collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.layoutMargins = .zero
@@ -76,19 +95,38 @@ final class SelectProjectBottomViewController: BaseViewController {
     // MARK: Properties
     
     private var recentProjectList: [RecentProject] = [
-        RecentProject(id: 1, title: "카카카카카카카카카카카카카카카카카카카카"),
-        RecentProject(id: 2, title: "어쩌구 프로젝트"),
-        RecentProject(id: 3, title: "솝텀 프로젝트"),
-        RecentProject(id: 4, title: "워킷"),
-        RecentProject(id: 2, title: "어쩌구 프로젝트"),
-        RecentProject(id: 3, title: "솝텀 프로젝트"),
-        RecentProject(id: 4, title: "워킷"),
-        RecentProject(id: 2, title: "어쩌구 프로젝트"),
-        RecentProject(id: 3, title: "솝텀 ㅋㅋ 프로젝트"),
-        RecentProject(id: 4, title: "워킷 짱")
+        RecentProject(id: 0, title: "카카카카카카카카카카카카카카카카카카카카"),
+        RecentProject(id: 1, title: "어쩌구 프로젝트"),
+        RecentProject(id: 2, title: "솝텀 프로젝트"),
+        RecentProject(id: 3, title: "워킷"),
+        RecentProject(id: 4, title: "어쩌구 프로젝트"),
+        RecentProject(id: 5, title: "솝텀 프로젝트"),
+        RecentProject(id: 6, title: "워킷")
     ]
     
+    private var allProjectList: [SearchProjectTableViewCellModel] = [
+        SearchProjectTableViewCellModel(id: 0, title: "카카카카카카카카카카카카카카카카카카카카"),
+        SearchProjectTableViewCellModel(id: 1, title: "어쩌구 프로젝트"),
+        SearchProjectTableViewCellModel(id: 2, title: "솝텀 프로젝트"),
+        SearchProjectTableViewCellModel(id: 3, title: "워킷"),
+        SearchProjectTableViewCellModel(id: 4, title: "어쩌구 프로젝트"),
+        SearchProjectTableViewCellModel(id: 5, title: "솝텀 프로젝트"),
+        SearchProjectTableViewCellModel(id: 6, title: "워킷"),
+        SearchProjectTableViewCellModel(id: 7, title: "워킷프로젝트"),
+        SearchProjectTableViewCellModel(id: 8, title: "뮤멘트"),
+        SearchProjectTableViewCellModel(id: 9, title: "플젝"),
+        SearchProjectTableViewCellModel(id: 10, title: "프로젝트"),
+        SearchProjectTableViewCellModel(id: 11, title: "워킷프로젝트"),
+        SearchProjectTableViewCellModel(id: 12, title: "뮤멘트")
+    ]
+    
+    private var filteredProjectList: [SearchProjectTableViewCellModel] = []
+    
     weak var delegate: SendSelectedProjectDelegate?
+    var searchProjectDataSource: UITableViewDiffableDataSource<Section, SearchProjectTableViewCellModel>!
+    var searchProjectSnapshot: NSDiffableDataSourceSnapshot<Section, SearchProjectTableViewCellModel>!
+    
+    private let disposeBag: DisposeBag = DisposeBag()
     
     // MARK: Initializer
     
@@ -112,7 +150,9 @@ final class SelectProjectBottomViewController: BaseViewController {
         self.setDoneButtonAction()
         self.setRecentProjectCollectionView()
         self.setDoneButtonEnabled()
+        self.setSearchProjectTableView()
         self.setProjectTextFeild()
+        self.setSearchProjectSnapshot(keyword: "")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -128,6 +168,7 @@ final class SelectProjectBottomViewController: BaseViewController {
         self.setTitleLayout()
         self.setProjectLayout()
         self.setDoneButtonLayout()
+        self.setSerachProjectTableViewLayout()
     }
     
     private func setCloseButtonAction() {
@@ -165,7 +206,79 @@ final class SelectProjectBottomViewController: BaseViewController {
         self.projectTextField.setClearButtonAction { [weak self] in
             self?.projectTextField.isEntered = false
             self?.recentProjectCollectionView.reloadData()
+            self?.searchProjectTableView.isHidden = true
             self?.setDoneButtonEnabled()
+        }
+        
+        self.projectTextField.rx.text
+            .orEmpty
+            .distinctUntilChanged()
+            .withUnretained(self)
+            .subscribe(onNext: { (owner, changedText) in
+                owner.searchProjectTableView.isHidden = changedText.isEmpty
+                owner.setSearchProjectSnapshot(keyword: changedText)
+            })
+            .disposed(by: self.disposeBag)
+    }
+    
+    private func setSearchProjectTableView() {
+        self.searchProjectTableView.delegate = self
+        self.searchProjectDataSource = UITableViewDiffableDataSource<Section, SearchProjectTableViewCellModel>(
+            tableView: self.searchProjectTableView,
+            cellProvider: { tableView, indexPath, _ in
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: SearchProjectTableViewCell.className,
+                    for: indexPath
+                ) as? SearchProjectTableViewCell else { return UITableViewCell() }
+                cell.setData(data: self.filteredProjectList[indexPath.row])
+                if self.filteredProjectList[indexPath.row].id == -1 {
+                    cell.setCreateUI()
+                } else {
+                    cell.setUI()
+                }
+                return cell
+            })
+        self.searchProjectDataSource.defaultRowAnimation = .fade
+        self.searchProjectTableView.dataSource = self.searchProjectDataSource
+    }
+    
+    private func setSearchProjectSnapshot(keyword: String) {
+        var filtered = self.allProjectList.filter { project in
+            project.title.contains(keyword)
+        }
+        
+        self.filteredProjectList = []
+        
+        if !filtered.contains(where: { project in
+            return project.title == keyword
+        }) {
+            self.filteredProjectList.append(SearchProjectTableViewCellModel(id: -1, title: keyword))
+        }
+        
+        self.filteredProjectList += filtered
+        self.searchProjectSnapshot = NSDiffableDataSourceSnapshot<Section, SearchProjectTableViewCellModel>()
+        self.searchProjectSnapshot.appendSections([.project])
+        
+        if self.projectTextField.text == nil {
+            filtered = self.allProjectList
+        }
+        
+        self.searchProjectSnapshot.appendItems(self.filteredProjectList)
+        debugPrint(self.filteredProjectList)
+        self.searchProjectDataSource.apply(self.searchProjectSnapshot)
+        
+        self.updateSearchProjectTableViewHeight()
+    }
+    
+    private func updateSearchProjectTableViewHeight() {
+        if self.filteredProjectList.count <= 4 {
+            self.searchProjectTableView.snp.updateConstraints { make in
+                make.height.equalTo(44 * self.filteredProjectList.count)
+            }
+        } else {
+            self.searchProjectTableView.snp.updateConstraints { make in
+                make.height.equalTo(44 * 4)
+            }
         }
     }
 }
@@ -209,6 +322,28 @@ extension SelectProjectBottomViewController: UICollectionViewDelegateFlowLayout 
     }
 }
 
+// MARK: - Extension (UITableViewDelegate)
+
+extension SelectProjectBottomViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if self.filteredProjectList[indexPath.row].id == -1 {
+            // TODO: 프로젝트 생성 request
+        }
+        
+        self.projectTextField.endEditing(true)
+        self.projectTextField.text = self.filteredProjectList[indexPath.row].title
+        self.projectTextField.isEntered = true
+        
+        for index in 0..<recentProjectList.count
+        where self.recentProjectList[index].id == self.filteredProjectList[indexPath.row].id {
+            self.recentProjectCollectionView.selectItem(at: IndexPath(row: index, section: 0), animated: true, scrollPosition: .top)
+        }
+        
+        self.setDoneButtonEnabled()
+    }
+}
+
 // MARK: - Extension (UITextFieldDelegate)
 
 extension SelectProjectBottomViewController: UITextFieldDelegate {
@@ -216,6 +351,11 @@ extension SelectProjectBottomViewController: UITextFieldDelegate {
         self.projectTextField.isEntered = false
         self.setDoneButtonEnabled()
         self.recentProjectCollectionView.reloadData()
+        return true
+    }
+    
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        self.searchProjectTableView.isHidden = true
         return true
     }
     
@@ -309,6 +449,16 @@ extension SelectProjectBottomViewController {
             make.bottom.equalTo(self.view.snp.bottom).inset(32)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(48)
+        }
+    }
+    
+    private func setSerachProjectTableViewLayout() {
+        self.bottomView.addSubview(searchProjectTableView)
+        
+        self.searchProjectTableView.snp.makeConstraints { make in
+            make.top.equalTo(self.projectTextField.snp.bottom).offset(8)
+            make.leading.trailing.equalTo(self.projectTextField)
+            make.height.equalTo(44)
         }
     }
 }
