@@ -9,11 +9,13 @@
 import DesignSystem
 import UIKit
 
+import RxCocoa
+import RxSwift
 import SnapKit
 
 final class CalendarBottomSheetTopView: UIView {
     
-    private let closeButton: UIButton = {
+    fileprivate let closeButton: UIButton = {
         let button = UIButton()
         button.setImage(Image.wkX, for: .normal)
         return button
@@ -64,5 +66,26 @@ final class CalendarBottomSheetTopView: UIView {
             make.leading.bottom.trailing.equalToSuperview()
             make.height.equalTo(1)
         }
+    }
+    
+    internal func setDateRange(startDate: Date?, endDate: Date?) {
+        guard
+            let startDate = startDate,
+            let endDate = endDate
+        else { return }
+        dateLabel.text = "\(startDate.toString(type: .fullYearDot)) - \(endDate.toString(type: .fullYearDot))"
+    }
+    
+    internal func setSingleDate(date: Date?) {
+        guard
+            let date = date
+        else { return }
+        dateLabel.text = String(date.toString(type: .fullYearDot))
+    }
+}
+
+extension Reactive where Base: CalendarBottomSheetTopView {
+    var closeButtonDidTap: ControlEvent<Void> {
+        return base.closeButton.rx.tap
     }
 }
