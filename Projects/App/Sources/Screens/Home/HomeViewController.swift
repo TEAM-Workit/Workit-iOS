@@ -215,6 +215,7 @@ final class HomeViewController: BaseViewController, View {
 
         self.dataSource.supplementaryViewProvider = { (collectionView, _, indexPath) -> UICollectionReusableView in
             let header: MyWorkitHeaderView = collectionView.dequeueHeaderView(for: indexPath)
+            header.delegate = self
             return header
         }
     }
@@ -225,6 +226,15 @@ final class HomeViewController: BaseViewController, View {
         snapshot.appendItems([Item.empty], toSection: .empty)
         snapshot.appendItems(works.map { Item.workit($0) }, toSection: .myWorkit)
         self.dataSource.apply(snapshot)
+    }
+}
+
+extension HomeViewController: MyWorkitHeaderViewDelegate {
+    func dateButtonDidTap() {
+        let bottomSheetViewController = CalendarBottomSheetViewController()
+        bottomSheetViewController.modalPresentationStyle = .overFullScreen
+        bottomSheetViewController.modalTransitionStyle = .crossDissolve
+        self.present(bottomSheetViewController, animated: true)
     }
 }
 

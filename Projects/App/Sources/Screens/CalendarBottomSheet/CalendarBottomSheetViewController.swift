@@ -151,7 +151,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = .wkBlack30
+        self.view.backgroundColor = .wkBlack.withAlphaComponent(0.7)
         self.calendarView.daySelectionHandler = daySelectionClosure
         self.calendarView.scroll(
             toMonthContaining: self.selectedDate,
@@ -200,7 +200,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
     }
     
     func makeContent() -> CalendarViewContent {
-        let startDate = calendar.date(from: DateComponents(year: 2020, month: 01, day: 01))!
+        let startDate = calendar.date(from: DateComponents(year: 2010, month: 01, day: 01))!
         let endDate = calendar.date(from: DateComponents(year: 2025, month: 12, day: 31))!
         let calendarSelection = self.calendarSelection
         
