@@ -71,6 +71,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
     }()
     
     lazy var dayItemClosure: (Day) -> AnyCalendarItemModel = { [weak self, calendar, dayDateFormatter] day in
+        /// 각 날짜들의 겉모습을 결정해줌
         var invariantViewProperties = DayView.InvariantViewProperties.baseInteractive
         let isSelectedStyle: Bool
         
@@ -114,15 +115,21 @@ final class CalendarBottomSheetViewController: BaseViewController {
         
         switch self.calendarSelection {
         case .singleDay(let selectedDay):
+            /// selectedDay -> 이미 선택되어있던 날짜
+            /// 새로 선택한 날짜 (calendarDay)가 이미 선택된 날짜보다 나중이면 Range형태로, 아니면 Single형태로
+            /// 이 파일의 calendarSelecteion 프로퍼티에 저장한다.
             if calendarDay > selectedDay {
                 self.calendarSelection = .dayRange(selectedDay...calendarDay)
             } else {
                 self.calendarSelection = .singleDay(calendarDay)
             }
         case .none, .dayRange:
+            /// 만약 아무것도 선택되어 있지 않았거나, 이미 기간이 설정된 상태라면
+            /// 다시 새로운 날짜를 선택했을 때 (calendarDay) 단일 날짜 형태로 선택되도록 한다.
             self.calendarSelection = .singleDay(calendarDay)
         }
         self.dateSelectPublisher.onNext(self.calendarSelection)
+        /// dayItemClosure 다시 불러짐
         self.calendarView.setContent(self.makeContent())
     }
     
@@ -150,20 +157,19 @@ final class CalendarBottomSheetViewController: BaseViewController {
         self.calendarView.scroll(
             toMonthContaining: self.selectedDate ?? Date(),
             scrollPosition: .centered, animated: false)
-        
     }
     
     // MARK: - Methods
     
     private func bind() {
-        topView.rx.closeButtonDidTap
+        self.topView.rx.closeButtonDidTap
             .withUnretained(self)
             .bind { owner, _ in
                 owner.dismiss(animated: true)
             }
             .disposed(by: disposeBag)
         
-        dateSelectPublisher
+        self.dateSelectPublisher
             .bind { [weak self] calendarSelection in
                 switch calendarSelection {
                 case .dayRange(let range):
@@ -172,18 +178,23 @@ final class CalendarBottomSheetViewController: BaseViewController {
                         endDate: self?.calendar.date(from: range.upperBound.components))
                 case .singleDay(let day):
                     self?.topView.setSingleDate(date: self?.calendar.date(from: day.components))
-                default:
-                    break
+                case .none:
+                    self?.topView.setSingleDate(date: self?.selectedDate)
                 }
             }
             .disposed(by: disposeBag)
         
-        resetButton.rx.tap
+        self.resetButton.rx.tap
             .withUnretained(self)
             .bind { owner, _ in
                 owner.selectedDate = Date()
-                owner.dateRanges = []
+                owner.calendarSelection = .none
+                owner.dateSelectPublisher.onNext(owner.calendarSelection)
                 owner.calendarView.setContent(owner.makeContent())
+                owner.calendarView.scroll(
+                    toMonthContaining: owner.selectedDate ?? Date(),
+                    scrollPosition: .centered,
+                    animated: true)
             }
             .disposed(by: disposeBag)
     }
@@ -194,7 +205,6 @@ final class CalendarBottomSheetViewController: BaseViewController {
         let calendarSelection = self.calendarSelection
         
         var dateRanges: Set<ClosedRange<Date>> = self.dateRanges
-        print(dateRanges)
         
         if case .dayRange(let dayRange) = calendarSelection,
            let lowerBound = calendar.date(from: dayRange.lowerBound.components),
@@ -231,7 +241,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
     
     internal override func setLayout() {
         self.view.addSubviews([bottomBackgroundView])
-        bottomBackgroundView.addSubviews([topView, calendarView, resetButton, okButton])
+        self.bottomBackgroundView.addSubviews([topView, calendarView, resetButton, okButton])
         
         self.bottomBackgroundView.snp.makeConstraints { make in
             make.leading.bottom.trailing.equalToSuperview()
