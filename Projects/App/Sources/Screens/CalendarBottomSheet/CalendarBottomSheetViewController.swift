@@ -55,7 +55,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
     private let disposeBag = DisposeBag()
     private var calendarSelection: CalendarSelection?
     
-    private var selectedDate: Date?
+    private var selectedDate: Date = Date()
     private var dateRanges: Set<ClosedRange<Date>> = []
     
     lazy var calendar = Calendar.current
@@ -77,7 +77,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
         
         switch self?.calendarSelection {
         case .singleDay(let selectedDay):
-            self?.selectedDate = calendar.date(from: selectedDay.components)
+            self?.selectedDate = calendar.date(from: selectedDay.components) ?? Date()
             isSelectedStyle = (day == selectedDay)
             
         case .dayRange(let selectedDayRange):
@@ -111,7 +111,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
     lazy var daySelectionClosure: ((Day) -> Void) = {[weak self] calendarDay in
         
         guard let self = self else { return }
-        self.selectedDate = self.calendar.date(from: calendarDay.components)
+        self.selectedDate = self.calendar.date(from: calendarDay.components) ?? Date()
         
         switch self.calendarSelection {
         case .singleDay(let selectedDay):
@@ -153,10 +153,10 @@ final class CalendarBottomSheetViewController: BaseViewController {
         
         self.view.backgroundColor = .wkBlack30
         self.calendarView.daySelectionHandler = daySelectionClosure
-        self.selectedDate = Date()
         self.calendarView.scroll(
-            toMonthContaining: self.selectedDate ?? Date(),
+            toMonthContaining: self.selectedDate,
             scrollPosition: .centered, animated: false)
+        self.topView.setSingleDate(date: self.selectedDate)
     }
     
     // MARK: - Methods
@@ -192,7 +192,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
                 owner.dateSelectPublisher.onNext(owner.calendarSelection)
                 owner.calendarView.setContent(owner.makeContent())
                 owner.calendarView.scroll(
-                    toMonthContaining: owner.selectedDate ?? Date(),
+                    toMonthContaining: owner.selectedDate,
                     scrollPosition: .centered,
                     animated: true)
             }
@@ -245,7 +245,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
         
         self.bottomBackgroundView.snp.makeConstraints { make in
             make.leading.bottom.trailing.equalToSuperview()
-            make.height.equalTo(500)
+            make.height.equalTo(540)
         }
         
         self.topView.snp.makeConstraints { make in
@@ -255,7 +255,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
         self.calendarView.snp.makeConstraints { make in
             make.top.equalTo(self.topView.snp.bottom).offset(24)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(345)
+            make.height.equalTo(360)
         }
         
         self.resetButton.snp.makeConstraints { make in
