@@ -54,6 +54,10 @@ final class CalendarBottomSheetViewController: BaseViewController {
     private let dateSelectPublisher = PublishSubject<(CalendarSelection?)>()
     private let disposeBag = DisposeBag()
     private var calendarSelection: CalendarSelection?
+    
+    private var selectedDate: Date?
+    private var dateRanges: Set<ClosedRange<Date>> = []
+    
     lazy var calendar = Calendar.current
     lazy var dayDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -68,11 +72,12 @@ final class CalendarBottomSheetViewController: BaseViewController {
     
     lazy var dayItemClosure: (Day) -> AnyCalendarItemModel = { [weak self, calendar, dayDateFormatter] day in
         var invariantViewProperties = DayView.InvariantViewProperties.baseInteractive
-        
         let isSelectedStyle: Bool
+        
         switch self?.calendarSelection {
         case .singleDay(let selectedDay):
-            isSelectedStyle = day == selectedDay
+            self?.selectedDate = calendar.date(from: selectedDay.components)
+            isSelectedStyle = (day == selectedDay)
             
         case .dayRange(let selectedDayRange):
             isSelectedStyle = day == selectedDayRange.lowerBound || day == selectedDayRange.upperBound
@@ -85,8 +90,15 @@ final class CalendarBottomSheetViewController: BaseViewController {
             invariantViewProperties.backgroundShapeDrawingConfig.fillColor = .black
             invariantViewProperties.textColor = .white
         }
+        
         invariantViewProperties.font = .b1M
         let date = calendar.date(from: day.components)
+        let selectedDate = self?.selectedDate
+        if selectedDate?.toString(type: .dot) == date?.toString(type: .dot) {
+            invariantViewProperties.backgroundShapeDrawingConfig.borderColor = .black
+            invariantViewProperties.backgroundShapeDrawingConfig.fillColor = .black
+            invariantViewProperties.textColor = .white
+        }
         return DayView.calendarItemModel(
             invariantViewProperties: invariantViewProperties,
             viewModel: .init(
@@ -96,7 +108,9 @@ final class CalendarBottomSheetViewController: BaseViewController {
     }
     
     lazy var daySelectionClosure: ((Day) -> Void) = {[weak self] calendarDay in
+        
         guard let self = self else { return }
+        self.selectedDate = self.calendar.date(from: calendarDay.components)
         
         switch self.calendarSelection {
         case .singleDay(let selectedDay):
@@ -132,6 +146,11 @@ final class CalendarBottomSheetViewController: BaseViewController {
         
         self.view.backgroundColor = .wkBlack30
         self.calendarView.daySelectionHandler = daySelectionClosure
+        self.selectedDate = Date()
+        self.calendarView.scroll(
+            toMonthContaining: self.selectedDate ?? Date(),
+            scrollPosition: .centered, animated: false)
+        
     }
     
     // MARK: - Methods
@@ -146,26 +165,37 @@ final class CalendarBottomSheetViewController: BaseViewController {
         
         dateSelectPublisher
             .bind { [weak self] calendarSelection in
-                let calendar = Calendar(identifier: .gregorian)
                 switch calendarSelection {
                 case .dayRange(let range):
                     self?.topView.setDateRange(
-                        startDate: calendar.date(from: range.lowerBound.components),
-                        endDate: calendar.date(from: range.upperBound.components))
+                        startDate: self?.calendar.date(from: range.lowerBound.components),
+                        endDate: self?.calendar.date(from: range.upperBound.components))
                 case .singleDay(let day):
-                    self?.topView.setSingleDate(date: calendar.date(from: day.components))
+                    self?.topView.setSingleDate(date: self?.calendar.date(from: day.components))
                 default:
                     break
                 }
+            }
+            .disposed(by: disposeBag)
+        
+        resetButton.rx.tap
+            .withUnretained(self)
+            .bind { owner, _ in
+                owner.selectedDate = Date()
+                owner.dateRanges = []
+                owner.calendarView.setContent(owner.makeContent())
             }
             .disposed(by: disposeBag)
     }
     
     func makeContent() -> CalendarViewContent {
         let startDate = calendar.date(from: DateComponents(year: 2020, month: 01, day: 01))!
-        let endDate = calendar.date(from: DateComponents(year: 2021, month: 12, day: 31))!
+        let endDate = calendar.date(from: DateComponents(year: 2025, month: 12, day: 31))!
         let calendarSelection = self.calendarSelection
-        let dateRanges: Set<ClosedRange<Date>>
+        
+        var dateRanges: Set<ClosedRange<Date>> = self.dateRanges
+        print(dateRanges)
+        
         if case .dayRange(let dayRange) = calendarSelection,
            let lowerBound = calendar.date(from: dayRange.lowerBound.components),
            let upperBound = calendar.date(from: dayRange.upperBound.components) {
