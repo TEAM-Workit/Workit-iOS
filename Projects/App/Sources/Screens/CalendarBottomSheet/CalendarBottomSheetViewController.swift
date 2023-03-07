@@ -13,6 +13,10 @@ import HorizonCalendar
 import RxSwift
 import SnapKit
 
+protocol CalendarBottomSheetDelegate: AnyObject {
+    func sendSelectedDate(start: Date, end: Date?)
+}
+
 final class CalendarBottomSheetViewController: BaseViewController {
     
     enum Text {
@@ -50,6 +54,8 @@ final class CalendarBottomSheetViewController: BaseViewController {
     lazy var calendarView = CalendarView(initialContent: makeContent())
     
     // MARK: - Properties
+    
+    weak var delegate: CalendarBottomSheetDelegate?
     
     private let dateSelectPublisher = PublishSubject<(CalendarSelection?)>()
     private let disposeBag = DisposeBag()
@@ -195,6 +201,26 @@ final class CalendarBottomSheetViewController: BaseViewController {
                     toMonthContaining: owner.selectedDate,
                     scrollPosition: .centered,
                     animated: true)
+            }
+            .disposed(by: disposeBag)
+        
+        self.okButton.rx.tap
+            .withUnretained(self)
+            .bind { owner, _ in
+                switch owner.calendarSelection {
+                case .singleDay(let day):
+                    owner.delegate?.sendSelectedDate(
+                        start: owner.calendar.date(from: day.components) ?? Date(),
+                        end: nil)
+                case .dayRange(let range):
+                    owner.delegate?.sendSelectedDate(
+                        start: owner.calendar.date(from: range.lowerBound.components) ?? Date(),
+                        end: owner.calendar.date(from: range.upperBound.components))
+                case .none:
+                    owner.delegate?.sendSelectedDate(
+                        start: Date(),
+                        end: nil)
+                }
             }
             .disposed(by: disposeBag)
     }

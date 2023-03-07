@@ -234,7 +234,14 @@ extension HomeViewController: MyWorkitHeaderViewDelegate {
         let bottomSheetViewController = CalendarBottomSheetViewController()
         bottomSheetViewController.modalPresentationStyle = .overFullScreen
         bottomSheetViewController.modalTransitionStyle = .crossDissolve
+        bottomSheetViewController.delegate = self
         self.present(bottomSheetViewController, animated: true)
+    }
+}
+
+extension HomeViewController: CalendarBottomSheetDelegate {
+    func sendSelectedDate(start: Date, end: Date?) {
+        print(start, end)
     }
 }
 
