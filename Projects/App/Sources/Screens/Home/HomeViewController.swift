@@ -59,6 +59,7 @@ final class HomeViewController: BaseViewController, View {
     // MARK: - Properties
 
     var dataSource: DiffableDataSource!
+    private var dateChangePublisher = PublishSubject<(Date, Date)>()
 
     // MARK: - Initializer
 
@@ -93,6 +94,14 @@ final class HomeViewController: BaseViewController, View {
             .map { _ in Reactor.Action.viewWillAppear }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        dateChangePublisher
+            .map { from, to in
+                Reactor.Action.setDate(from, to)
+            }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+            
     }
     
     private func bindState(reactor: HomeReactor) {
@@ -111,6 +120,13 @@ final class HomeViewController: BaseViewController, View {
             .withUnretained(self)
             .bind { owner, name in
                 owner.bannerView.setName(name: name)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.dates }
+            .bind { [weak self] _ in
+                //self?.reloadCollectionViewHeader()
             }
             .disposed(by: disposeBag)
     }
@@ -214,7 +230,12 @@ final class HomeViewController: BaseViewController, View {
             })
 
         self.dataSource.supplementaryViewProvider = { (collectionView, _, indexPath) -> UICollectionReusableView in
+           // guard let self = self else { fatalError() }
             let header: MyWorkitHeaderView = collectionView.dequeueHeaderView(for: indexPath)
+           // guard let self = self else { fatalError() }
+            header.setDate(
+                startDate: self.reactor?.currentState.dates.startDate ?? Date(),
+                endDate: self.reactor?.currentState.dates.endDate ?? Date())
             header.delegate = self
             return header
         }
@@ -240,7 +261,9 @@ extension HomeViewController: MyWorkitHeaderViewDelegate {
 }
 
 extension HomeViewController: CalendarBottomSheetDelegate {
-    func sendSelectedDate(start: Date, end: Date?) {
+    func sendSelectedDate(start: Date, end: Date) {
+        // 여기에 홈 리프레시 있어야함 하..
+        dateChangePublisher.onNext((start, end))
         print(start, end)
     }
 }

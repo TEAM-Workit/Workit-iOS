@@ -26,25 +26,25 @@ final class HomeReactor: Reactor {
         self.userUseCase = userUseCase
         initialState = .init(
             works: [],
-            startDate: Date(),
-            endDate: Date(),
+            dates: (startDate: Date(), endDate: Date()),
             username: "")
     }
     
     enum Action {
         case viewWillAppear
+        case setDate(Date, Date)
     }
     
     struct State {
         var works: [Work]
-        var startDate: Date
-        var endDate: Date
+        var dates: (startDate: Date, endDate: Date)
         var username: String
     }
     
     enum Mutation {
         case setProjects([Work])
         case setName(String)
+        case setDate(Date, Date)
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
@@ -52,12 +52,20 @@ final class HomeReactor: Reactor {
         case .viewWillAppear:
             // TODO: BottomSheet 연결 후 currentState로 변경
             let works = workUseCase.fetchWorksDate(
-                start: "2023.01.28".toDate(type: .fullYearDash) ?? .now,
-                end: currentState.endDate)
+                start: currentState.dates.startDate,
+                end: currentState.dates.endDate)
                 .map { Mutation.setProjects($0) }
             let name = userUseCase.fetchUserNickname()
                 .map { Mutation.setName($0.nickname) }
             return Observable.concat(works, name)
+            
+        case .setDate(let startDate, let endDate):
+            let date = Observable.just(Mutation.setDate(startDate, endDate))
+            let works = workUseCase.fetchWorksDate(
+                start: startDate,
+                end: endDate)
+                .map { Mutation.setProjects($0) }
+            return Observable.concat(date, works)
         }
     }
     
@@ -69,6 +77,8 @@ final class HomeReactor: Reactor {
             newState.works = works
         case .setName(let name):
             newState.username = name
+        case .setDate(let startDate, let endDate):
+            newState.dates = (startDate, endDate)
         }
         
         return newState

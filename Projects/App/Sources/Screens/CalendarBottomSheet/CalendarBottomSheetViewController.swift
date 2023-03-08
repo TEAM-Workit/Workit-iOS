@@ -16,7 +16,7 @@ import SnapKit
 // swiftlint:disable function_body_length
 
 protocol CalendarBottomSheetDelegate: AnyObject {
-    func sendSelectedDate(start: Date, end: Date?)
+    func sendSelectedDate(start: Date, end: Date)
 }
 
 final class CalendarBottomSheetViewController: BaseViewController {
@@ -213,15 +213,15 @@ final class CalendarBottomSheetViewController: BaseViewController {
                 case .singleDay(let day):
                     owner.delegate?.sendSelectedDate(
                         start: owner.calendar.date(from: day.components) ?? Date(),
-                        end: nil)
+                        end: owner.calendar.date(from: day.components) ?? Date())
                 case .dayRange(let range):
                     owner.delegate?.sendSelectedDate(
                         start: owner.calendar.date(from: range.lowerBound.components) ?? Date(),
-                        end: owner.calendar.date(from: range.upperBound.components))
+                        end: owner.calendar.date(from: range.upperBound.components) ?? Date())
                 case .none:
                     owner.delegate?.sendSelectedDate(
                         start: Date(),
-                        end: nil)
+                        end: Date())
                 }
                 owner.dismiss(animated: true)
             }

@@ -65,6 +65,15 @@ final class MyWorkitHeaderView: UICollectionReusableView {
     private let disposeBag = DisposeBag()
 
     // MARK: - Methods
+    
+    public func setDate(startDate: Date, endDate: Date) {
+        if startDate == endDate {
+            dateButton.setDate(fromDate: startDate, toDate: nil)
+            return
+        }
+        
+        dateButton.setDate(fromDate: startDate, toDate: endDate)
+    }
 
     private func setBackgroundColor() {
         self.backgroundColor = .wkMainPurple
