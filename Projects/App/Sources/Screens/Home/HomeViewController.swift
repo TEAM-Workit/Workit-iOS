@@ -96,8 +96,8 @@ final class HomeViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         dateChangePublisher
-            .map { from, to in
-                Reactor.Action.setDate(from, to)
+            .map { fromDate, toDate in
+                Reactor.Action.setDate(fromDate, toDate)
             }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -125,8 +125,10 @@ final class HomeViewController: BaseViewController, View {
         
         reactor.state
             .map { $0.dates }
-            .bind { [weak self] _ in
-                //self?.reloadCollectionViewHeader()
+            .withUnretained(self)
+            .bind { owner, _ in
+                owner.setDataSource()
+                owner.applySnapshot(works: owner.reactor?.currentState.works ?? [])
             }
             .disposed(by: disposeBag)
     }
@@ -230,9 +232,7 @@ final class HomeViewController: BaseViewController, View {
             })
 
         self.dataSource.supplementaryViewProvider = { (collectionView, _, indexPath) -> UICollectionReusableView in
-           // guard let self = self else { fatalError() }
             let header: MyWorkitHeaderView = collectionView.dequeueHeaderView(for: indexPath)
-           // guard let self = self else { fatalError() }
             header.setDate(
                 startDate: self.reactor?.currentState.dates.startDate ?? Date(),
                 endDate: self.reactor?.currentState.dates.endDate ?? Date())
