@@ -256,6 +256,9 @@ extension HomeViewController: MyWorkitHeaderViewDelegate {
         bottomSheetViewController.modalPresentationStyle = .overFullScreen
         bottomSheetViewController.modalTransitionStyle = .crossDissolve
         bottomSheetViewController.delegate = self
+        bottomSheetViewController.setCalenderInitialDate(
+            fromDate: self.reactor?.currentState.dates.startDate ?? Date(),
+            toDate: self.reactor?.currentState.dates.endDate ?? Date())
         self.present(bottomSheetViewController, animated: true)
     }
 }

@@ -14,6 +14,7 @@ import RxSwift
 import SnapKit
 
 // swiftlint:disable function_body_length
+// swiftlint:disable type_body_length
 
 protocol CalendarBottomSheetDelegate: AnyObject {
     func sendSelectedDate(start: Date, end: Date)
@@ -226,6 +227,18 @@ final class CalendarBottomSheetViewController: BaseViewController {
                 owner.dismiss(animated: true)
             }
             .disposed(by: disposeBag)
+    }
+    
+    internal func setCalenderInitialDate(fromDate: Date, toDate: Date) {
+        if fromDate.toString(type: .dot) == toDate.toString(type: .dot) {
+            self.selectedDate = fromDate
+        } else {
+            let range = DayRange(
+                containing: ClosedRange(uncheckedBounds: (fromDate, toDate)),
+                in: calendar)
+            self.calendarSelection = .dayRange(range)
+        }
+        self.dateSelectPublisher.onNext(self.calendarSelection)
     }
     
     func makeContent() -> CalendarViewContent {
