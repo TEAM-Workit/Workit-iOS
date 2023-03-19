@@ -14,7 +14,6 @@ import RxSwift
 import SnapKit
 
 // swiftlint:disable function_body_length
-// swiftlint:disable type_body_length
 
 protocol CalendarBottomSheetDelegate: AnyObject {
     func sendSelectedDate(start: Date, end: Date)
