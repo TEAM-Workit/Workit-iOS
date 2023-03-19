@@ -64,9 +64,6 @@ final class CalendarBottomSheetViewController: BaseViewController {
     private let disposeBag = DisposeBag()
     private var calendarSelection: CalendarSelection?
     
-    private var selectedDate: Date = Date()
-    private var dateRanges: Set<ClosedRange<Date>> = []
-    
     lazy var calendar = Calendar.current
     lazy var dayDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -86,9 +83,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
         
         switch self?.calendarSelection {
         case .singleDay(let selectedDay):
-            self?.selectedDate = calendar.date(from: selectedDay.components) ?? Date()
             isSelectedStyle = (day == selectedDay)
-            
         case .dayRange(let selectedDayRange):
             isSelectedStyle = day == selectedDayRange.lowerBound || day == selectedDayRange.upperBound
         case .none:
@@ -103,12 +98,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
         
         invariantViewProperties.font = .b1M
         let date = calendar.date(from: day.components)
-        let selectedDate = self?.selectedDate
-        if selectedDate?.toString(type: .dot) == date?.toString(type: .dot) {
-            invariantViewProperties.backgroundShapeDrawingConfig.borderColor = .black
-            invariantViewProperties.backgroundShapeDrawingConfig.fillColor = .black
-            invariantViewProperties.textColor = .white
-        }
+
         return DayView.calendarItemModel(
             invariantViewProperties: invariantViewProperties,
             viewModel: .init(
@@ -120,7 +110,6 @@ final class CalendarBottomSheetViewController: BaseViewController {
     lazy var daySelectionClosure: ((Day) -> Void) = {[weak self] calendarDay in
         
         guard let self = self else { return }
-        self.selectedDate = self.calendar.date(from: calendarDay.components) ?? Date()
         
         switch self.calendarSelection {
         case .singleDay(let selectedDay):
@@ -162,10 +151,6 @@ final class CalendarBottomSheetViewController: BaseViewController {
         
         self.view.backgroundColor = .wkBlack.withAlphaComponent(0.7)
         self.calendarView.daySelectionHandler = daySelectionClosure
-        self.calendarView.scroll(
-            toMonthContaining: self.selectedDate,
-            scrollPosition: .centered, animated: false)
-        self.topView.setSingleDate(date: self.selectedDate)
     }
     
     // MARK: - Methods
@@ -188,7 +173,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
                 case .singleDay(let day):
                     self?.topView.setSingleDate(date: self?.calendar.date(from: day.components))
                 case .none:
-                    self?.topView.setSingleDate(date: self?.selectedDate)
+                    break
                 }
             }
             .disposed(by: disposeBag)
@@ -196,12 +181,13 @@ final class CalendarBottomSheetViewController: BaseViewController {
         self.resetButton.rx.tap
             .withUnretained(self)
             .bind { owner, _ in
-                owner.selectedDate = Date()
-                owner.calendarSelection = .none
+                /// 오늘날짜로 재설정
+                let today = owner.calendar.day(containing: Date())
+                owner.calendarSelection = .singleDay(today)
                 owner.dateSelectPublisher.onNext(owner.calendarSelection)
                 owner.calendarView.setContent(owner.makeContent())
                 owner.calendarView.scroll(
-                    toMonthContaining: owner.selectedDate,
+                    toMonthContaining: Date(),
                     scrollPosition: .centered,
                     animated: true)
             }
@@ -230,23 +216,31 @@ final class CalendarBottomSheetViewController: BaseViewController {
     }
     
     internal func setCalenderInitialDate(fromDate: Date, toDate: Date) {
+        /// 단일날짜인경우
         if fromDate.toString(type: .dot) == toDate.toString(type: .dot) {
-            self.selectedDate = fromDate
+            let day = calendar.day(containing: fromDate)
+            self.calendarSelection = .singleDay(day)
         } else {
+            /// 단일 날짜가 아닌 경우
             let range = DayRange(
                 containing: ClosedRange(uncheckedBounds: (fromDate, toDate)),
                 in: calendar)
             self.calendarSelection = .dayRange(range)
         }
+        /// 첫 화면에서 해당 날짜로 이동하도록 함
+        /// dayRange의 경우에는 첫번째 날짜로 이동함
+        self.calendarView.scroll(
+            toMonthContaining: fromDate,
+            scrollPosition: .centered, animated: false)
         self.dateSelectPublisher.onNext(self.calendarSelection)
     }
     
     func makeContent() -> CalendarViewContent {
         let startDate = calendar.date(from: DateComponents(year: 2010, month: 01, day: 01))!
-        let endDate = calendar.date(from: DateComponents(year: 2025, month: 12, day: 31))!
+        let endDate = calendar.date(from: DateComponents(year: 2100, month: 12, day: 31))!
         let calendarSelection = self.calendarSelection
         
-        var dateRanges: Set<ClosedRange<Date>> = self.dateRanges
+        var dateRanges: Set<ClosedRange<Date>> = []
         
         if case .dayRange(let dayRange) = calendarSelection,
            let lowerBound = calendar.date(from: dayRange.lowerBound.components),
