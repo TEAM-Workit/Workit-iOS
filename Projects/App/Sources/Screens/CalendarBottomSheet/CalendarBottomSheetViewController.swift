@@ -217,7 +217,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
     
     internal func setCalenderInitialDate(fromDate: Date, toDate: Date) {
         /// 단일날짜인경우
-        if fromDate.toString(type: .dot) == toDate.toString(type: .dot) {
+        if fromDate == toDate {
             let day = calendar.day(containing: fromDate)
             self.calendarSelection = .singleDay(day)
         } else {
