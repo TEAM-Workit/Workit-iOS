@@ -227,6 +227,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
                 in: calendar)
             self.calendarSelection = .dayRange(range)
         }
+        self.calendarView.setContent(makeContent())
         /// 첫 화면에서 해당 날짜로 이동하도록 함
         /// dayRange의 경우에는 첫번째 날짜로 이동함
         self.calendarView.scroll(
