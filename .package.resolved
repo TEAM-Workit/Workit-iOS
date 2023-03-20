@@ -12,10 +12,10 @@
     {
       "identity" : "horizoncalendar",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/airbnb/HorizonCalendar.git",
+      "location" : "https://github.com/TEAM-Workit/HorizonCalendar.git",
       "state" : {
-        "revision" : "0b21e9edb6b0769cd37766d782068fc7a847f0c5",
-        "version" : "1.14.2"
+        "branch" : "main",
+        "revision" : "5c8b19aee75750b8f06fff378cdbed3501ecf276"
       }
     },
     {

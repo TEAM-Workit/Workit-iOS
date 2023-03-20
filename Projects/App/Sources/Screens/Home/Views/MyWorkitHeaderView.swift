@@ -9,7 +9,15 @@
 import DesignSystem
 import UIKit
 
+import RxCocoa
+import RxSwift
 import SnapKit
+
+// MARK: - Protocols
+
+protocol MyWorkitHeaderViewDelegate: AnyObject {
+    func dateButtonDidTap()
+}
 
 final class MyWorkitHeaderView: UICollectionReusableView {
 
@@ -35,22 +43,37 @@ final class MyWorkitHeaderView: UICollectionReusableView {
         return label
     }()
 
-    private let dateButton = WKDateButton(fromDate: Date())
+    fileprivate let dateButton = WKDateButton(fromDate: Date())
 
     // MARK: - Initializer
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
-        setBackgroundColor()
-        setLayout()
+        self.setBackgroundColor()
+        self.setLayout()
+        self.bind()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Properties
+    
+    weak var delegate: MyWorkitHeaderViewDelegate?
+    private let disposeBag = DisposeBag()
 
     // MARK: - Methods
+    
+    public func setDate(startDate: Date, endDate: Date) {
+        if startDate == endDate {
+            dateButton.setDate(fromDate: startDate, toDate: nil)
+            return
+        }
+        
+        dateButton.setDate(fromDate: startDate, toDate: endDate)
+    }
 
     private func setBackgroundColor() {
         self.backgroundColor = .wkMainPurple
@@ -73,5 +96,13 @@ final class MyWorkitHeaderView: UICollectionReusableView {
             make.top.equalToSuperview().inset(28)
             make.trailing.equalToSuperview().inset(20)
         }
+    }
+    
+    private func bind() {
+        self.dateButton.rx.tap
+            .bind { [weak self] _ in
+                self?.delegate?.dateButtonDidTap()
+            }
+            .disposed(by: disposeBag)
     }
 }

@@ -59,6 +59,7 @@ final class HomeViewController: BaseViewController, View {
     // MARK: - Properties
 
     var dataSource: DiffableDataSource!
+    private var dateChangePublisher = PublishSubject<(Date, Date)>()
 
     // MARK: - Initializer
 
@@ -93,6 +94,14 @@ final class HomeViewController: BaseViewController, View {
             .map { _ in Reactor.Action.viewWillAppear }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        dateChangePublisher
+            .map { fromDate, toDate in
+                Reactor.Action.setDate(fromDate, toDate)
+            }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+            
     }
     
     private func bindState(reactor: HomeReactor) {
@@ -111,6 +120,15 @@ final class HomeViewController: BaseViewController, View {
             .withUnretained(self)
             .bind { owner, name in
                 owner.bannerView.setName(name: name)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.dates }
+            .withUnretained(self)
+            .bind { owner, _ in
+                owner.setDataSource()
+                owner.applySnapshot(works: owner.reactor?.currentState.works ?? [])
             }
             .disposed(by: disposeBag)
     }
@@ -215,6 +233,10 @@ final class HomeViewController: BaseViewController, View {
 
         self.dataSource.supplementaryViewProvider = { (collectionView, _, indexPath) -> UICollectionReusableView in
             let header: MyWorkitHeaderView = collectionView.dequeueHeaderView(for: indexPath)
+            header.setDate(
+                startDate: self.reactor?.currentState.dates.startDate ?? Date(),
+                endDate: self.reactor?.currentState.dates.endDate ?? Date())
+            header.delegate = self
             return header
         }
     }
@@ -225,6 +247,27 @@ final class HomeViewController: BaseViewController, View {
         snapshot.appendItems([Item.empty], toSection: .empty)
         snapshot.appendItems(works.map { Item.workit($0) }, toSection: .myWorkit)
         self.dataSource.apply(snapshot)
+    }
+}
+
+extension HomeViewController: MyWorkitHeaderViewDelegate {
+    func dateButtonDidTap() {
+        let bottomSheetViewController = CalendarBottomSheetViewController()
+        bottomSheetViewController.modalPresentationStyle = .overFullScreen
+        bottomSheetViewController.modalTransitionStyle = .crossDissolve
+        bottomSheetViewController.delegate = self
+        bottomSheetViewController.setCalenderInitialDate(
+            fromDate: self.reactor?.currentState.dates.startDate ?? Date(),
+            toDate: self.reactor?.currentState.dates.endDate ?? Date())
+        self.present(bottomSheetViewController, animated: true)
+    }
+}
+
+extension HomeViewController: CalendarBottomSheetDelegate {
+    func sendSelectedDate(start: Date, end: Date) {
+        // 여기에 홈 리프레시 있어야함 하..
+        dateChangePublisher.onNext((start, end))
+        print(start, end)
     }
 }
 
