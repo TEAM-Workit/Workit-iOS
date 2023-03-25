@@ -50,7 +50,6 @@ final class HomeReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewWillAppear:
-            // TODO: BottomSheet 연결 후 currentState로 변경
             let works = workUseCase.fetchWorksDate(
                 start: currentState.dates.startDate,
                 end: currentState.dates.endDate)

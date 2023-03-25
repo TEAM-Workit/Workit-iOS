@@ -101,7 +101,6 @@ final class HomeViewController: BaseViewController, View {
             }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-            
     }
     
     private func bindState(reactor: HomeReactor) {
@@ -265,9 +264,7 @@ extension HomeViewController: MyWorkitHeaderViewDelegate {
 
 extension HomeViewController: CalendarBottomSheetDelegate {
     func sendSelectedDate(start: Date, end: Date) {
-        // 여기에 홈 리프레시 있어야함 하..
         dateChangePublisher.onNext((start, end))
-        print(start, end)
     }
 }
 
