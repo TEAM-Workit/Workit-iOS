@@ -13,7 +13,8 @@ import HorizonCalendar
 import RxSwift
 import SnapKit
 
-// swiftlint:type_name
+// swiftlint:disable type_name
+// swiftLint:disable blanket_disable_command
 
 protocol SingleDayCalendarBottomSheetDelegate: AnyObject {
     func sendSelectedSingleDay(_ date: Date)
