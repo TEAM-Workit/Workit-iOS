@@ -14,7 +14,7 @@ import RxSwift
 import SnapKit
 
 // swiftlint:disable type_name
-// swiftLint:disable blanket_disable_command
+// swiftLint:disable function_body_length
 
 protocol SingleDayCalendarBottomSheetDelegate: AnyObject {
     func sendSelectedSingleDay(_ date: Date)
