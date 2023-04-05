@@ -120,6 +120,7 @@ final class WriteViewController: BaseViewController {
         self.setAbilityAddButtonAction()
         self.setAbilityCollectionView()
         self.setProjectButtonAction()
+        self.setDateButtonAction()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -220,6 +221,28 @@ final class WriteViewController: BaseViewController {
             selectProjectBottomViewController.delegate = self
             self?.present(selectProjectBottomViewController, animated: true)
         }
+    }
+    
+    private func setDateButtonAction() {
+        self.dateButton.setAction { [weak self] in
+            let dateBottomViewController = SingleDayCalendarBottomSheetViewController()
+            dateBottomViewController.modalPresentationStyle = .overFullScreen
+            dateBottomViewController.modalTransitionStyle = .crossDissolve
+            dateBottomViewController.delegate = self
+            
+            dateBottomViewController.setCalenderInitialDate(self?.dateButton.date() ?? Date())
+            
+            self?.present(dateBottomViewController, animated: true)
+        }
+    }
+}
+
+// MARK: - Extension (UICollectionViewDelegateFlowLayout)
+
+extension WriteViewController: SingleDayCalendarBottomSheetDelegate {
+    func sendSelectedSingleDay(_ date: Date) {
+        print(date)
+        self.dateButton.setDate(date: date)
     }
 }
 
