@@ -14,7 +14,6 @@ import RxSwift
 import SnapKit
 
 // swiftlint:disable type_name
-// swiftLint:disable function_body_length
 
 protocol SingleDayCalendarBottomSheetDelegate: AnyObject {
     func sendSelectedSingleDay(_ date: Date)
@@ -237,3 +236,5 @@ final class SingleDayCalendarBottomSheetViewController: BaseViewController {
             })
     }
 }
+
+// swiftlint:enable type_name
