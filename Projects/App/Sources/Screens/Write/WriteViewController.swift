@@ -121,6 +121,7 @@ final class WriteViewController: BaseViewController {
         self.setAbilityCollectionView()
         self.setProjectButtonAction()
         self.setDateButtonAction()
+        self.setCloseButtonAction()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -233,6 +234,29 @@ final class WriteViewController: BaseViewController {
             dateBottomViewController.setCalenderInitialDate(self?.dateButton.date() ?? Date())
             
             self?.present(dateBottomViewController, animated: true)
+        }
+    }
+    
+    private func setCloseButtonAction() {
+        if let button = self.navigationBar.topItem?.leftBarButtonItem?.customView as? UIButton {
+            button.setAction { [weak self] in
+                let alert = UIAlertController(
+                    title: Text.closeTitle,
+                    message: Text.closeContent,
+                    preferredStyle: .alert
+                )
+                let continueAction = UIAlertAction(title: Text.continueTitle, style: .cancel) { _ in
+                    alert.dismiss(animated: true)
+                }
+                let cancelAction = UIAlertAction(title: Text.cancelTitle, style: .destructive) { _ in
+                    self?.dismiss(animated: true)
+                }
+                
+                alert.addAction(continueAction)
+                alert.addAction(cancelAction)
+                
+                self?.present(alert, animated: true)
+            }
         }
     }
 }
