@@ -36,6 +36,8 @@ public extension UIFont {
     
     class var h2M: UIFont {
         return DesignSystemFontFamily.Suit.medium.font(size: 22)
+    class var h25b: UIFont {
+        return DesignSystemFontFamily.Pretendard.bold.font(size: 20)
     }
     
     // H3
