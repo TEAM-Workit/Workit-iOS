@@ -45,7 +45,9 @@ final class WorkDetailViewController: BaseViewController {
     
     private let workTitleLabel: UILabel = {
         let label: UILabel = UILabel()
+        label.font = .h25b
         label.textColor = .wkBlack
+        label.numberOfLines = 0
         return label
     }()
     
@@ -62,14 +64,19 @@ final class WorkDetailViewController: BaseViewController {
         return view
     }()
     
-    private let abilityLabel: WKStarLabel = {
-        let label: WKStarLabel = WKStarLabel()
+    private let abilityLabel: UILabel = {
+        let label: UILabel = UILabel()
         label.text = Text.abilityTitle
+        label.font = .b1Sb
+        label.textColor = .wkBlack85
         return label
     }()
     
     private var hardAbilityCollectionView: WKWriteAbilityCollectionView = WKWriteAbilityCollectionView()
     private var softAbilityCollectionView: WKWriteAbilityCollectionView = WKWriteAbilityCollectionView()
+    
+    private let hardAbilityFlowLayout: WriteAbilityCollectionViewFlowLayout = WriteAbilityCollectionViewFlowLayout()
+    private let softAbilityFlowLayout: WriteAbilityCollectionViewFlowLayout = WriteAbilityCollectionViewFlowLayout()
     
     private let workDescriptionLabel: UILabel = {
         let label: UILabel = UILabel()
@@ -79,12 +86,15 @@ final class WorkDetailViewController: BaseViewController {
     
     // MARK: Properties
     
+    private var softAbilityList: [WriteAbility] = []
+    private var hardAbilityList: [WriteAbility] = []
+    
     private var dummyWorkData: Work = Work(
         id: 1,
-        title: "데일리 지표 확인",
+        title: "데일리 지표 확인데일리 지표 확인데일리 지표 확인데일리 지표 확인데일리 지표 확인데일리 지표 확인",
         project: Project(title: "솝텀 워킷 프로젝트"),
         description: "최근 며칠간 리텐션이 지속적으로 떨어진 것을 파악했다.\n\n앱 진입하자마자 보이는 새로운 기능에 대한 홍보 팝업을 보고 앱을 꺼버리는 비율이 늘어난 것 같았다.\n\n팝업 표시 이전과 이번주 리텐션 자료를 비교하기 위해 조회를 해보고 오늘 스크럼에서 이야기를 나눴다.\n\n팀장님이 이 부분에 대해서 마케팅팀과 함께 논의해봐야겠다고 하셔서, 해당 내용에 대해 정리해서 마케팅팀 슬랙에 이슈를 전달했다.",
-        date: "2022-11-13T00:00:00.000+00:00",
+        date: "2022-11-13T00:00:00.000Z",
         abilities: [Ability(id: 1, name: "데이터 분석을 통한 서비스 개선", type: "SOFT"), Ability(id: 2, name: "논리적인 커뮤니케이션 능력", type: "SOFT"), Ability(id: 2, name: "지표 분석을 통한 인사이트 도출", type: "HARD")]
     )
     
@@ -94,18 +104,162 @@ final class WorkDetailViewController: BaseViewController {
         super.viewDidLoad()
         
         self.setLayout()
+        self.setAbilityCollectionView()
         self.setData(workData: self.dummyWorkData)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.updateAbilityCollectionViewHeight()
+    }
+    
+    // MARK: Methods
     
     override func setLayout() {
         self.setSubviews()
         self.setBackgroundLayout()
+        self.setTitleLayout()
+        self.setAbilityLayout()
+    }
+    
+    private func setAbilityCollectionView() {
+        self.hardAbilityCollectionView.collectionViewLayout = self.hardAbilityFlowLayout
+        self.softAbilityCollectionView.collectionViewLayout = self.softAbilityFlowLayout
+        
+        self.hardAbilityCollectionView.dataSource = self
+        self.softAbilityCollectionView.dataSource = self
+        
+        self.hardAbilityCollectionView.delegate = self
+        self.softAbilityCollectionView.delegate = self
+        
+        self.hardAbilityCollectionView.register(
+            cell: WKWriteAbilityCollectionViewCell.self,
+            forCellWithReuseIdentifier: "hardCell"
+        )
+        self.softAbilityCollectionView.register(
+            cell: WKWriteAbilityCollectionViewCell.self,
+            forCellWithReuseIdentifier: "softCell"
+        )
     }
     
     private func setData(workData: Work) {
         self.projectTitleLabel.text = workData.project.title
         self.workTitleLabel.text = workData.title
-        self.dateLabel.text = workData.date.toDate(type: .dot)?.toString(type: .dot)
+        self.dateLabel.text = workData.date.toDate(type: .full)?.toString(type: .simpleDot)
+        
+        let abilities: ([WriteAbility], [WriteAbility]) = self.divideAbilities(abilities: workData.abilities)
+        self.softAbilityList = abilities.0
+        self.hardAbilityList = abilities.1
+        
+        self.projectTitleLabel.sizeToFit()
+        self.workTitleLabel.sizeToFit()
+        
+        self.softAbilityCollectionView.reloadData()
+        self.hardAbilityCollectionView.reloadData()
+    }
+    
+    private func updateAbilityCollectionViewHeight() {
+        self.hardAbilityCollectionView.snp.updateConstraints { make in
+            make.top.equalTo(self.abilityLabel.snp.bottom).offset(self.hardAbilityList.isEmpty ? 0 : 8)
+            make.height.equalTo(self.hardAbilityList.isEmpty ? 0 : 29)
+        }
+        self.softAbilityCollectionView.snp.updateConstraints { make in
+            make.height.equalTo(self.softAbilityList.isEmpty ? 0 : 29)
+        }
+    }
+    
+    private func divideAbilities(abilities: [Ability]) -> ([WriteAbility], [WriteAbility]) {
+        var softAbilites: [WriteAbility] = []
+        var hardAbilites: [WriteAbility] = []
+        for ability in abilities {
+            if ability.type == .soft {
+                softAbilites.append(
+                    WriteAbility(
+                        abilityId: ability.id,
+                        abilityName: ability.name,
+                        abilityType: ability.type.rawValue
+                    )
+                )
+            } else {
+                hardAbilites.append(
+                    WriteAbility(
+                        abilityId: ability.id,
+                        abilityName: ability.name,
+                        abilityType: ability.type.rawValue
+                    )
+                )
+            }
+        }
+        return (softAbilites, hardAbilites)
+    }
+}
+
+// MARK: - Extension (UICollectionViewDataSource)
+
+extension WorkDetailViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch collectionView {
+        case self.hardAbilityCollectionView:
+            return self.hardAbilityList.count
+        case self.softAbilityCollectionView:
+            return self.softAbilityList.count
+        default: return 0
+        }
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        
+        switch collectionView {
+        case self.hardAbilityCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "hardCell",
+                for: indexPath
+            ) as? WKWriteAbilityCollectionViewCell
+            else { return UICollectionViewCell() }
+            
+            cell.setData(data: self.hardAbilityList[indexPath.row])
+            
+            return cell
+        case self.softAbilityCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: "softCell",
+                for: indexPath
+            ) as? WKWriteAbilityCollectionViewCell
+            else { return UICollectionViewCell() }
+            
+            cell.setData(data: self.softAbilityList[indexPath.row])
+            
+            return cell
+        default: return UICollectionViewCell()
+        }
+    }
+}
+
+// MARK: - Extension (UICollectionViewDelegateFlowLayout)
+
+extension WorkDetailViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        let sizingCell = WKWriteAbilityCollectionViewCell()
+        
+        switch collectionViewLayout {
+        case self.hardAbilityFlowLayout:
+            sizingCell.setData(data: hardAbilityList[indexPath.row])
+        case self.softAbilityFlowLayout:
+            sizingCell.setData(data: softAbilityList[indexPath.row])
+        default: return .zero
+        }
+        
+        let cellWidth = sizingCell.titleLabelWidth() + 20
+        let cellHeight = 29
+        return CGSize(width: cellWidth, height: CGFloat(cellHeight))
     }
 }
 
@@ -115,7 +269,11 @@ extension WorkDetailViewController {
     private func setSubviews() {
         self.view.addSubviews([navigationBar, scrollView])
         self.scrollView.addSubview(contentView)
-        self.contentView.addSubviews([])
+        self.contentView.addSubviews([
+            projectTitleLabel, workTitleLabel,
+            dateLabel, separatorLineView,
+            abilityLabel, hardAbilityCollectionView,
+            softAbilityCollectionView, workDescriptionLabel])
     }
     
     private func setBackgroundLayout() {
@@ -132,5 +290,53 @@ extension WorkDetailViewController {
             make.width.equalToSuperview()
             make.centerX.top.bottom.equalToSuperview()
         }
+    }
+    
+    private func setTitleLayout() {
+        self.projectTitleLabel.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview().inset(20)
+        }
+        
+        self.workTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(projectTitleLabel.snp.bottom).offset(8)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
+        
+        self.dateLabel.snp.makeConstraints { make in
+            make.top.equalTo(workTitleLabel.snp.bottom).offset(8)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(20)
+        }
+        
+        self.separatorLineView.snp.makeConstraints { make in
+            make.top.equalTo(dateLabel.snp.bottom).offset(16)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(1)
+        }
+    }
+    
+    private func setAbilityLayout() {
+        self.abilityLabel.snp.makeConstraints { make in
+            make.top.equalTo(self.separatorLineView.snp.bottom).offset(24)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(18)
+        }
+        
+        self.hardAbilityCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(self.abilityLabel.snp.bottom).offset(12)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(0)
+        }
+        
+        self.softAbilityCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(self.hardAbilityCollectionView.snp.bottom).offset(8)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(0)
+        }
+    }
+    
+        }
+        
+        
     }
 }
