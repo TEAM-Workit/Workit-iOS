@@ -11,6 +11,8 @@ import Foundation
 public enum DateType: String {
     /// yy.MM.dd.
     case dot = "yy.MM.dd."
+    /// yy.MM.dd
+    case simpleDot = "yy.MM.dd"
     /// yy-MM-dd
     case dash = "yy-MM-dd"
     /// yyyy-MM-dd
