@@ -86,7 +86,7 @@ final class WriteViewController: BaseViewController {
     }()
     
     private let workDescriptionTextView: WKTextView = {
-        let textView: WKTextView = WKTextView()
+        let textView: WKTextView = WKTextView(isEditable: true)
         textView.setPlaceholder(text: "업무의 구체적인 과정과 배운 점을 남겨주세요!")
         return textView
     }()
