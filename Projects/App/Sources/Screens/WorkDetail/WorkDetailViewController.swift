@@ -81,7 +81,15 @@ final class WorkDetailViewController: BaseViewController {
     private let workDescriptionLabel: UILabel = {
         let label: UILabel = UILabel()
         label.text = Text.workDescriptionTitle
+        label.font = .b1Sb
+        label.textColor = .wkBlack85
         return label
+    }()
+    
+    private let workDescriptionTextView: WKTextView = {
+        let textView: WKTextView = WKTextView(isEditable: false)
+        textView.setPlaceholder(text: "업무 내용이 아직 입력되지 않았어요!")
+        return textView
     }()
     
     // MARK: Properties
@@ -93,7 +101,7 @@ final class WorkDetailViewController: BaseViewController {
         id: 1,
         title: "데일리 지표 확인데일리 지표 확인데일리 지표 확인데일리 지표 확인데일리 지표 확인데일리 지표 확인",
         project: Project(title: "솝텀 워킷 프로젝트"),
-        description: "최근 며칠간 리텐션이 지속적으로 떨어진 것을 파악했다.\n\n앱 진입하자마자 보이는 새로운 기능에 대한 홍보 팝업을 보고 앱을 꺼버리는 비율이 늘어난 것 같았다.\n\n팝업 표시 이전과 이번주 리텐션 자료를 비교하기 위해 조회를 해보고 오늘 스크럼에서 이야기를 나눴다.\n\n팀장님이 이 부분에 대해서 마케팅팀과 함께 논의해봐야겠다고 하셔서, 해당 내용에 대해 정리해서 마케팅팀 슬랙에 이슈를 전달했다.",
+        description: "최근 며칠간 리텐션이 지속적으로 떨어진 것을 파악했다.\n\n앱 진입하자마자 보이는 새로운 기능에 대한 홍보 팝업을 보고 앱을 꺼버리는 비율이 늘어난 것 같았다.\n\n팝업 표시 이전과 이번주 리텐션 자료를 비교하기 위해 조회를 해보고 오늘 스크럼에서 이야기를 나눴다.\n\n팀장님이 이 부분에 대해서 마케팅팀과 함께 논의해봐야겠다고 하셔서, 해당 내용에 대해 정리해서 마케팅팀 슬랙에 이슈를 전달했다.위해 조회를 해보고 오늘 스크럼에서 이야기를 나눴다.\n\n팀장님이 이 부분에 대해서 마케팅팀과 함께 논의해봐야겠다고 하셔서, 해당 내용에 대해 정리해서 마케팅팀 슬랙에 이슈를 전달했다.",
         date: "2022-11-13T00:00:00.000Z",
         abilities: [Ability(id: 1, name: "데이터 분석을 통한 서비스 개선", type: "SOFT"), Ability(id: 2, name: "논리적인 커뮤니케이션 능력", type: "SOFT"), Ability(id: 2, name: "지표 분석을 통한 인사이트 도출", type: "HARD")]
     )
@@ -121,6 +129,7 @@ final class WorkDetailViewController: BaseViewController {
         self.setBackgroundLayout()
         self.setTitleLayout()
         self.setAbilityLayout()
+        self.setWorkDescriptionLayout()
     }
     
     private func setAbilityCollectionView() {
@@ -152,8 +161,11 @@ final class WorkDetailViewController: BaseViewController {
         self.softAbilityList = abilities.0
         self.hardAbilityList = abilities.1
         
+        self.workDescriptionTextView.text = workData.description
+        
         self.projectTitleLabel.sizeToFit()
         self.workTitleLabel.sizeToFit()
+        self.workDescriptionTextView.sizeToFit()
         
         self.softAbilityCollectionView.reloadData()
         self.hardAbilityCollectionView.reloadData()
@@ -273,7 +285,9 @@ extension WorkDetailViewController {
             projectTitleLabel, workTitleLabel,
             dateLabel, separatorLineView,
             abilityLabel, hardAbilityCollectionView,
-            softAbilityCollectionView, workDescriptionLabel])
+            softAbilityCollectionView, workDescriptionLabel,
+            workDescriptionTextView
+        ])
     }
     
     private func setBackgroundLayout() {
@@ -335,8 +349,17 @@ extension WorkDetailViewController {
         }
     }
     
+    private func setWorkDescriptionLayout() {
+        self.workDescriptionLabel.snp.makeConstraints { make in
+            make.top.equalTo(self.softAbilityCollectionView.snp.bottom).offset(32)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(18)
         }
         
-        
+        self.workDescriptionTextView.snp.makeConstraints { make in
+            make.top.equalTo(self.workDescriptionLabel.snp.bottom).offset(12)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview().inset(40)
+        }
     }
 }
