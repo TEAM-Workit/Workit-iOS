@@ -121,16 +121,13 @@ public final class WKDateButton: UIView {
     public func setDate(fromDate: Date?, toDate: Date?) {
         self.fromDate = fromDate
         self.toDate = toDate
-    
         if fromDate == nil && toDate == nil {
             /// 날짜 둘다 없는 경우
             self.dateLabel.text = "날짜선택"
-        }
-        /// 날짜 단일인 경우
-        else if toDate == nil, let fromDate = fromDate {
+        } else if toDate == nil, let fromDate = fromDate {
+            /// 날짜 단일인 경우
             self.dateLabel.text = "\(fromDate.toString(type: .dot))"
-        }
-        else if let fromDate = fromDate?.toString(type: .dot),
+        } else if let fromDate = fromDate?.toString(type: .dot),
                 let toDate = toDate?.toString(type: .dot) {
             if fromDate == toDate {
                 self.dateLabel.text = "\(fromDate)"
