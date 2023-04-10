@@ -43,7 +43,7 @@ final class MyWorkitHeaderView: UICollectionReusableView {
         return label
     }()
 
-    fileprivate let dateButton = WKDateButton(fromDate: Date())
+    fileprivate let dateButton = WKDateButton()
 
     // MARK: - Initializer
 
@@ -67,11 +67,7 @@ final class MyWorkitHeaderView: UICollectionReusableView {
     // MARK: - Methods
     
     public func setDate(startDate: Date, endDate: Date) {
-        if startDate == endDate {
-            dateButton.setDate(fromDate: startDate, toDate: nil)
-            return
-        }
-        
+        print(startDate, endDate)
         dateButton.setDate(fromDate: startDate, toDate: endDate)
     }
 
