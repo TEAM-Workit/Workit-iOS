@@ -320,5 +320,3 @@ extension CalendarItemViewRepresentable {
         CalendarItemModel<Self>(invariantViewProperties: invariantViewProperties, viewModel: viewModel)
     }
 }
-
-// swiftlint:enable function_body_length
