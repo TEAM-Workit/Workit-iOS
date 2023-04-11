@@ -113,6 +113,7 @@ final class WorkDetailViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.setMenuButtonAction()
         self.setScrollView()
         self.setLayout()
         self.setAbilityCollectionView()
@@ -126,6 +127,42 @@ final class WorkDetailViewController: BaseViewController {
     }
     
     // MARK: Methods
+    
+    private func setMenuButtonAction() {
+        if let button = self.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
+            button.setAction { [weak self] in
+                let actionSheet = UIAlertController(
+                    title: nil,
+                    message: nil,
+                    preferredStyle: .actionSheet
+                )
+                
+                actionSheet.addAction(
+                    UIAlertAction(
+                        title: Text.edit,
+                        style: .default,
+                        handler: { [weak self] _ in
+                            self?.presentEditViewController()
+                        }
+                    )
+                )
+                
+                actionSheet.addAction(
+                    UIAlertAction(
+                        title: Text.remove,
+                        style: .destructive,
+                        handler: { _ in
+                            self?.presentRemoveAlert()
+                        }
+                    )
+                )
+                
+                actionSheet.addAction(UIAlertAction(title: Text.cancel, style: .cancel, handler: nil))
+                
+                self?.present(actionSheet, animated: true, completion: nil)
+            }
+        }
+    }
     
     private func setScrollView() {
         self.scrollView.delegate = self
@@ -212,6 +249,40 @@ final class WorkDetailViewController: BaseViewController {
         }
         return (softAbilites, hardAbilites)
     }
+    
+    private func presentRemoveAlert() {
+        let actionSheet = UIAlertController(
+            title: Text.removeAlertTitle,
+            message: Text.removeAlertDetail,
+            preferredStyle: .alert
+        )
+        
+        actionSheet.addAction(
+            UIAlertAction(
+                title: Text.cancel,
+                style: .default,
+                handler: nil
+            )
+        )
+        
+        actionSheet.addAction(
+            UIAlertAction(
+                title: Text.remove,
+                style: .destructive,
+                handler: { [weak self] _ in
+                    self?.requestRemoveWork()
+                }
+            )
+        )
+        
+        self.present(actionSheet, animated: true, completion: nil)
+    }
+    
+    private func presentEditViewController() {
+        let editViewController: BaseViewController = WriteViewController()
+        
+        self.present(editViewController, animated: true)
+    }
 }
 
 // MARK: - Extension (UICollectionViewDataSource)
@@ -294,6 +365,14 @@ extension WorkDetailViewController: UIScrollViewDelegate {
             self.navigationBar.topItem?.title = self.workTitleLabel.text
         }
      }
+}
+
+// MARK: - Network
+
+extension WorkDetailViewController {
+    private func requestRemoveWork() {
+        debugPrint("삭제 request")
+    }
 }
 
 // MARK: - UI
