@@ -111,6 +111,7 @@ final class WorkDetailViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.setScrollView()
         self.setLayout()
         self.setAbilityCollectionView()
         self.setData(workData: self.dummyWorkData)
@@ -123,6 +124,10 @@ final class WorkDetailViewController: BaseViewController {
     }
     
     // MARK: Methods
+    
+    private func setScrollView() {
+        self.scrollView.delegate = self
+    }
     
     override func setLayout() {
         self.setSubviews()
@@ -273,6 +278,20 @@ extension WorkDetailViewController: UICollectionViewDelegateFlowLayout {
         let cellHeight = 29
         return CGSize(width: cellWidth, height: CGFloat(cellHeight))
     }
+}
+
+// MARK: - Extension (UIScrollViewDelegate)
+
+extension WorkDetailViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let limitOffset: CGFloat = self.workTitleLabel.frame.minY
+        
+        if scrollView.contentOffset.y <= limitOffset {
+            self.navigationBar.topItem?.title = ""
+        } else {
+            self.navigationBar.topItem?.title = self.workTitleLabel.text
+        }
+     }
 }
 
 // MARK: - UI
