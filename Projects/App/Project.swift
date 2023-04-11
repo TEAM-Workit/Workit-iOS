@@ -23,7 +23,6 @@ let project = Project.app(
                 requirement: .upToNextMinor(from: "6.5.0")),
         .remote(url: "https://github.com/RxSwiftCommunity/RxGesture",
                 requirement: .upToNextMajor(from: "4.0.0"))
-        
     ],
     infoPlist: .file(path: "Plists/Info.plist")
 )
