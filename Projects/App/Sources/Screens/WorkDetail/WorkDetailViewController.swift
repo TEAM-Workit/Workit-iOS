@@ -119,6 +119,7 @@ final class WorkDetailViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.setBackButtonAction()
         self.setMenuButtonAction()
         self.setScrollView()
         self.setLayout()
@@ -133,6 +134,14 @@ final class WorkDetailViewController: BaseViewController {
     }
     
     // MARK: Methods
+    
+    private func setBackButtonAction() {
+        if let button = self.navigationBar.topItem?.leftBarButtonItem?.customView as? UIButton {
+            button.setAction { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            }
+        }
+    }
     
     private func setMenuButtonAction() {
         if let button = self.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
