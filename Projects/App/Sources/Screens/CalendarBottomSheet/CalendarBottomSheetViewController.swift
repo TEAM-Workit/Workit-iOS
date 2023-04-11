@@ -13,8 +13,6 @@ import HorizonCalendar
 import RxSwift
 import SnapKit
 
-// swiftlint:disable function_body_length
-
 protocol CalendarBottomSheetDelegate: AnyObject {
     func sendSelectedDate(start: Date, end: Date)
 }
@@ -154,6 +152,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
     
     // MARK: - Methods
     
+    // swiftlint:disable function_body_length
     private func bind() {
         self.topView.rx.closeButtonDidTap
             .withUnretained(self)
@@ -213,6 +212,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
             }
             .disposed(by: disposeBag)
     }
+    // swiftlint:enable function_body_length
     
     internal func setCalenderInitialDate(fromDate: Date, toDate: Date) {
         /// 단일날짜인경우
@@ -320,3 +320,5 @@ extension CalendarItemViewRepresentable {
         CalendarItemModel<Self>(invariantViewProperties: invariantViewProperties, viewModel: viewModel)
     }
 }
+
+// swiftlint:enable function_body_length

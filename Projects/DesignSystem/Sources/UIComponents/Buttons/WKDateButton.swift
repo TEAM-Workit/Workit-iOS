@@ -50,7 +50,7 @@ public final class WKDateButton: UIView {
     fileprivate let tapPublisher = PublishSubject<()>()
     
     // MARK: - Initializer
-
+    
     /// - Parameters:
     ///    - fromDate: 시작날짜 (형식: YY.MM.DD.)
     ///    - toDate: 끝나는 날짜 (형식: YY.MM.DD. / 단일 날짜의 경우 nil)
@@ -60,7 +60,6 @@ public final class WKDateButton: UIView {
         setUI()
         setLayout()
         setGesture()
-        setDate(fromDate: fromDate, toDate: toDate)
     }
     
     required init?(coder: NSCoder) {
@@ -108,13 +107,13 @@ public final class WKDateButton: UIView {
             make.height.equalTo(32)
         }
     }
-
+    
     private func setGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewDidTap))
         self.addGestureRecognizer(tapGesture)
         self.isUserInteractionEnabled = true
     }
-
+    
     /// 컴포넌트 생성 후 Date를 다시 설정하는 함수
     /// - Parameters:
     ///    - fromDate: 시작날짜 (날짜 선택 전일 경우 nil)
@@ -122,11 +121,20 @@ public final class WKDateButton: UIView {
     public func setDate(fromDate: Date?, toDate: Date?) {
         self.fromDate = fromDate
         self.toDate = toDate
-        var date = "" + "\(fromDate?.toString(type: .dot) ?? "날짜 선택")"
-        if let toDate = toDate?.toString(type: .dot) {
-            date += " - \(toDate)"
+        if fromDate == nil && toDate == nil {
+            /// 날짜 둘다 없는 경우
+            self.dateLabel.text = "날짜선택"
+        } else if toDate == nil, let fromDate = fromDate {
+            /// 날짜 단일인 경우
+            self.dateLabel.text = "\(fromDate.toString(type: .dot))"
+        } else if let fromDate = fromDate?.toString(type: .dot),
+                let toDate = toDate?.toString(type: .dot) {
+            if fromDate == toDate {
+                self.dateLabel.text = "\(fromDate)"
+            } else {
+                self.dateLabel.text = "\(fromDate) - \(toDate)"
+            }
         }
-        dateLabel.text = date
         dateLabel.sizeToFit()
     }
 }
