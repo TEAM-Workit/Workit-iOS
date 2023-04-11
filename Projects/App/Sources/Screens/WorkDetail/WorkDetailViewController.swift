@@ -20,6 +20,12 @@ final class WorkDetailViewController: BaseViewController {
     enum Text {
         static let abilityTitle = "역량 태그"
         static let workDescriptionTitle = "업무 내용"
+        static let removeAlertTitle = "기록을 삭제하시겠어요?"
+        static let removeAlertDetail = "삭제하면 복구할 수 없습니다."
+        static let edit = "수정"
+        static let remove = "삭제"
+        static let cancel = "취소"
+        static let descriptionPlaceholder = "업무 내용이 아직 입력되지 않았어요!"
     }
     
     // MARK: - UIComponents
@@ -90,7 +96,7 @@ final class WorkDetailViewController: BaseViewController {
     
     private let workDescriptionTextView: WKTextView = {
         let textView: WKTextView = WKTextView(isEditable: false)
-        textView.setPlaceholder(text: "업무 내용이 아직 입력되지 않았어요!")
+        textView.setPlaceholder(text: Text.descriptionPlaceholder)
         return textView
     }()
     
