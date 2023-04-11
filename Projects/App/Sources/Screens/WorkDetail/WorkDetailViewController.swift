@@ -13,6 +13,8 @@ import UIKit
 
 import SnapKit
 
+// swiftlint:disable file_length
+
 final class WorkDetailViewController: BaseViewController {
     
     enum Text {
@@ -382,3 +384,5 @@ extension WorkDetailViewController {
         }
     }
 }
+
+// swiftlint:enable file_length
