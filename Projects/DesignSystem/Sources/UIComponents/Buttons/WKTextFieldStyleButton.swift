@@ -26,6 +26,7 @@ public class WKTextFieldStyleButton: UIButton {
     
     private let textField: WKTextField = WKTextField()
     private let calendarImageView: UIImageView = UIImageView(image: Image.wkCalendar.withRenderingMode(.alwaysOriginal))
+    private var selectedDate: Date = Date()
     
     // MARK: Initializer
     
@@ -43,6 +44,7 @@ public class WKTextFieldStyleButton: UIButton {
     // MARK: - Methods
     
     public func setDate(date: Date) {
+        self.selectedDate = date
         self.textField.text = date.toString(type: .dot)
     }
     
@@ -52,6 +54,10 @@ public class WKTextFieldStyleButton: UIButton {
     
     public func setText(text: String) {
         self.textField.text = text
+    }
+    
+    public func date() -> Date {
+        return self.selectedDate
     }
 }
 

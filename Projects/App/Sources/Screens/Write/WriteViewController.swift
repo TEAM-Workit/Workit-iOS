@@ -16,11 +16,28 @@ import SnapKit
 
 final class WriteViewController: BaseViewController {
     
+    enum Text {
+        static let save = "저장"
+        static let dateLabel = "업무 날짜"
+        static let closeTitle = "기록을 취소하시겠어요?"
+        static let closeContent = "지금 나가면 작성한 내용이\n모두 사라집니다."
+        static let continueTitle = "이어쓰기"
+        static let cancelTitle = "취소하기"
+        static let projectLabel = "프로젝트"
+        static let projectButtonPlaceholder = "프로젝트명을 입력해주세요"
+        static let workLabel = "업무"
+        static let workTextFieldPlaceholder = "업무명을 입력해주세요"
+        static let abilityLabel = "역량 태그"
+        static let abilityAddButton = "역량 추가하기"
+        static let workDescriptionLabel = "업무 내용"
+        static let workDescriptionPlaceholder = "업무의 구체적인 과정과 배운 점을 남겨주세요!"
+    }
+    
     // MARK: - UIComponents
     
     private let navigationBar: WKNavigationBar = {
         let navigationBar: WKNavigationBar = WKNavigationBar()
-        navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(customView: WKNavigationButton(text: "저장"))
+        navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(customView: WKNavigationButton(text: Text.save))
         navigationBar.topItem?.leftBarButtonItem = UIBarButtonItem(customView: WKNavigationButton(image: Image.wkX))
         return navigationBar
     }()
@@ -34,7 +51,7 @@ final class WriteViewController: BaseViewController {
     
     private let dateLabel: WKStarLabel = {
         let label: WKStarLabel = WKStarLabel()
-        label.text = "업무 날짜"
+        label.text = Text.dateLabel
         return label
     }()
     
@@ -42,31 +59,31 @@ final class WriteViewController: BaseViewController {
     
     private let projectLabel: WKStarLabel = {
         let label: WKStarLabel = WKStarLabel()
-        label.text = "프로젝트"
+        label.text = Text.projectLabel
         return label
     }()
     
     private let projectButton: WKTextFieldStyleButton = {
         let button: WKTextFieldStyleButton = WKTextFieldStyleButton(style: .defaultStyle)
-        button.setPlaceholder(text: "프로젝트명을 입력해주세요")
+        button.setPlaceholder(text: Text.projectButtonPlaceholder)
         return button
     }()
     
     private let workLabel: WKStarLabel = {
         let label: WKStarLabel = WKStarLabel()
-        label.text = "업무"
+        label.text = Text.workLabel
         return label
     }()
     
     private let workTextField: WKTextField = {
         let textField: WKTextField = WKTextField()
-        textField.placeholder = "업무명을 입력해주세요"
+        textField.placeholder = Text.workTextFieldPlaceholder
         return textField
     }()
     
     private let abilityLabel: WKStarLabel = {
         let label: WKStarLabel = WKStarLabel()
-        label.text = "역량 태그"
+        label.text = Text.abilityLabel
         return label
     }()
     
@@ -75,19 +92,19 @@ final class WriteViewController: BaseViewController {
     
     private let abilityAddButton: WKAbilityAddButton = {
         let button: WKAbilityAddButton = WKAbilityAddButton()
-        button.setTitle("역량 추가하기", for: .normal)
+        button.setTitle(Text.abilityAddButton, for: .normal)
         return button
     }()
     
     private let workDescriptionLabel: UILabel = {
         let label: UILabel = UILabel()
-        label.text = "업무 내용"
+        label.text = Text.workDescriptionLabel
         return label
     }()
     
     private let workDescriptionTextView: WKTextView = {
         let textView: WKTextView = WKTextView()
-        textView.setPlaceholder(text: "업무의 구체적인 과정과 배운 점을 남겨주세요!")
+        textView.setPlaceholder(text: Text.workDescriptionPlaceholder)
         return textView
     }()
     
@@ -120,6 +137,8 @@ final class WriteViewController: BaseViewController {
         self.setAbilityAddButtonAction()
         self.setAbilityCollectionView()
         self.setProjectButtonAction()
+        self.setDateButtonAction()
+        self.setCloseButtonAction()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -220,6 +239,51 @@ final class WriteViewController: BaseViewController {
             selectProjectBottomViewController.delegate = self
             self?.present(selectProjectBottomViewController, animated: true)
         }
+    }
+    
+    private func setDateButtonAction() {
+        self.dateButton.setAction { [weak self] in
+            let dateBottomViewController = SingleDayCalendarBottomSheetViewController()
+            dateBottomViewController.modalPresentationStyle = .overFullScreen
+            dateBottomViewController.modalTransitionStyle = .crossDissolve
+            dateBottomViewController.delegate = self
+            
+            dateBottomViewController.setCalenderInitialDate(self?.dateButton.date() ?? Date())
+            
+            self?.present(dateBottomViewController, animated: true)
+        }
+    }
+    
+    private func setCloseButtonAction() {
+        if let button = self.navigationBar.topItem?.leftBarButtonItem?.customView as? UIButton {
+            button.setAction { [weak self] in
+                let alert = UIAlertController(
+                    title: Text.closeTitle,
+                    message: Text.closeContent,
+                    preferredStyle: .alert
+                )
+                let continueAction = UIAlertAction(title: Text.continueTitle, style: .cancel) { _ in
+                    alert.dismiss(animated: true)
+                }
+                let cancelAction = UIAlertAction(title: Text.cancelTitle, style: .destructive) { _ in
+                    self?.dismiss(animated: true)
+                }
+                
+                alert.addAction(continueAction)
+                alert.addAction(cancelAction)
+                
+                self?.present(alert, animated: true)
+            }
+        }
+    }
+}
+
+// MARK: - Extension (UICollectionViewDelegateFlowLayout)
+
+extension WriteViewController: SingleDayCalendarBottomSheetDelegate {
+    func sendSelectedSingleDay(_ date: Date) {
+        print(date)
+        self.dateButton.setDate(date: date)
     }
 }
 
