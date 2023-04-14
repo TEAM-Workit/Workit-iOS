@@ -10,15 +10,6 @@
       }
     },
     {
-      "identity" : "horizoncalendar",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/TEAM-Workit/HorizonCalendar.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "5c8b19aee75750b8f06fff378cdbed3501ecf276"
-      }
-    },
-    {
       "identity" : "ohhttpstubs",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AliSoftware/OHHTTPStubs.git",

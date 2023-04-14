@@ -6,6 +6,7 @@ let project = Project.app(
     platform: .iOS,
     additionalTargets: [],
     dependencies: [
+        .external(name: "HorizonCalendar"),
         .project(target: "Data", path: "../Data"),
         .project(target: "DesignSystem", path: "../DesignSystem"),
         .project(target: "Global", path: "../Global"),
@@ -21,9 +22,7 @@ let project = Project.app(
         .remote(url: "https://github.com/ReactiveX/RxSwift.git",
                 requirement: .upToNextMinor(from: "6.5.0")),
         .remote(url: "https://github.com/RxSwiftCommunity/RxGesture",
-                requirement: .upToNextMajor(from: "4.0.0")),
-        .remote(url: "https://github.com/TEAM-Workit/HorizonCalendar.git",
-                requirement: .branch("main"))
+                requirement: .upToNextMajor(from: "4.0.0"))
     ],
     infoPlist: .file(path: "Plists/Info.plist")
 )
