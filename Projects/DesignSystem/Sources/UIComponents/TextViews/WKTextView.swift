@@ -32,12 +32,19 @@ public class WKTextView: UITextView {
     
     // MARK: Initializer
     
-    override init(frame: CGRect, textContainer: NSTextContainer?) {
-        super.init(frame: frame, textContainer: textContainer)
-        self.setDefaultStyle()
-        self.setActiveStyle()
-        self.setToolBar()
-        self.setDoneButtonAction()
+    public init(isEditable: Bool) {
+        super.init(frame: .zero, textContainer: nil)
+        
+        if isEditable {
+            self.setDefaultStyle()
+            self.setEditableStyle()
+            self.setActiveStyle()
+            self.setToolBar()
+            self.setDoneButtonAction()
+        } else {
+            self.setDefaultStyle()
+            self.setNoneEditableStyle()
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -76,12 +83,25 @@ extension WKTextView {
         self.textColor = .wkBlack
         self.font = .b1M
         self.autocorrectionType = .no
+    }
+    
+    private func setEditableStyle() {
         self.textContainerInset = .zero
         self.textContainer.lineFragmentPadding = 0
         self.contentInset = .init(top: 10, left: 12, bottom: 10, right: 12)
         self.verticalScrollIndicatorInsets.top = 10
         self.verticalScrollIndicatorInsets.bottom = 10
         self.verticalScrollIndicatorInsets.right = 4
+    }
+    
+    private func setNoneEditableStyle() {
+        self.isScrollEnabled = false
+        self.isEditable = false
+        self.inputAccessoryView = nil
+        
+        self.textContainerInset = .init(top: 10, left: 12, bottom: 10, right: 12)
+        self.textContainer.lineFragmentPadding = 0
+        self.contentInset = .zero
     }
     
     private func setActiveStyle() {

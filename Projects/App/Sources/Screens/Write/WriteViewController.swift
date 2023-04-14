@@ -103,7 +103,7 @@ final class WriteViewController: BaseViewController {
     }()
     
     private let workDescriptionTextView: WKTextView = {
-        let textView: WKTextView = WKTextView()
+        let textView: WKTextView = WKTextView(isEditable: true)
         textView.setPlaceholder(text: Text.workDescriptionPlaceholder)
         return textView
     }()
