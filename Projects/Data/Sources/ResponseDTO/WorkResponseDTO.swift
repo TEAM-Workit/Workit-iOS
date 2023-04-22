@@ -37,6 +37,30 @@ public struct WorkDTO: Decodable {
     let abilityInfos: [AbilityDTO]
 }
 
+public struct WorkDetailDTO: Decodable {
+    let workId: Int
+    let project: ProjectSimpleDTO
+    let date: String
+    let workTitle: String
+    let description: String
+    let abilities: [AbilityDTO]
+    
+    public func toDomain() -> WorkDetail {
+        return WorkDetail.init(
+            id: self.workId,
+            title: self.workTitle,
+            project: Project(title: self.project.projectTitle),
+            description: self.description,
+            date: self.date,
+            abilities: self.abilities.map { $0.toDomain() })
+    }
+    
+    public struct ProjectSimpleDTO: Decodable {
+        let projectId: Int
+        let projectTitle: String
+    }
+}
+
 public struct AbilityDTO: Decodable {
     let abilityId: Int
     let abilityName: String

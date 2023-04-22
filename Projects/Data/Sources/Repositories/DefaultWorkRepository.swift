@@ -26,4 +26,12 @@ public final class DefaultWorkRepository: WorkRepository {
             .compactMap { $0.data }
             .map { $0.toDomain() }
     }
+    
+    public func fetchWorkDetail(workId: Int, completion: @escaping (WorkDetail) -> Void) {
+        NetworkService.shared.work.fetchWorkDetail(workId: workId) { data in
+            if let workDetailDTO = data.data {
+                completion(workDetailDTO.toDomain())
+            }
+        }
+    }
 }
