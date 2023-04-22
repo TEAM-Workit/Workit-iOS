@@ -6,6 +6,7 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Data
 import DesignSystem
 import Domain
 import Global
@@ -15,6 +16,8 @@ import SnapKit
 
 // swiftlint:disable file_length
 
+/// 워킷 상세보기 View Controller
+/// - workId에 꼭 Id 넣어 주세요~
 final class WorkDetailViewController: BaseViewController {
     
     enum Text {
@@ -29,13 +32,6 @@ final class WorkDetailViewController: BaseViewController {
     }
     
     // MARK: - UIComponents
-    
-    private let navigationBar: WKNavigationBar = {
-        let navigationBar: WKNavigationBar = WKNavigationBar()
-        navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(customView: WKNavigationButton(image: Image.wkKebapA))
-        navigationBar.topItem?.leftBarButtonItem = UIBarButtonItem(customView: WKNavigationButton(image: Image.wkArrowBig))
-        return navigationBar
-    }()
     
     private let scrollView: UIScrollView = {
         let scrollView: UIScrollView = UIScrollView()
@@ -102,16 +98,18 @@ final class WorkDetailViewController: BaseViewController {
     
     // MARK: Properties
     
+    var workId: Int = -1
     private var softAbilityList: [WriteAbility] = []
     private var hardAbilityList: [WriteAbility] = []
     
-    private var dummyWorkData: Work = Work(
-        id: 1,
-        title: "데일리 지표 확인데일리 지표 확인데일리 지표 확인데일리 지표 확인데일리 지표 확인데일리 지표 확인",
-        project: Project(title: "솝텀 워킷 프로젝트"),
+    private var workRepository: WorkRepository = DefaultWorkRepository()
+    private var workDetailData: WorkDetail = WorkDetail(
+        id: -1,
+        title: "",
+        project: Project(title: ""),
         description: "",
-        date: "2022-11-13T00:00:00.000Z",
-        abilities: [Ability(id: 1, name: "데이터 분석을 통한 서비스 개선", type: "SOFT"), Ability(id: 2, name: "논리적인 커뮤니케이션 능력", type: "SOFT"), Ability(id: 2, name: "지표 분석을 통한 인사이트 도출", type: "HARD")]
+        date: "",
+        abilities: []
     )
     
     // MARK: View Life Cycle
@@ -119,24 +117,29 @@ final class WorkDetailViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.setNavigationBar()
         self.setBackButtonAction()
         self.setMenuButtonAction()
         self.setScrollView()
         self.setLayout()
         self.setAbilityCollectionView()
-        self.setData(workData: self.dummyWorkData)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.updateAbilityCollectionViewHeight()
+        self.fetchWorkDetail(workId: self.workId)
     }
     
     // MARK: Methods
     
+    private func setNavigationBar() {
+        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(customView: WKNavigationButton(image: Image.wkKebapA))
+        self.navigationController?.navigationBar.topItem?.leftBarButtonItem = UIBarButtonItem(customView: WKNavigationButton(image: Image.wkArrowBig))
+    }
+    
     private func setBackButtonAction() {
-        if let button = self.navigationBar.topItem?.leftBarButtonItem?.customView as? UIButton {
+        if let button = self.navigationController?.navigationBar.topItem?.leftBarButtonItem?.customView as? UIButton {
             button.setAction { [weak self] in
                 self?.navigationController?.popViewController(animated: true)
             }
@@ -144,7 +147,7 @@ final class WorkDetailViewController: BaseViewController {
     }
     
     private func setMenuButtonAction() {
-        if let button = self.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
+        if let button = self.navigationController?.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
             button.setAction { [weak self] in
                 let actionSheet = UIAlertController(
                     title: nil,
@@ -211,10 +214,10 @@ final class WorkDetailViewController: BaseViewController {
         )
     }
     
-    private func setData(workData: Work) {
+    private func setData(workData: WorkDetail) {
         self.projectTitleLabel.text = workData.project.title
         self.workTitleLabel.text = workData.title
-        self.dateLabel.text = workData.date.toDate(type: .full)?.toString(type: .simpleDot)
+        self.dateLabel.text = workData.date.toDate(type: .fullPlus)?.toString(type: .simpleDot)
         
         let abilities: ([WriteAbility], [WriteAbility]) = self.divideAbilities(abilities: workData.abilities)
         self.softAbilityList = abilities.0
@@ -228,6 +231,7 @@ final class WorkDetailViewController: BaseViewController {
         
         self.softAbilityCollectionView.reloadData()
         self.hardAbilityCollectionView.reloadData()
+        self.updateAbilityCollectionViewHeight()
     }
     
     private func updateAbilityCollectionViewHeight() {
@@ -375,9 +379,9 @@ extension WorkDetailViewController: UIScrollViewDelegate {
         let limitOffset: CGFloat = self.workTitleLabel.frame.minY
         
         if scrollView.contentOffset.y <= limitOffset {
-            self.navigationBar.topItem?.title = ""
+            self.navigationController?.navigationBar.topItem?.title = ""
         } else {
-            self.navigationBar.topItem?.title = self.workTitleLabel.text
+            self.navigationController?.navigationBar.topItem?.title = self.workTitleLabel.text
         }
      }
 }
@@ -385,6 +389,13 @@ extension WorkDetailViewController: UIScrollViewDelegate {
 // MARK: - Network
 
 extension WorkDetailViewController {
+    private func fetchWorkDetail(workId: Int) {
+        workRepository.fetchWorkDetail(workId: workId) { workDetail in
+            self.workDetailData = workDetail
+            self.setData(workData: self.workDetailData)
+        }
+    }
+    
     private func requestRemoveWork() {
         debugPrint("삭제 request")
     }
@@ -394,7 +405,7 @@ extension WorkDetailViewController {
 
 extension WorkDetailViewController {
     private func setSubviews() {
-        self.view.addSubviews([navigationBar, scrollView])
+        self.view.addSubview(scrollView)
         self.scrollView.addSubview(contentView)
         self.contentView.addSubviews([
             projectTitleLabel, workTitleLabel,
@@ -406,18 +417,14 @@ extension WorkDetailViewController {
     }
     
     private func setBackgroundLayout() {
-        self.navigationBar.snp.makeConstraints { make in
-            make.top.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
-        }
-        
         self.scrollView.snp.makeConstraints { make in
-            make.top.equalTo(self.navigationBar.snp.bottom)
-            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalTo(self.view.safeAreaLayoutGuide)
+            make.leading.trailing.bottom.equalTo(self.view.safeAreaLayoutGuide)
         }
         
         self.contentView.snp.makeConstraints { make in
             make.width.equalToSuperview()
-            make.centerX.top.bottom.equalToSuperview()
+            make.leading.trailing.top.bottom.equalToSuperview()
         }
     }
     

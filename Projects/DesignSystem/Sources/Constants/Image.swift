@@ -41,4 +41,6 @@ public enum Image {
     public static let wkOnboarding1 = Assets.wkOnboarding1.image
     public static let wkOnboarding2 = Assets.wkOnboarding2.image
     public static let wkOnboarding3 = Assets.wkOnboarding3.image
+    public static let wkUncheck = Assets.wkUncheck.image
+    public static let wkCheck = Assets.wkCheck.image
 }
