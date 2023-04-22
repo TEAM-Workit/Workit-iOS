@@ -180,62 +180,14 @@ final class ProjectManagementViewController: BaseViewController, View {
                 cell.setProject(itemIdentifier)
                 cell.editButton.rx.tap
                     .bind(onNext: {
-                        let sheetReactor = ProjectManagementAlertReactor(projectID: 0)
-                        let sheetController = AlertController<ProjectManagementAlertAction>(
-                            reactor: sheetReactor,
-                            preferredStyle: .actionSheet
-                        )
-                        self.present(sheetController, animated: true, completion: nil)
-                        
-                        sheetController.rx.actionSelected
-                            .subscribe(onNext: { action in
-                                switch action {
-                                case .modify:
-                                    let alert = UIAlertController(
-                                        title: Text.modifyAlertTitle,
-                                        message: nil,
-                                        preferredStyle: .alert)
-                                    
-                                    alert.addAction(UIAlertAction(title: Text.cancel, style: .cancel))
-                                    alert.addAction(UIAlertAction(title: Text.confirm, style: .default) { _ in
-                                        if let projectName = alert.textFields?[0].text {
-                                            self.modifyConfirmSubject.onNext((projectName, self.selectedProjectId))
-                                        }
-                                    })
-                                    alert.addTextField { textfield in
-                                        guard let index = self.reactor?.currentState.projectList.firstIndex(where: { item in
-                                            item.id == itemIdentifier.id
-                                        }) else { return }
-                                        textfield.text = self.reactor?.currentState.projectList[index].title
-                                    }
-                                    
-                                    self.present(alert, animated: true, completion: nil)
-                                case .delete:
-                                    let alert = UIAlertController(title: Text.deleteAlertTitle,
-                                                                  message: Text.deleteAlertDescription,
-                                                                  preferredStyle: .alert)
-                                    
-                                    alert.addAction(UIAlertAction(title: Text.cancel, style: .cancel))
-                                    alert.addAction(UIAlertAction(title: Text.confirm, style: .default) { _ in
-                                        self.deleteItemToDataSource(with: itemIdentifier)
-                                        self.deleteConfirmSubject.onNext(self.selectedProjectId)
-                                    })
-                                    
-                                    self.present(alert, animated: true, completion: nil)
-                                case .cancel:
-                                    break
-                                }
-                            })
-                            .disposed(by: self.disposeBag)
-                            
+                        self.bindPopup(itemIdentifier: itemIdentifier)
                     })
                     .disposed(by: self.disposeBag)
                 
                 cell.rx.deleteButtonDelegate
                     .asObservable()
                     .withUnretained(self)
-                    .bind(onNext: { owner, projectId in
-//                        print(projectId, "프로젝트 아이디")
+                    .bind(onNext: { _, projectId in
                         self.selectedProjectId = projectId
                     })
                     .disposed(by: self.disposeBag)
@@ -245,6 +197,7 @@ final class ProjectManagementViewController: BaseViewController, View {
         let headerRegistration = UICollectionView.SupplementaryRegistration
         <ProjectHeaderReusableView>(elementKind: Text.headerIdentifier) { supplementaryView, _, indexPath in
             supplementaryView.title.text = Section.allCases[indexPath.section].title
+            supplementaryView.backgroundColor = .wkWhite
         }
         
         self.dataSource.supplementaryViewProvider = { (_, _, indexPath) -> UICollectionReusableView in
@@ -278,5 +231,54 @@ final class ProjectManagementViewController: BaseViewController, View {
         snapshot.deleteItems([identifier])
         dataSource.apply(snapshot)
     }
+    
+    private func bindPopup(itemIdentifier: Project) {
+        let sheetReactor = ProjectManagementAlertReactor(projectID: 0)
+        let sheetController = AlertController<ProjectManagementAlertAction>(
+            reactor: sheetReactor,
+            preferredStyle: .actionSheet
+        )
+        self.present(sheetController, animated: true, completion: nil)
+        
+        sheetController.rx.actionSelected
+            .subscribe(onNext: { action in
+                switch action {
+                case .modify:
+                    let alert = UIAlertController(
+                        title: Text.modifyAlertTitle,
+                        message: nil,
+                        preferredStyle: .alert)
+                    
+                    alert.addAction(UIAlertAction(title: Text.cancel, style: .cancel))
+                    alert.addAction(UIAlertAction(title: Text.confirm, style: .default) { _ in
+                        if let projectName = alert.textFields?[0].text {
+                            self.modifyConfirmSubject.onNext((projectName, self.selectedProjectId))
+                        }
+                    })
+                    alert.addTextField { textfield in
+                        guard let index = self.reactor?.currentState.projectList.firstIndex(where: { item in
+                            item.id == itemIdentifier.id
+                        }) else { return }
+                        textfield.text = self.reactor?.currentState.projectList[index].title
+                    }
+                    
+                    self.present(alert, animated: true, completion: nil)
+                case .delete:
+                    let alert = UIAlertController(title: Text.deleteAlertTitle,
+                                                  message: Text.deleteAlertDescription,
+                                                  preferredStyle: .alert)
+                    
+                    alert.addAction(UIAlertAction(title: Text.cancel, style: .cancel))
+                    alert.addAction(UIAlertAction(title: Text.confirm, style: .default) { _ in
+                        self.deleteItemToDataSource(with: itemIdentifier)
+                        self.deleteConfirmSubject.onNext(self.selectedProjectId)
+                    })
+                    
+                    self.present(alert, animated: true, completion: nil)
+                case .cancel:
+                    break
+                }
+            })
+            .disposed(by: self.disposeBag)
+    }
 }
-

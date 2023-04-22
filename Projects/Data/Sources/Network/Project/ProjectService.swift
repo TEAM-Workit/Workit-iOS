@@ -24,7 +24,7 @@ public protocol ProjectService {
 public final class DefaultProjectService: ProjectService {
     public func createProject(request: ProjectRequestDTO) -> Observable<BaseResponseType<ProjectResponseDTO>> {
         return RxAlamofire.requestDecodable(ProjectRouter.createProject(request: request))
-            .map { (response, data) in
+            .map { (_, data) in
                 return data
             }
             .catch { error in
@@ -44,7 +44,7 @@ public final class DefaultProjectService: ProjectService {
     
     public func modifyProject(id: Int, request: ProjectRequestDTO) -> Observable<BaseResponseType<ProjectResponseDTO>> {
         return RxAlamofire.requestDecodable(ProjectRouter.modifyProject(projectId: id, request: request))
-            .map { (response, data) in
+            .map { (_, data) in
                 return data
             }.catch { error in
                 return Observable.error(error)

@@ -38,4 +38,3 @@ public final class DefaultProjectRepository: ProjectRepository {
             .compactMap { $0.status }
     }
 }
-
