@@ -54,6 +54,7 @@ final class WithdrawalReasonView: UIView {
         textView.makeRounded(radius: 5)
         textView.layer.borderColor = UIColor.wkBlack15.cgColor
         textView.isHidden = true
+        textView.contentInset = .init(top: 10, left: 12, bottom: 10, right: 12)
         return textView
     }()
     
