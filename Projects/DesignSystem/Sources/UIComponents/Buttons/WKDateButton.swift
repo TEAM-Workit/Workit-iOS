@@ -123,7 +123,7 @@ public final class WKDateButton: UIView {
         self.toDate = toDate
         if fromDate == nil && toDate == nil {
             /// 날짜 둘다 없는 경우
-            self.dateLabel.text = "날짜선택"
+            self.dateLabel.text = "기간 설정"
         } else if toDate == nil, let fromDate = fromDate {
             /// 날짜 단일인 경우
             self.dateLabel.text = "\(fromDate.toString(type: .dot))"
