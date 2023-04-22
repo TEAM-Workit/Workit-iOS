@@ -73,3 +73,4 @@ open class AlertReactor<AlertAction: AlertActionType>: Reactor {
     return state
   }
 }
+// swiftlint:enable all
