@@ -7,11 +7,11 @@
 //
 
 import Domain
+import Foundation
 
 import RxSwift
 
 public final class DefaultProjectRepository: ProjectRepository {
-    
     public init() { }
     
     public func createProject(title: String) -> Observable<Project> {
@@ -28,8 +28,8 @@ public final class DefaultProjectRepository: ProjectRepository {
             }
     }
     
-    public func fetchProjectsDetail(id: Int) -> Observable<[Work]> {
-        return NetworkService.shared.project.fetchProjectsDetail(id: id)
+    public func fetchProjectsDetail(id: Int, startDate: Date?, endDate: Date?) -> Observable<[Work]> {
+        return NetworkService.shared.project.fetchProjectsDetail(id: id, startDate: startDate, endDate: endDate)
             .compactMap { $0.data }
             .map { $0.toDomain() }
     }
