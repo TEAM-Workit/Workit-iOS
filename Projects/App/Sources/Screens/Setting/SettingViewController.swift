@@ -6,6 +6,8 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Data
+import Domain
 import DesignSystem
 import Global
 import UIKit
@@ -115,7 +117,9 @@ extension SettingViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch Setting(rawValue: indexPath.row) {
         case .project:
-            let projectViewController = ProjectCreateViewController()
+            let projectViewController = ProjectManagementViewController()
+            let useCase = DefaultProjectUseCase(projectRepository: DefaultProjectRepository())
+            projectViewController.reactor = ProjectManagementReactor(projectUseCase: useCase)
             self.navigationController?.pushViewController(projectViewController, animated: true)
             return
         case .service:

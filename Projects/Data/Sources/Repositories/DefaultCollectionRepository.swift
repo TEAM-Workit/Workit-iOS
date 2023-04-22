@@ -19,7 +19,7 @@ public final class DefaultCollectionRepository: CollectionRepository {
         return NetworkService.shared.collection.fetchProjects()
             .compactMap { $0.data }
             .map { libraryItems in
-                return libraryItems.map { $0.toDomain() }
+                return libraryItems.map { $0.toLibraryDomain() }
             }
     }
     
