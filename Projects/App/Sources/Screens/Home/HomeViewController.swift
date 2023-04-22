@@ -219,7 +219,7 @@ final class HomeViewController: BaseViewController, View {
                     let cell: WKProjectCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
                     let workData: WKCellModel = WKCellModel(
                         projectTitle: workItem.project.title,
-                        date: workItem.date.toDate(type: .dot) ?? Date(),
+                        date: workItem.date.toDate(type: .full) ?? Date(),
                         title: workItem.title,
                         description: workItem.description,
                         firstTag: workItem.firstAbilityTag?.name ?? "",
