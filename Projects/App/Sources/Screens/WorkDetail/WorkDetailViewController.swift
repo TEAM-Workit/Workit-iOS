@@ -6,6 +6,7 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Data
 import DesignSystem
 import Domain
 import Global
@@ -105,6 +106,10 @@ final class WorkDetailViewController: BaseViewController {
     private var softAbilityList: [WriteAbility] = []
     private var hardAbilityList: [WriteAbility] = []
     
+    private var workRepository: WorkRepository = DefaultWorkRepository()
+    private var workDetailData: WorkDetail = WorkDetail(
+        id: 4,
+        title: "",
         project: Project(title: "솝텀 워킷 프로젝트"),
         description: "",
         date: "2022-11-13T00:00:00.000Z",
@@ -121,13 +126,12 @@ final class WorkDetailViewController: BaseViewController {
         self.setScrollView()
         self.setLayout()
         self.setAbilityCollectionView()
-        self.setData(workData: self.dummyWorkData)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.updateAbilityCollectionViewHeight()
+        self.fetchWorkDetail(workId: self.workDetailData.id)
     }
     
     // MARK: Methods
@@ -208,10 +212,10 @@ final class WorkDetailViewController: BaseViewController {
         )
     }
     
-    private func setData(workData: Work) {
+    private func setData(workData: WorkDetail) {
         self.projectTitleLabel.text = workData.project.title
         self.workTitleLabel.text = workData.title
-        self.dateLabel.text = workData.date.toDate(type: .full)?.toString(type: .simpleDot)
+        self.dateLabel.text = workData.date.toDate(type: .fullPlus)?.toString(type: .simpleDot)
         
         let abilities: ([WriteAbility], [WriteAbility]) = self.divideAbilities(abilities: workData.abilities)
         self.softAbilityList = abilities.0
@@ -225,6 +229,7 @@ final class WorkDetailViewController: BaseViewController {
         
         self.softAbilityCollectionView.reloadData()
         self.hardAbilityCollectionView.reloadData()
+        self.updateAbilityCollectionViewHeight()
     }
     
     private func updateAbilityCollectionViewHeight() {
@@ -382,6 +387,13 @@ extension WorkDetailViewController: UIScrollViewDelegate {
 // MARK: - Network
 
 extension WorkDetailViewController {
+    private func fetchWorkDetail(workId: Int) {
+        workRepository.fetchWorkDetail(workId: workId) { workDetail in
+            self.workDetailData = workDetail
+            self.setData(workData: self.workDetailData)
+        }
+    }
+    
     private func requestRemoveWork() {
         debugPrint("삭제 request")
     }
