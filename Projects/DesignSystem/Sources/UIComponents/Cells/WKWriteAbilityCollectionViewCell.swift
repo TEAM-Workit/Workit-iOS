@@ -76,7 +76,7 @@ public final class WKWriteAbilityCollectionViewCell: UICollectionViewCell {
         self.titleLabel.text = data.abilityName
         self.titleLabel.sizeToFit()
         
-        if data.abilityType == "HARD" {
+        if data.abilityType == "HARD" || data.abilityType == "hard" {
             self.setHardUI()
         } else {
             self.setSoftUI()
