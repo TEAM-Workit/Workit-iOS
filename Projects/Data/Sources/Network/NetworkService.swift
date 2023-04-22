@@ -15,4 +15,5 @@ public final class NetworkService {
     public let collection: CollectionService = DefaultCollectionService()
     public let work: WorkService = DefaultWorkService()
     public let user: UserService = DefaultUserService()
+    public let project: ProjectService = DefaultProjectService()
 }
