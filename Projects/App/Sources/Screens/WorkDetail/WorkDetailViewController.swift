@@ -105,9 +105,6 @@ final class WorkDetailViewController: BaseViewController {
     private var softAbilityList: [WriteAbility] = []
     private var hardAbilityList: [WriteAbility] = []
     
-    private var dummyWorkData: Work = Work(
-        id: 1,
-        title: "데일리 지표 확인데일리 지표 확인데일리 지표 확인데일리 지표 확인데일리 지표 확인데일리 지표 확인",
         project: Project(title: "솝텀 워킷 프로젝트"),
         description: "",
         date: "2022-11-13T00:00:00.000Z",
