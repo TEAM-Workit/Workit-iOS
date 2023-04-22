@@ -31,13 +31,6 @@ final class WorkDetailViewController: BaseViewController {
     
     // MARK: - UIComponents
     
-    private let navigationBar: WKNavigationBar = {
-        let navigationBar: WKNavigationBar = WKNavigationBar()
-        navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(customView: WKNavigationButton(image: Image.wkKebapA))
-        navigationBar.topItem?.leftBarButtonItem = UIBarButtonItem(customView: WKNavigationButton(image: Image.wkArrowBig))
-        return navigationBar
-    }()
-    
     private let scrollView: UIScrollView = {
         let scrollView: UIScrollView = UIScrollView()
         return scrollView
@@ -121,6 +114,7 @@ final class WorkDetailViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.setNavigationBar()
         self.setBackButtonAction()
         self.setMenuButtonAction()
         self.setScrollView()
@@ -136,8 +130,13 @@ final class WorkDetailViewController: BaseViewController {
     
     // MARK: Methods
     
+    private func setNavigationBar() {
+        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(customView: WKNavigationButton(image: Image.wkKebapA))
+        self.navigationController?.navigationBar.topItem?.leftBarButtonItem = UIBarButtonItem(customView: WKNavigationButton(image: Image.wkArrowBig))
+    }
+    
     private func setBackButtonAction() {
-        if let button = self.navigationBar.topItem?.leftBarButtonItem?.customView as? UIButton {
+        if let button = self.navigationController?.navigationBar.topItem?.leftBarButtonItem?.customView as? UIButton {
             button.setAction { [weak self] in
                 self?.navigationController?.popViewController(animated: true)
             }
@@ -145,7 +144,7 @@ final class WorkDetailViewController: BaseViewController {
     }
     
     private func setMenuButtonAction() {
-        if let button = self.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
+        if let button = self.navigationController?.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
             button.setAction { [weak self] in
                 let actionSheet = UIAlertController(
                     title: nil,
@@ -377,9 +376,9 @@ extension WorkDetailViewController: UIScrollViewDelegate {
         let limitOffset: CGFloat = self.workTitleLabel.frame.minY
         
         if scrollView.contentOffset.y <= limitOffset {
-            self.navigationBar.topItem?.title = ""
+            self.navigationController?.navigationBar.topItem?.title = ""
         } else {
-            self.navigationBar.topItem?.title = self.workTitleLabel.text
+            self.navigationController?.navigationBar.topItem?.title = self.workTitleLabel.text
         }
      }
 }
@@ -403,7 +402,7 @@ extension WorkDetailViewController {
 
 extension WorkDetailViewController {
     private func setSubviews() {
-        self.view.addSubviews([navigationBar, scrollView])
+        self.view.addSubview(scrollView)
         self.scrollView.addSubview(contentView)
         self.contentView.addSubviews([
             projectTitleLabel, workTitleLabel,
@@ -415,18 +414,14 @@ extension WorkDetailViewController {
     }
     
     private func setBackgroundLayout() {
-        self.navigationBar.snp.makeConstraints { make in
-            make.top.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
-        }
-        
         self.scrollView.snp.makeConstraints { make in
-            make.top.equalTo(self.navigationBar.snp.bottom)
-            make.leading.trailing.bottom.equalToSuperview()
+            make.top.equalTo(self.view.safeAreaLayoutGuide)
+            make.leading.trailing.bottom.equalTo(self.view.safeAreaLayoutGuide)
         }
         
         self.contentView.snp.makeConstraints { make in
             make.width.equalToSuperview()
-            make.centerX.top.bottom.equalToSuperview()
+            make.leading.trailing.top.bottom.equalToSuperview()
         }
     }
     
