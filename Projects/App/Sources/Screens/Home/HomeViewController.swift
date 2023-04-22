@@ -263,8 +263,11 @@ extension HomeViewController: MyWorkitHeaderViewDelegate {
 }
 
 extension HomeViewController: CalendarBottomSheetDelegate {
-    func sendSelectedDate(start: Date, end: Date) {
-        dateChangePublisher.onNext((start, end))
+    func sendSelectedDate(start: Date?, end: Date?) {
+        if let start = start,
+           let end = end {
+            dateChangePublisher.onNext((start, end))
+        }
     }
 }
 
