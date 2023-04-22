@@ -16,6 +16,8 @@ import SnapKit
 
 // swiftlint:disable file_length
 
+/// 워킷 상세보기 View Controller
+/// - workId에 꼭 Id 넣어 주세요~
 final class WorkDetailViewController: BaseViewController {
     
     enum Text {
@@ -96,6 +98,7 @@ final class WorkDetailViewController: BaseViewController {
     
     // MARK: Properties
     
+    var workId: Int = -1
     private var softAbilityList: [WriteAbility] = []
     private var hardAbilityList: [WriteAbility] = []
     
@@ -125,7 +128,7 @@ final class WorkDetailViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.fetchWorkDetail(workId: self.workDetailData.id)
+        self.fetchWorkDetail(workId: self.workId)
     }
     
     // MARK: Methods
