@@ -101,12 +101,12 @@ final class WorkDetailViewController: BaseViewController {
     
     private var workRepository: WorkRepository = DefaultWorkRepository()
     private var workDetailData: WorkDetail = WorkDetail(
-        id: 4,
+        id: -1,
         title: "",
-        project: Project(title: "솝텀 워킷 프로젝트"),
+        project: Project(title: ""),
         description: "",
-        date: "2022-11-13T00:00:00.000Z",
-        abilities: [Ability(id: 1, name: "데이터 분석을 통한 서비스 개선", type: "SOFT"), Ability(id: 2, name: "논리적인 커뮤니케이션 능력", type: "SOFT"), Ability(id: 2, name: "지표 분석을 통한 인사이트 도출", type: "HARD")]
+        date: "",
+        abilities: []
     )
     
     // MARK: View Life Cycle
