@@ -14,6 +14,7 @@ import Alamofire
 public enum ProjectRouter {
     case createProject(request: ProjectRequestDTO)
     case fetchProjects
+    case fetchProejctsDetail(projectId: Int)
     case deleteProject(projectId: Int)
     case modifyProject(projectId: Int, request: ProjectRequestDTO)
 }
@@ -25,6 +26,8 @@ extension ProjectRouter: BaseRequestConvertible {
         case .createProject:
             return .post
         case .fetchProjects:
+            return .get
+        case .fetchProejctsDetail:
             return .get
         case .deleteProject:
             return .delete
@@ -39,6 +42,8 @@ extension ProjectRouter: BaseRequestConvertible {
             return URLConstant.project
         case .fetchProjects:
             return URLConstant.project + "/all"
+        case let .fetchProejctsDetail(projectId):
+            return URLConstant.project + "/\(projectId)" + "/collection"
         case let .deleteProject(projectId):
             return URLConstant.project + "/\(projectId)"
         case let .modifyProject(projectId, _):

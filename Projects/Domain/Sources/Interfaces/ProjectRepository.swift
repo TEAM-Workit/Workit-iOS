@@ -12,6 +12,7 @@ import RxSwift
 public protocol ProjectRepository {
     func createProject(title: String) -> Observable<Project>
     func fetchProjects() -> Observable<[Project]>
+    func fetchProjectsDetail(id: Int) -> Observable<[Work]>
     func deleteProject(id: Int) -> Observable<Int>
     func modifyProject(id: Int, title: String) -> Observable<Int>
 }
