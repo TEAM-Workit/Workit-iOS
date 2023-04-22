@@ -25,6 +25,7 @@ class ProjectHeaderReusableView: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        self.setUI()
         self.setLayout()
     }
     
@@ -33,6 +34,10 @@ class ProjectHeaderReusableView: UICollectionReusableView {
     }
     
     // MARK: - Methods
+    
+    private func setUI() {
+        self.backgroundColor = .wkWhite
+    }
     
     private func setLayout() {
         self.addSubview(title)
