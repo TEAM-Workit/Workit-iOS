@@ -21,7 +21,6 @@ final class WithdrawalViewController: BaseViewController, View {
         static let navigationTitle: String = "회원탈퇴"
         static let withdrawTitle: String = "정말 떠나시는 건가요?"
         static let description: String = "지금 워킷을 떠나시면 워킷의 모든 기록들이 사라지게 돼요. 이전에 기록한 역량, 프로젝트별 기록은 더 이상 확인하실 수 없어요."
-      
     }
     
     private let navigationView = UIView()
@@ -54,7 +53,7 @@ final class WithdrawalViewController: BaseViewController, View {
     private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.text = Text.description
-        label.font = DesignSystemFontFamily.Suit.medium.font(size: 15)
+        label.font = DesignSystemFontFamily.Pretendard.medium.font(size: 16)
         label.textColor = .wkBlack85
         label.numberOfLines = 0
         return label
@@ -62,11 +61,11 @@ final class WithdrawalViewController: BaseViewController, View {
     
     private let withDrawalReasonView = WithdrawalReasonView()
     private let withDrawalBottomView = WithdrawalBottomView()
-   
+    
     init() {
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -75,6 +74,67 @@ final class WithdrawalViewController: BaseViewController, View {
         super.viewDidLoad()
         
         self.setLayout()
+        self.addKeyboardObserver()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        self.removeKeyboardObserver()
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
+    private func addKeyboardObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.keyboardWillShow(_:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(self.keyboardWillHide(_:)),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+    
+    private func removeKeyboardObserver() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIResponder.keyboardWillShowNotification,
+            object: nibName
+        )
+        
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIResponder.keyboardWillHideNotification,
+            object: nibName
+        )
+    }
+    
+    @objc
+    func keyboardWillShow(_ notification: NSNotification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            self.scrollView.contentOffset.y = 200
+            UIView.animate(
+                withDuration: 0.3
+                , animations: {
+                    self.withDrawalBottomView.transform = CGAffineTransform(translationX: 0, y: -keyboardRectangle.height)
+                }
+            )
+        }
+    }
+    
+    @objc
+    func keyboardWillHide(_ notification: NSNotification) {
+        self.scrollView.contentOffset.y = 0
+        self.withDrawalBottomView.transform = .identity
     }
     
     func bind(reactor: WithdrawalReactor) {
@@ -86,6 +146,13 @@ final class WithdrawalViewController: BaseViewController, View {
         self.withDrawalBottomView.rx.agreeButtonDidTap
             .map { _ in Reactor.Action.agreeButtonTap }
             .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        self.scrollContentsView.rx.tapGesture
+            .withUnretained(self)
+            .bind { owner, _ in
+                owner.view.endEditing(true)
+            }
             .disposed(by: disposeBag)
     }
     
@@ -101,11 +168,11 @@ final class WithdrawalViewController: BaseViewController, View {
     }
     
     override func setLayout() {
-        self.view.addSubviews([navigationView, scrollContainerView])
+        self.view.addSubviews([navigationView, scrollContainerView, withDrawalBottomView])
         self.scrollContainerView.addSubviews([scrollView])
         self.scrollView.addSubviews([scrollContentsView])
         self.navigationView.addSubviews([navigationTitleLabel, closeButton])
-        self.scrollContentsView.addSubviews([titleLabel, descriptionLabel, withDrawalReasonView, withDrawalBottomView])
+        self.scrollContentsView.addSubviews([titleLabel, descriptionLabel, withDrawalReasonView])
         
         self.navigationView.snp.makeConstraints { make in
             make.top.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
@@ -114,7 +181,8 @@ final class WithdrawalViewController: BaseViewController, View {
         
         self.scrollContainerView.snp.makeConstraints { make in
             make.top.equalTo(self.navigationView.snp.bottom)
-            make.leading.bottom.trailing.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(self.withDrawalBottomView.snp.top)
         }
         
         self.scrollView.snp.makeConstraints { make in
