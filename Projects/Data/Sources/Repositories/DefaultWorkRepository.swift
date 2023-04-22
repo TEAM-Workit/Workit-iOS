@@ -27,7 +27,7 @@ public final class DefaultWorkRepository: WorkRepository {
             .map { $0.toDomain() }
     }
     
-    public func fetchWorkDetail(workId: Int, completion: @escaping (WorkDetail) -> (Void)) {
+    public func fetchWorkDetail(workId: Int, completion: @escaping (WorkDetail) -> ()) {
         NetworkService.shared.work.fetchWorkDetail(workId: workId) { data in
             if let workDetailDTO = data.data {
                 completion(workDetailDTO.toDomain())

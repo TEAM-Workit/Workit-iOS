@@ -15,7 +15,7 @@ import RxSwift
 public protocol WorkService {
     func fetchWorks() -> Observable<BaseResponseType<WorksResponseDTO>>
     func fetchWorksDate(start: Date, end: Date) -> Observable<BaseResponseType<WorksResponseDTO>>
-    func fetchWorkDetail(workId: Int, completion: @escaping (BaseResponseType<WorkDetailDTO>) -> (Void))
+    func fetchWorkDetail(workId: Int, completion: @escaping (BaseResponseType<WorkDetailDTO>) -> ())
 }
 
 public final class DefaultWorkService: WorkService {
@@ -30,7 +30,7 @@ public final class DefaultWorkService: WorkService {
             .expectingObject(ofType: BaseResponseType<WorksResponseDTO>.self)
     }
     
-    public func fetchWorkDetail(workId: Int, completion: @escaping (BaseResponseType<WorkDetailDTO>) -> (Void)) {
+    public func fetchWorkDetail(workId: Int, completion: @escaping (BaseResponseType<WorkDetailDTO>) -> ()) {
         AF.request(WorkRouter.fetchWorkDetail(workId: workId))
             .responseDecodable(of: BaseResponseType<WorkDetailDTO>.self) { response in
                 if let result = response.value {
