@@ -6,10 +6,18 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Domain
 import DesignSystem
 import UIKit
 
 import SnapKit
+import RxSwift
+import RxCocoa
+
+@objc
+protocol DeleteButtonDelegate: AnyObject {
+    @objc optional func deleteButtonTapped(_ button: UIButton, projectID: Int)
+}
 
 class ProjectListCollectionViewCell: UICollectionViewCell {
     
@@ -28,11 +36,18 @@ class ProjectListCollectionViewCell: UICollectionViewCell {
         return view
     }()
     
-    private let editButton: UIButton = {
+    lazy var editButton: UIButton = {
         let button = UIButton()
         button.setImage(Image.wkKebapB, for: .normal)
+        button.addTarget(self, action: #selector(deleteButtonTapped(sender:)), for: .touchUpInside)
         return button
     }()
+    
+    // MARK: - Properties
+    
+    weak var delegate: DeleteButtonDelegate?
+    var disposeBag = DisposeBag()
+    private var project: Project = Project(title: "")
     
     // MARK: - Initializer
     
@@ -73,4 +88,46 @@ class ProjectListCollectionViewCell: UICollectionViewCell {
         self.projectTitleView.text = text
     }
     
+    func setProject(_ project: Project) {
+        self.project = project
+    }
+    
+    @objc
+    private func deleteButtonTapped(sender: UIButton) {
+        delegate?.deleteButtonTapped!(sender, projectID: self.project.id)
+    }
+}
+
+class RxCollectionViewCellDelegateProxy: DelegateProxy<ProjectListCollectionViewCell, DeleteButtonDelegate>, DelegateProxyType, DeleteButtonDelegate {
+    
+    static func registerKnownImplementations() {
+        self.register { button in
+            RxCollectionViewCellDelegateProxy(parentObject: button,
+                                              delegateProxy: self)
+        }
+    }
+    
+    static func currentDelegate(for object: ProjectListCollectionViewCell) -> DeleteButtonDelegate? {
+        return object.delegate
+    }
+    
+    static func setCurrentDelegate(_ delegate: DeleteButtonDelegate?, to object: ProjectListCollectionViewCell) {
+        object.delegate = delegate
+    }
+        
+}
+
+extension Reactive where Base: ProjectListCollectionViewCell {
+    var delegate: DelegateProxy<ProjectListCollectionViewCell, DeleteButtonDelegate> {
+        return RxCollectionViewCellDelegateProxy.proxy(for: self.base)
+    }
+    
+    var deleteButtonDelegate: Observable<Int> {
+        return delegate
+            .methodInvoked(#selector(DeleteButtonDelegate.deleteButtonTapped(_:projectID:)))
+            .map({ parameters in
+                print(parameters)
+                return parameters[1] as? Int ?? 0
+            })
+    }
 }
