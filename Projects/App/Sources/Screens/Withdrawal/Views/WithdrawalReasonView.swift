@@ -65,11 +65,14 @@ final class WithdrawalReasonView: UIView {
         return stackView
     }()
     
+    private let disposeBag = DisposeBag()
+    
     init() {
         super.init(frame: .zero)
         
         self.setSelectButton()
         self.setLayout()
+        self.bind()
     }
     
     required init?(coder: NSCoder) {
@@ -78,6 +81,24 @@ final class WithdrawalReasonView: UIView {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.endEditing(true)
+    }
+    
+    private func bind() {
+        self.etcReasonTextView.rx.didBeginEditing
+            .withUnretained(self)
+            .bind { owner, _ in
+                owner.etcReasonTextView.layer.borderColor = UIColor.wkMainPurple.cgColor
+                owner.etcReasonTextView.layer.borderWidth = 2
+            }
+            .disposed(by: disposeBag)
+        
+        self.etcReasonTextView.rx.didEndEditing
+            .withUnretained(self)
+            .bind { owner, _ in
+                owner.etcReasonTextView.layer.borderColor = UIColor.wkBlack15.cgColor
+                owner.etcReasonTextView.layer.borderWidth = 1
+            }
+            .disposed(by: disposeBag)
     }
     
     private func setLayout() {
