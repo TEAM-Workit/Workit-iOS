@@ -6,6 +6,7 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Data
 import Domain
 import DesignSystem
 import UIKit
@@ -68,7 +69,6 @@ class ProjectViewController: BaseViewController, PageTabProtocol, View {
     public func bindState(reactor: ProjectReactor) {
         reactor.state
             .map { $0.projects }
-            .filter { !$0.isEmpty }
             .withUnretained(self)
             .bind { owner, projects in
                 owner.applySnapshot(record: projects)
@@ -119,6 +119,13 @@ class ProjectViewController: BaseViewController, PageTabProtocol, View {
 extension ProjectViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detailViewController = DetailViewController(previousView: .project)
+        detailViewController.reactor = DetailReactor(
+            projectUseCase: DefaultProjectUseCase(
+                projectRepository: DefaultProjectRepository()
+            ),
+            viewType: .project,
+            id: self.reactor?.currentState.projects[indexPath.row].id ?? 0
+        )
         self.navigationController?.pushViewController(detailViewController, animated: true)
     }
 }
