@@ -25,7 +25,6 @@ final class CalendarBottomSheetTopView: UIView {
         let label = UILabel()
         label.font = .h3M
         label.textColor = .wkBlack
-        label.text = "2020.20.20"
         return label
     }()
     
@@ -72,7 +71,10 @@ final class CalendarBottomSheetTopView: UIView {
         guard
             let startDate = startDate,
             let endDate = endDate
-        else { return }
+        else {
+            dateLabel.text = ""
+            return
+        }
         dateLabel.text = "\(startDate.toString(type: .fullYearDot)) - \(endDate.toString(type: .fullYearDot))"
     }
     
