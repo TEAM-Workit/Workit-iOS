@@ -34,6 +34,12 @@ class DetailViewController: BaseViewController, View {
     
     private let dateButton = WKDateButton(fromDate: Date())
     private var listCollectionView: ListCollectionView = ListCollectionView()
+    private let emptyView: WKEmptyView = {
+        let emptyView = WKEmptyView()
+        emptyView.isHidden = true
+        emptyView.setImage(image: Image.wkEmpty2)
+        return emptyView
+    }()
     
     // MARK: - Properties
     
@@ -110,6 +116,7 @@ class DetailViewController: BaseViewController, View {
             .bind { owner, works in
                 owner.setDataSource()
                 owner.applySnapshot(workit: works)
+                owner.emptyView.isHidden = !works.isEmpty
             }
             .disposed(by: disposeBag)
     }
@@ -121,7 +128,7 @@ class DetailViewController: BaseViewController, View {
     }
     
     override func setLayout() {
-        self.view.addSubviews([dateButton, listCollectionView])
+        self.view.addSubviews([dateButton, listCollectionView, emptyView])
         
         self.dateButton.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide)
@@ -131,6 +138,10 @@ class DetailViewController: BaseViewController, View {
         self.listCollectionView.snp.makeConstraints { make in
             make.top.equalTo(dateButton.snp.bottom).offset(12)
             make.leading.bottom.trailing.equalToSuperview()
+        }
+        
+        self.emptyView.snp.makeConstraints { make in
+            make.centerX.centerY.equalToSuperview()
         }
     }
     
