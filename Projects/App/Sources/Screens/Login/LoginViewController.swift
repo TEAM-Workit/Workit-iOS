@@ -8,6 +8,7 @@
 
 import DesignSystem
 import Domain
+import Global
 import UIKit
 
 import RxKakaoSDKUser
@@ -128,7 +129,7 @@ final class LoginViewController: BaseViewController {
                         socialId: oauthToken.accessToken))
                 }
                 .bind(onNext: { authToken in
-                    print("🤍", authToken)
+                    UserDefaultsManager.shared.accessToken = authToken.accessToken
                 })
                 .disposed(by: disposeBag)
         } else {
@@ -141,7 +142,7 @@ final class LoginViewController: BaseViewController {
                         socialId: oauthToken.accessToken))
                 }
                 .bind(onNext: { authToken in
-                    print("🤍🤍", authToken)
+                    UserDefaultsManager.shared.accessToken = authToken.accessToken
                 })
                 .disposed(by: disposeBag)
         }
