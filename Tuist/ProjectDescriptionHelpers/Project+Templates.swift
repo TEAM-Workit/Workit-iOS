@@ -75,13 +75,7 @@ extension Project {
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             scripts: [.swiftlint],
-            dependencies: dependencies + [
-                .package(product: "ReactorKit"),
-                .package(product: "SnapKit"),
-                .package(product: "RxAlamofire"),
-                .package(product: "RxCocoa"),
-                .package(product: "RxGesture")
-            ]
+            dependencies: dependencies + []
         )
         
         let testTarget = Target(

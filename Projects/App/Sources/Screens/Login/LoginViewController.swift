@@ -9,7 +9,10 @@
 import DesignSystem
 import UIKit
 
+import RxKakaoSDKUser
+import KakaoSDKUser
 import ReactorKit
+import RxSwift
 import SnapKit
 
 final class LoginViewController: BaseViewController {
@@ -76,14 +79,17 @@ final class LoginViewController: BaseViewController {
         stackView.axis = .vertical
         return stackView
     }()
+    
+    private let disposeBag = DisposeBag()
 
     // MARK: - Initializer
 
     init() {
         super.init(nibName: nil, bundle: nil)
 
-        setLayout()
-        setStackView()
+        self.setLayout()
+        self.setStackView()
+        self.bindAction()
     }
 
     required init?(coder: NSCoder) {
@@ -95,8 +101,42 @@ final class LoginViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
+    private func bindAction() {
+        kakaoLoginButton.rx.tap
+            .withUnretained(self)
+            .bind { owner, _ in
+                owner.kakaoLogin()
+            }
+            .disposed(by: disposeBag)
+    }
 
     // MARK: - Methods
+    
+    private func kakaoLogin() {
+        if UserApi.isKakaoTalkLoginAvailable() {
+            /// 카카오톡으로 로그인
+            UserApi.shared.rx.loginWithKakaoTalk()
+                .subscribe(onNext: { (oauthToken) in
+                    print("loginWithKakaoTalk() success.")
+                    
+                    _ = oauthToken
+                }, onError: {error in
+                    print(error)
+                })
+            .disposed(by: disposeBag)
+        } else {
+            /// 카카오 계정으로 로그인
+            UserApi.shared.rx.loginWithKakaoAccount()
+                .subscribe(onNext: { (oauthToken) in
+                    print("loginWithKakaoAccount() success.")
+                    _ = oauthToken.accessToken
+                }, onError: {error in
+                    print(error)
+                })
+                .disposed(by: disposeBag)
+        }
+    }
 
     override func setLayout() {
         self.view.addSubviews([self.logoStackView, self.loginButtonStackView])
