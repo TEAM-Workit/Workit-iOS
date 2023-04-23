@@ -7,6 +7,7 @@
 //
 
 import DesignSystem
+import Domain
 import UIKit
 
 import RxKakaoSDKUser
@@ -16,6 +17,8 @@ import RxSwift
 import SnapKit
 
 final class LoginViewController: BaseViewController {
+    
+    private let authUseCase: AuthUseCase
 
     enum Number {
         static let deviceHeight: CGFloat = UIScreen.main.bounds.height
@@ -84,7 +87,8 @@ final class LoginViewController: BaseViewController {
 
     // MARK: - Initializer
 
-    init() {
+    init(authUseCase: AuthUseCase) {
+        self.authUseCase = authUseCase
         super.init(nibName: nil, bundle: nil)
 
         self.setLayout()
@@ -117,22 +121,27 @@ final class LoginViewController: BaseViewController {
         if UserApi.isKakaoTalkLoginAvailable() {
             /// 카카오톡으로 로그인
             UserApi.shared.rx.loginWithKakaoTalk()
-                .subscribe(onNext: { (oauthToken) in
-                    print("loginWithKakaoTalk() success.")
-                    
-                    _ = oauthToken
-                }, onError: {error in
-                    print(error)
+                .withUnretained(self)
+                .flatMap { owner, oauthToken in
+                    owner.authUseCase.postSocialLogin(requestValue: PostSocialLoginRequestValue(
+                        socialType: .KAKAO,
+                        socialId: oauthToken.accessToken))
+                }
+                .bind(onNext: { authToken in
+                    print("🤍", authToken)
                 })
-            .disposed(by: disposeBag)
+                .disposed(by: disposeBag)
         } else {
-            /// 카카오 계정으로 로그인
+            /// 카카오 계정으로 로그인 (카카오톡 없는 경우)
             UserApi.shared.rx.loginWithKakaoAccount()
-                .subscribe(onNext: { (oauthToken) in
-                    print("loginWithKakaoAccount() success.")
-                    _ = oauthToken.accessToken
-                }, onError: {error in
-                    print(error)
+                .withUnretained(self)
+                .flatMap { owner, oauthToken in
+                    owner.authUseCase.postSocialLogin(requestValue: PostSocialLoginRequestValue(
+                        socialType: .KAKAO,
+                        socialId: oauthToken.accessToken))
+                }
+                .bind(onNext: { authToken in
+                    print("🤍🤍", authToken)
                 })
                 .disposed(by: disposeBag)
         }
