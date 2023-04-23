@@ -7,12 +7,19 @@
 //
 
 import DesignSystem
+import Domain
+import Global
 import UIKit
 
+import RxKakaoSDKUser
+import KakaoSDKUser
 import ReactorKit
+import RxSwift
 import SnapKit
 
 final class LoginViewController: BaseViewController {
+    
+    private let authUseCase: AuthUseCase
 
     enum Number {
         static let deviceHeight: CGFloat = UIScreen.main.bounds.height
@@ -76,14 +83,18 @@ final class LoginViewController: BaseViewController {
         stackView.axis = .vertical
         return stackView
     }()
+    
+    private let disposeBag = DisposeBag()
 
     // MARK: - Initializer
 
-    init() {
+    init(authUseCase: AuthUseCase) {
+        self.authUseCase = authUseCase
         super.init(nibName: nil, bundle: nil)
 
-        setLayout()
-        setStackView()
+        self.setLayout()
+        self.setStackView()
+        self.bindAction()
     }
 
     required init?(coder: NSCoder) {
@@ -95,8 +106,47 @@ final class LoginViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
+    private func bindAction() {
+        kakaoLoginButton.rx.tap
+            .withUnretained(self)
+            .bind { owner, _ in
+                owner.kakaoLogin()
+            }
+            .disposed(by: disposeBag)
+    }
 
     // MARK: - Methods
+    
+    private func kakaoLogin() {
+        if UserApi.isKakaoTalkLoginAvailable() {
+            /// 카카오톡으로 로그인
+            UserApi.shared.rx.loginWithKakaoTalk()
+                .withUnretained(self)
+                .flatMap { owner, oauthToken in
+                    owner.authUseCase.postSocialLogin(requestValue: PostSocialLoginRequestValue(
+                        socialType: .KAKAO,
+                        socialId: oauthToken.accessToken))
+                }
+                .bind(onNext: { authToken in
+                    UserDefaultsManager.shared.accessToken = authToken.accessToken
+                })
+                .disposed(by: disposeBag)
+        } else {
+            /// 카카오 계정으로 로그인 (카카오톡 없는 경우)
+            UserApi.shared.rx.loginWithKakaoAccount()
+                .withUnretained(self)
+                .flatMap { owner, oauthToken in
+                    owner.authUseCase.postSocialLogin(requestValue: PostSocialLoginRequestValue(
+                        socialType: .KAKAO,
+                        socialId: oauthToken.accessToken))
+                }
+                .bind(onNext: { authToken in
+                    UserDefaultsManager.shared.accessToken = authToken.accessToken
+                })
+                .disposed(by: disposeBag)
+        }
+    }
 
     override func setLayout() {
         self.view.addSubviews([self.logoStackView, self.loginButtonStackView])

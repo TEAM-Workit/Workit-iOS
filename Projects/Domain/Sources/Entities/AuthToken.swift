@@ -7,7 +7,7 @@
 //
 
 public struct AuthToken {
-    let accessToken: String
+    public let accessToken: String
     
     public init(accessToken: String) {
         self.accessToken = accessToken
