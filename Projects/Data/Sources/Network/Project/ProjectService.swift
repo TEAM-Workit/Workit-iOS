@@ -17,6 +17,7 @@ import Dispatch
 public protocol ProjectService {
     func createProject(request: ProjectRequestDTO) -> Observable<BaseResponseType<ProjectResponseDTO>>
     func fetchProjects() -> Observable<BaseResponseType<[ProjectResponseDTO]>>
+    func fetchProjects(completion: @escaping (BaseResponseType<[ProjectResponseDTO]>) -> Void)
     func deleteProject(id: Int) -> Observable<BaseResponseType<Int>>
     func modifyProject(id: Int, request: ProjectRequestDTO) -> Observable<BaseResponseType<ProjectResponseDTO>>
 }
@@ -35,6 +36,15 @@ public final class DefaultProjectService: ProjectService {
     public func fetchProjects() -> Observable<BaseResponseType<[ProjectResponseDTO]>> {
         return RxAlamofire.requestJSON(ProjectRouter.fetchProjects)
             .expectingObject(ofType: BaseResponseType<[ProjectResponseDTO]>.self)
+    }
+    
+    public func fetchProjects(completion: @escaping (BaseResponseType<[ProjectResponseDTO]>) -> Void) {
+        AF.request(ProjectRouter.fetchProjects)
+            .responseDecodable(of: BaseResponseType<[ProjectResponseDTO]>.self) { response in
+                if let result = response.value {
+                    completion(result)
+                }
+            }
     }
     
     public func deleteProject(id: Int) -> Observable<BaseResponseType<Int>> {

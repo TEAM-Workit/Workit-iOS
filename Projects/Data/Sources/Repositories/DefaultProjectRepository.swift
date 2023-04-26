@@ -28,6 +28,17 @@ public final class DefaultProjectRepository: ProjectRepository {
             }
     }
     
+    public func fetchProjects(completion: @escaping ([Project]) -> Void) {
+        NetworkService.shared.project.fetchProjects { data in
+            if let projectsResponse = data.data {
+                let projects = projectsResponse.map { project in
+                    project.toProjectDomain()
+                }
+                completion(projects)
+            }
+        }
+    }
+    
     public func deleteProject(id: Int) -> Observable<Int> {
         return NetworkService.shared.project.deleteProject(id: id)
             .compactMap { $0.status }

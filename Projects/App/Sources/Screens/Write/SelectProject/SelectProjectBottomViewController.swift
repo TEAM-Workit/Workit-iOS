@@ -6,6 +6,7 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Data
 import Domain
 import DesignSystem
 import Global
@@ -124,6 +125,7 @@ final class SelectProjectBottomViewController: BaseViewController {
     private var filteredProjectList: [SearchProjectTableViewCellModel] = []
     
     weak var delegate: SendSelectedProjectDelegate?
+    private let projectRepository: ProjectRepository = DefaultProjectRepository()
     var searchProjectDataSource: UITableViewDiffableDataSource<Section, SearchProjectTableViewCellModel>!
     var searchProjectSnapshot: NSDiffableDataSourceSnapshot<Section, SearchProjectTableViewCellModel>!
     
@@ -146,6 +148,7 @@ final class SelectProjectBottomViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.fetchAllProject()
         self.setLayout()
         self.setCloseButtonAction()
         self.setDoneButtonAction()
@@ -244,6 +247,7 @@ final class SelectProjectBottomViewController: BaseViewController {
     }
     
     private func setSearchProjectSnapshot(keyword: String) {
+        debugPrint(self.allProjectList, "allProjectList")
         var filtered = self.allProjectList.filter { project in
             project.title.contains(keyword)
         }
@@ -365,6 +369,25 @@ extension SelectProjectBottomViewController: UITextFieldDelegate {
         guard let stringRange = Range(range, in: currentText) else { return false }
         let changedText = currentText.replacingCharacters(in: stringRange, with: string)
         return changedText.count <= 20
+    }
+}
+
+// MARK: - Network
+
+extension SelectProjectBottomViewController {
+    
+    private func fetchAllProject() {
+        self.allProjectList = []
+        self.projectRepository.fetchProjects { projects in
+            _ = projects.map { project in
+                self.allProjectList.append(
+                    SearchProjectTableViewCellModel(
+                        id: project.id,
+                        title: project.title
+                    )
+                )
+            }
+        }
     }
 }
 
