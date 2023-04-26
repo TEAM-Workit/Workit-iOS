@@ -413,3 +413,25 @@ extension PickAbilityBottomViewController {
         }
     }
 }
+
+// MARK: - Network
+
+extension PickAbilityBottomViewController {
+    private func fetchAllAbility() {
+        self.softAbilityList = []
+        self.hardAbilityList = []
+        
+        self.abilityRepository.fetchAllAbility(completion: { ability in
+            _ = ability.map {
+                switch $0.type {
+                case .hard:
+                    self.hardAbilityList.append($0)
+                case .soft:
+                    self.softAbilityList.append($0)
+                }
+                self.hardAbilityTableView.reloadData()
+                self.softAbilityTableView.reloadData()
+            }
+        })
+    }
+}
