@@ -96,32 +96,8 @@ final class SelectProjectBottomViewController: BaseViewController {
     
     // MARK: Properties
     
-    private var recentProjectList: [RecentProject] = [
-        RecentProject(id: 0, title: "카카카카카카카카카카카카카카카카카카카카"),
-        RecentProject(id: 1, title: "어쩌구 프로젝트"),
-        RecentProject(id: 2, title: "솝텀 프로젝트"),
-        RecentProject(id: 3, title: "워킷"),
-        RecentProject(id: 4, title: "어쩌구 프로젝트"),
-        RecentProject(id: 5, title: "솝텀 프로젝트"),
-        RecentProject(id: 6, title: "워킷")
-    ]
-    
-    private var allProjectList: [SearchProjectTableViewCellModel] = [
-        SearchProjectTableViewCellModel(id: 0, title: "카카카카카카카카카카카카카카카카카카카카"),
-        SearchProjectTableViewCellModel(id: 1, title: "어쩌구 프로젝트"),
-        SearchProjectTableViewCellModel(id: 2, title: "솝텀 프로젝트"),
-        SearchProjectTableViewCellModel(id: 3, title: "워킷"),
-        SearchProjectTableViewCellModel(id: 4, title: "어쩌구 프로젝트"),
-        SearchProjectTableViewCellModel(id: 5, title: "솝텀 프로젝트"),
-        SearchProjectTableViewCellModel(id: 6, title: "워킷"),
-        SearchProjectTableViewCellModel(id: 7, title: "워킷프로젝트"),
-        SearchProjectTableViewCellModel(id: 8, title: "뮤멘트"),
-        SearchProjectTableViewCellModel(id: 9, title: "플젝"),
-        SearchProjectTableViewCellModel(id: 10, title: "프로젝트"),
-        SearchProjectTableViewCellModel(id: 11, title: "워킷프로젝트"),
-        SearchProjectTableViewCellModel(id: 12, title: "뮤멘트")
-    ]
-    
+    private var recentProjectList: [RecentProject] = []
+    private var allProjectList: [SearchProjectTableViewCellModel] = []
     private var filteredProjectList: [SearchProjectTableViewCellModel] = []
     
     weak var delegate: SendSelectedProjectDelegate?
@@ -149,6 +125,7 @@ final class SelectProjectBottomViewController: BaseViewController {
         super.viewDidLoad()
         
         self.fetchAllProject()
+        self.fetchRecentProject()
         self.setLayout()
         self.setCloseButtonAction()
         self.setDoneButtonAction()
@@ -247,7 +224,6 @@ final class SelectProjectBottomViewController: BaseViewController {
     }
     
     private func setSearchProjectSnapshot(keyword: String) {
-        debugPrint(self.allProjectList, "allProjectList")
         var filtered = self.allProjectList.filter { project in
             project.title.contains(keyword)
         }
@@ -269,7 +245,6 @@ final class SelectProjectBottomViewController: BaseViewController {
         }
         
         self.searchProjectSnapshot.appendItems(self.filteredProjectList)
-        debugPrint(self.filteredProjectList)
         self.searchProjectDataSource.apply(self.searchProjectSnapshot)
         
         self.updateSearchProjectTableViewHeight()
@@ -375,6 +350,21 @@ extension SelectProjectBottomViewController: UITextFieldDelegate {
 // MARK: - Network
 
 extension SelectProjectBottomViewController {
+    
+    private func fetchRecentProject() {
+        self.recentProjectList = []
+        self.projectRepository.fetchRecentProjects { projects in
+            _ = projects.map { project in
+                self.recentProjectList.append(
+                    RecentProject(
+                        id: project.id,
+                        title: project.title
+                    )
+                )
+            }
+            self.recentProjectCollectionView.reloadData()
+        }
+    }
     
     private func fetchAllProject() {
         self.allProjectList = []

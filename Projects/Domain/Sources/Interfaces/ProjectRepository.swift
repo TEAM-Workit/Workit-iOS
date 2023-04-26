@@ -15,4 +15,5 @@ public protocol ProjectRepository {
     func fetchProjects(completion: @escaping ([Project]) -> Void)
     func deleteProject(id: Int) -> Observable<Int>
     func modifyProject(id: Int, title: String) -> Observable<Int>
+    func fetchRecentProjects(completion: @escaping ([Project]) -> Void)
 }

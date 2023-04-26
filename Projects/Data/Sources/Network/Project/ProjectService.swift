@@ -20,6 +20,7 @@ public protocol ProjectService {
     func fetchProjects(completion: @escaping (BaseResponseType<[ProjectResponseDTO]>) -> Void)
     func deleteProject(id: Int) -> Observable<BaseResponseType<Int>>
     func modifyProject(id: Int, request: ProjectRequestDTO) -> Observable<BaseResponseType<ProjectResponseDTO>>
+    func fetchRecentProjects(completion: @escaping (BaseResponseType<[ProjectResponseDTO]>) -> Void)
 }
 
 public final class DefaultProjectService: ProjectService {
@@ -58,6 +59,15 @@ public final class DefaultProjectService: ProjectService {
                 return data
             }.catch { error in
                 return Observable.error(error)
+            }
+    }
+    
+    public func fetchRecentProjects(completion: @escaping (BaseResponseType<[ProjectResponseDTO]>) -> Void) {
+        AF.request(ProjectRouter.fetchRecentProjects)
+            .responseDecodable(of: BaseResponseType<[ProjectResponseDTO]>.self) { response in
+                if let result = response.value {
+                    completion(result)
+                }
             }
     }
 }

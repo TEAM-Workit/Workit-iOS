@@ -48,4 +48,15 @@ public final class DefaultProjectRepository: ProjectRepository {
         return NetworkService.shared.project.modifyProject(id: id, request: ProjectRequestDTO.init(title: title))
             .compactMap { $0.status }
     }
+    
+    public func fetchRecentProjects(completion: @escaping ([Project]) -> Void) {
+        NetworkService.shared.project.fetchRecentProjects { data in
+            if let projectsResponse = data.data {
+                let projects = projectsResponse.map { project in
+                    project.toProjectDomain()
+                }
+                completion(projects)
+            }
+        }
+    }
 }
