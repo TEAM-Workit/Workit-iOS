@@ -6,6 +6,7 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Domain
 import DesignSystem
 import Global
 import UIKit
@@ -197,7 +198,7 @@ final class SelectProjectBottomViewController: BaseViewController {
         self.doneButton.isEnabled = self.projectTextField.isEntered
     }
     
-    func setSelectedAbilityList(abilityList: [WriteAbility]) {
+    func setSelectedAbilityList(abilityList: [Ability]) {
         // TODO: 리스폰스에 있는 ability id를 보고 구현...
     }
     

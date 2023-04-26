@@ -6,6 +6,8 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Data
+import Domain
 import DesignSystem
 import Global
 import UIKit
@@ -17,8 +19,8 @@ import SnapKit
 // MARK: - Protocols
 protocol SendSelectedAbilityListDelegate: AnyObject {
     func sendUpdate(
-        hardAbilityList: [WriteAbility],
-        softAbilityList: [WriteAbility]
+        hardAbilityList: [Ability],
+        softAbilityList: [Ability]
     )
 }
 
@@ -98,29 +100,17 @@ final class PickAbilityBottomViewController: BaseViewController {
     
     // MARK: Properties
     
-    private var hardAbilityList: [WriteAbility] = [
-        WriteAbility(abilityId: 1, abilityName: "지표 분석을 통한 인사이트 도출", abilityType: "HARD"),
-        WriteAbility(abilityId: 2, abilityName: "지표 지표를 개선한 경험 도출", abilityType: "HARD"),
-        WriteAbility(abilityId: 3, abilityName: "지표 지표를 개선한 경험한 인사이트 도출", abilityType: "HARD"),
-        WriteAbility(abilityId: 4, abilityName: "Product 전체 프로세스에 대한 경험", abilityType: "HARD"),
-        WriteAbility(abilityId: 5, abilityName: "트 도출", abilityType: "HARD")
-    ]
+    private var hardAbilityList: [Ability] = []
+    private var softAbilityList: [Ability] = []
     
-    private var softAbilityList: [WriteAbility] = [
-        WriteAbility(abilityId: 6, abilityName: "지표 분석을 통한 인사이트 도출", abilityType: "SOFT"),
-        WriteAbility(abilityId: 7, abilityName: "지표 지표를 개선한 경험 도출", abilityType: "SOFT"),
-        WriteAbility(abilityId: 8, abilityName: "지표 지표를 개선한 경험한 인사이트 도출", abilityType: "SOFT"),
-        WriteAbility(abilityId: 9, abilityName: "Product 전체 프로세스에 대한 경험", abilityType: "SOFT"),
-        WriteAbility(abilityId: 10, abilityName: "트 도출", abilityType: "SOFT")
-    ]
-    
-    private var selectedHardAbilityList: [WriteAbility] = []
-    private var selectedSoftAbilityList: [WriteAbility] = []
+    private var selectedHardAbilityList: [Ability] = []
+    private var selectedSoftAbilityList: [Ability] = []
     
     private let hardCellReuseIdentifier: String = "hardCell"
     private let softCellReuseIdentifier: String = "softCell"
     
     weak var delegate: SendSelectedAbilityListDelegate?
+    private let abilityRepository: AbilityRepository = DefaultAbilityRepository()
     
     // MARK: Initializer
     
@@ -144,6 +134,7 @@ final class PickAbilityBottomViewController: BaseViewController {
         self.setDoneButtonAction()
         self.setTableView()
         self.setDoneButtonEnabled()
+        self.fetchAllAbility()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -219,7 +210,7 @@ final class PickAbilityBottomViewController: BaseViewController {
         )
     }
     
-    func setSelectedAbilityList(abilityList: [WriteAbility]) {
+    func setSelectedAbilityList(abilityList: [Ability]) {
         // TODO: 리스폰스에 있는 ability id를 보고 구현...
     }
 }
@@ -281,12 +272,16 @@ extension PickAbilityBottomViewController: UITableViewDelegate {
         if let cell = tableView.cellForRow(at: indexPath) as? SelectAbilityTableViewCell {
             cell.isSelected = false
             
-            var selectedAbility: WriteAbility = WriteAbility()
+            var selectedAbility: Ability = Ability(
+                id: 0,
+                name: "",
+                type: ""
+            )
             if tableView == self.hardAbilityTableView {
                 selectedAbility = hardAbilityList[indexPath.row]
                 
                 if let selectedIndex = selectedHardAbilityList.firstIndex(
-                    where: { $0.abilityId == selectedAbility.abilityId }
+                    where: { $0.id == selectedAbility.id }
                 ) {
                     self.selectedHardAbilityList.remove(at: selectedIndex)
                 }
@@ -294,7 +289,7 @@ extension PickAbilityBottomViewController: UITableViewDelegate {
                 selectedAbility = softAbilityList[indexPath.row]
                 
                 if let selectedIndex = selectedSoftAbilityList.firstIndex(
-                    where: { $0.abilityId == selectedAbility.abilityId }
+                    where: { $0.id == selectedAbility.id }
                 ) {
                     self.selectedSoftAbilityList.remove(at: selectedIndex)
                 }

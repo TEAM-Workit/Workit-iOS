@@ -6,23 +6,10 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Domain
 import UIKit
 
 import SnapKit
-
-public struct WriteAbility {
-    public var abilityId: Int = 0
-    public var abilityName: String = ""
-    public var abilityType: String = ""
-    
-    public init(abilityId: Int, abilityName: String, abilityType: String) {
-        self.abilityId = abilityId
-        self.abilityName = abilityName
-        self.abilityType = abilityType
-    }
-    
-    public init() {}
-}
 
 public final class WKWriteAbilityCollectionViewCell: UICollectionViewCell {
     
@@ -72,14 +59,13 @@ public final class WKWriteAbilityCollectionViewCell: UICollectionViewCell {
         self.titleLabel.textColor = .wkMainPurple
     }
     
-    public func setData(data: WriteAbility) {
-        self.titleLabel.text = data.abilityName
+    public func setData(data: Ability) {
+        self.titleLabel.text = data.name
         self.titleLabel.sizeToFit()
         
-        if data.abilityType == "HARD" || data.abilityType == "hard" {
-            self.setHardUI()
-        } else {
-            self.setSoftUI()
+        switch data.type {
+        case .hard: self.setHardUI()
+        case .soft: self.setSoftUI()
         }
     }
     

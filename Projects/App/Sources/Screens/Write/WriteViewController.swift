@@ -6,6 +6,7 @@
 //  Copyright © 2022 com.workit. All rights reserved.
 //
 
+import Domain
 import DesignSystem
 import Global
 import UIKit
@@ -123,8 +124,8 @@ final class WriteViewController: BaseViewController {
     
     private var keyboardHeight: CGFloat = 0
     
-    private var selectedHardAbilityList: [WriteAbility] = []
-    private var selectedSoftAbilityList: [WriteAbility] = []
+    private var selectedHardAbilityList: [Ability] = []
+    private var selectedSoftAbilityList: [Ability] = []
     
     // MARK: View Life Cycle
     
@@ -290,7 +291,7 @@ extension WriteViewController: SingleDayCalendarBottomSheetDelegate {
 // MARK: - Extension (SendSelectedAbilityListDelegate)
 
 extension WriteViewController: SendSelectedAbilityListDelegate {
-    func sendUpdate(hardAbilityList: [WriteAbility], softAbilityList: [WriteAbility]) {
+    func sendUpdate(hardAbilityList: [Ability], softAbilityList: [Ability]) {
         self.selectedHardAbilityList = hardAbilityList
         self.selectedSoftAbilityList = softAbilityList
         
