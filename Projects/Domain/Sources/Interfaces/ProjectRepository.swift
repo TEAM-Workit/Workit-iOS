@@ -11,6 +11,7 @@ import RxSwift
 
 public protocol ProjectRepository {
     func createProject(title: String) -> Observable<Project>
+    func createProject(title: String, completion: @escaping (Project) -> Void)
     func fetchProjects() -> Observable<[Project]>
     func fetchProjects(completion: @escaping ([Project]) -> Void)
     func deleteProject(id: Int) -> Observable<Int>

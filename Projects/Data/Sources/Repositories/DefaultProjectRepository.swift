@@ -20,6 +20,15 @@ public final class DefaultProjectRepository: ProjectRepository {
             .map { $0.toProjectDomain() }
     }
     
+    public func createProject(title: String, completion: @escaping (Project) -> Void) {
+        let projectRequest: ProjectRequestDTO = ProjectRequestDTO(title: title)
+        NetworkService.shared.project.createProject(request: projectRequest) { data in
+            if let projectsResponse = data.data {
+                completion(projectsResponse.toProjectDomain())
+            }
+        }
+    }
+    
     public func fetchProjects() -> Observable<[Project]> {
         return NetworkService.shared.project.fetchProjects()
             .compactMap { $0.data }

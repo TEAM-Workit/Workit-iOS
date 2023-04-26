@@ -308,7 +308,7 @@ extension SelectProjectBottomViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if self.filteredProjectList[indexPath.row].id == -1 {
-            // TODO: 프로젝트 생성 request
+            self.createProject(title: self.filteredProjectList[indexPath.row].title)
         }
         
         self.projectTextField.endEditing(true)
@@ -377,6 +377,12 @@ extension SelectProjectBottomViewController {
                     )
                 )
             }
+        }
+    }
+    
+    private func createProject(title: String) {
+        self.projectRepository.createProject(title: title) { project in
+            self.fetchAllProject()
         }
     }
 }

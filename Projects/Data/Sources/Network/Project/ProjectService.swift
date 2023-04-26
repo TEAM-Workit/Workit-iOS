@@ -16,6 +16,7 @@ import Dispatch
 
 public protocol ProjectService {
     func createProject(request: ProjectRequestDTO) -> Observable<BaseResponseType<ProjectResponseDTO>>
+    func createProject(request: ProjectRequestDTO, completion: @escaping (BaseResponseType<ProjectResponseDTO>) -> Void)
     func fetchProjects() -> Observable<BaseResponseType<[ProjectResponseDTO]>>
     func fetchProjects(completion: @escaping (BaseResponseType<[ProjectResponseDTO]>) -> Void)
     func deleteProject(id: Int) -> Observable<BaseResponseType<Int>>
@@ -31,6 +32,15 @@ public final class DefaultProjectService: ProjectService {
             }
             .catch { error in
                 return Observable.error(error)
+            }
+    }
+    
+    public func createProject(request: ProjectRequestDTO, completion: @escaping (BaseResponseType<ProjectResponseDTO>) -> Void) {
+        AF.request(ProjectRouter.createProject(request: request))
+            .responseDecodable(of: BaseResponseType<ProjectResponseDTO>.self) { response in
+                if let result = response.value {
+                    completion(result)
+                }
             }
     }
     
