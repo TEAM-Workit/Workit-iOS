@@ -381,7 +381,7 @@ extension SelectProjectBottomViewController {
     }
     
     private func createProject(title: String) {
-        self.projectRepository.createProject(title: title) { project in
+        self.projectRepository.createProject(title: title) { _ in
             self.fetchAllProject()
         }
     }
