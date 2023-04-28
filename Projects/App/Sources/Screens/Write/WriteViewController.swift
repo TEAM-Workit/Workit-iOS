@@ -345,6 +345,8 @@ extension WriteViewController: SendSelectedProjectDelegate {
     }
 }
 
+// MARK: - Extension (UICollectionViewDataSource)
+
 extension WriteViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
@@ -445,7 +447,7 @@ extension WriteViewController {
             if response != nil {
                 completion()
             } else {
-                self.showAlert(title: Text.networkError)
+                self.showAlert(title: Message.networkError.text)
             }
         }
     }
