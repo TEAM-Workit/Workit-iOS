@@ -6,14 +6,17 @@
 //  Copyright © 2022 com.workit. All rights reserved.
 //
 
+import Data
 import Domain
 import DesignSystem
 import Global
 import UIKit
 
+import RxSwift
 import SnapKit
 
 // swiftlint:disable file_length
+// swiftlint:disable type_body_length
 
 final class WriteViewController: BaseViewController {
     
@@ -32,6 +35,12 @@ final class WriteViewController: BaseViewController {
         static let abilityAddButton = "역량 추가하기"
         static let workDescriptionLabel = "업무 내용"
         static let workDescriptionPlaceholder = "업무의 구체적인 과정과 배운 점을 남겨주세요!"
+    }
+    
+    enum SaveButtonConditionType {
+        static let project = "project"
+        static let title = "title"
+        static let abilities = "abilities"
     }
     
     // MARK: - UIComponents
@@ -127,7 +136,18 @@ final class WriteViewController: BaseViewController {
     private var selectedHardAbilityList: [Ability] = []
     private var selectedSoftAbilityList: [Ability] = []
     
-    private var selectedProjectId: Int = 0
+    private let workRepository: DefaultWorkRepository = DefaultWorkRepository()
+    private var selectedProjectId: Int = -1
+    
+    private var isSaveButtonEnabled: [String: Bool] = [
+        SaveButtonConditionType.project: false,
+        SaveButtonConditionType.title: false,
+        SaveButtonConditionType.abilities: false
+    ] { didSet { self.setSaveButtonState() } }
+    
+    private let disposeBag: DisposeBag = DisposeBag()
+    
+    // swiftlint:enable type_body_length
     // MARK: View Life Cycle
     
     override func viewDidLoad() {
@@ -141,6 +161,8 @@ final class WriteViewController: BaseViewController {
         self.setProjectButtonAction()
         self.setDateButtonAction()
         self.setCloseButtonAction()
+        self.setSaveButtonAction()
+        self.setWorkTextField()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -306,6 +328,36 @@ final class WriteViewController: BaseViewController {
             }
         }
     }
+    
+    private func setSaveButtonState() {
+        let type = SaveButtonConditionType.self
+        let condition = self.isSaveButtonEnabled.values
+        var state = true
+        condition.forEach {
+            state = state && $0
+        }
+        
+        if let button = self.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
+            DispatchQueue.main.async {
+                button.isEnabled = state
+            }
+        }
+    }
+    
+    private func setWorkTextField() {
+        self.workTextField.rx.text
+            .orEmpty
+            .distinctUntilChanged()
+            .withUnretained(self)
+            .subscribe(onNext: { (owner, changedText) in
+                owner.isSaveButtonEnabled[SaveButtonConditionType.title] = !changedText.isEmpty
+            })
+            .disposed(by: self.disposeBag)
+        
+        self.workTextField.setClearButtonAction { [weak self] in
+            self?.isSaveButtonEnabled[SaveButtonConditionType.title] = false
+        }
+    }
 }
 
 // MARK: - Extension (UICollectionViewDelegateFlowLayout)
@@ -323,6 +375,7 @@ extension WriteViewController: SendSelectedAbilityListDelegate {
     func sendUpdate(hardAbilityList: [Ability], softAbilityList: [Ability]) {
         self.selectedHardAbilityList = hardAbilityList
         self.selectedSoftAbilityList = softAbilityList
+        self.isSaveButtonEnabled[SaveButtonConditionType.abilities] = true
         
         self.updateAbilityCollectionViewHeight()
         
@@ -342,6 +395,7 @@ extension WriteViewController: SendSelectedProjectDelegate {
     func sendUpdate(selectedProjectTitle: String, projectId: Int) {
         self.projectButton.setText(text: selectedProjectTitle)
         self.selectedProjectId = projectId
+        self.isSaveButtonEnabled[SaveButtonConditionType.project] = true
     }
 }
 
