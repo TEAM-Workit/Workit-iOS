@@ -278,6 +278,18 @@ final class WriteViewController: BaseViewController {
             }
         }
     }
+    
+    private func setSaveButtonAction() {
+        if let button = self.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
+            button.setAction { [weak self] in
+                if let self = self {
+                    self.createWork(data: self.createNewWork()) {
+                        self.dismiss(animated: true)
+                    }
+                }
+            }
+        }
+    }
 }
 
 // MARK: - Extension (UICollectionViewDelegateFlowLayout)
