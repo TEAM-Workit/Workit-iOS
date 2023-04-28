@@ -49,7 +49,7 @@ public struct WorkDetailDTO: Decodable {
         return WorkDetail.init(
             id: self.workId,
             title: self.workTitle,
-            project: Project(title: self.project.projectTitle),
+            project: Project(id: self.project.projectId, title: self.project.projectTitle),
             description: self.description,
             date: self.date,
             abilities: self.abilities.map { $0.toDomain() })
