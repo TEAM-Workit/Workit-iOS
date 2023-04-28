@@ -70,4 +70,10 @@ public final class DefaultWorkRepository: WorkRepository {
             }
         }
     }
+    
+    public func deleteWork(workId: Int, completion: @escaping (Bool) -> Void) {
+        NetworkService.shared.work.deleteWork(workId: workId) { data in
+            completion(data)
+        }
+    }
 }

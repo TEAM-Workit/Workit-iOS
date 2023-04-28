@@ -16,4 +16,5 @@ public protocol WorkRepository {
     func fetchWorkDetail(workId: Int, completion: @escaping (WorkDetail) -> Void)
     func createWork(data: NewWork, completion: @escaping (WorkDetail?) -> Void)
     func updateWork(data: NewWork, workId: Int,completion: @escaping (WorkDetail?) -> Void)
+    func deleteWork(workId: Int, completion: @escaping (Bool) -> Void)
 }

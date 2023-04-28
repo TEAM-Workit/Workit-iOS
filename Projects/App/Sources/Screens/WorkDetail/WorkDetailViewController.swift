@@ -289,7 +289,7 @@ final class WorkDetailViewController: BaseViewController {
                 title: Text.remove,
                 style: .destructive,
                 handler: { [weak self] _ in
-                    self?.requestRemoveWork()
+                    self?.requestRemoveWork(workId: self?.workId ?? -1)
                 }
             )
         )
@@ -398,8 +398,15 @@ extension WorkDetailViewController {
         }
     }
     
-    private func requestRemoveWork() {
-        debugPrint("삭제 request")
+    private func requestRemoveWork(workId: Int) {
+        self.workRepository.deleteWork(workId: workId) { success in
+            if success {
+                
+                self.navigationController?.popViewController(animated: true)
+            } else {
+                self.showAlert(title: Message.networkError.text)
+            }
+        }
     }
 }
 
