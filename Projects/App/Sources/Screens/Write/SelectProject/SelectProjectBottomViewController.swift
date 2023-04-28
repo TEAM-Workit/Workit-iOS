@@ -21,7 +21,7 @@ import SnapKit
 // MARK: - Protocols
 
 protocol SendSelectedProjectDelegate: AnyObject {
-    func sendUpdate(selectedProjectTitle: String)
+    func sendUpdate(selectedProjectTitle: String, projectId: Int)
 }
 
 final class SelectProjectBottomViewController: BaseViewController {
@@ -104,6 +104,7 @@ final class SelectProjectBottomViewController: BaseViewController {
     private let projectRepository: ProjectRepository = DefaultProjectRepository()
     var searchProjectDataSource: UITableViewDiffableDataSource<Section, SearchProjectTableViewCellModel>!
     var searchProjectSnapshot: NSDiffableDataSourceSnapshot<Section, SearchProjectTableViewCellModel>!
+    private var selectedProjectId: Int = 0
     
     private let disposeBag: DisposeBag = DisposeBag()
     
@@ -161,8 +162,13 @@ final class SelectProjectBottomViewController: BaseViewController {
     private func setDoneButtonAction() {
         self.doneButton.setAction { [weak self] in
             if let title = self?.projectTextField.text as? String {
-                self?.delegate?.sendUpdate(selectedProjectTitle: title)
-                self?.dismiss(animated: true)
+                if let projectId = self?.selectedProjectId {
+                    self?.delegate?.sendUpdate(
+                        selectedProjectTitle: title,
+                        projectId: projectId
+                    )
+                    self?.dismiss(animated: true)
+                }
             }
         }
     }
@@ -297,6 +303,7 @@ extension SelectProjectBottomViewController: UICollectionViewDelegateFlowLayout 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.projectTextField.endEditing(true)
         self.projectTextField.text = self.recentProjectList[indexPath.row].title
+        self.selectedProjectId = self.recentProjectList[indexPath.row].id
         self.projectTextField.isEntered = true
         self.setDoneButtonEnabled()
     }
@@ -313,6 +320,7 @@ extension SelectProjectBottomViewController: UITableViewDelegate {
         
         self.projectTextField.endEditing(true)
         self.projectTextField.text = self.filteredProjectList[indexPath.row].title
+        self.selectedProjectId = self.filteredProjectList[indexPath.row].id
         self.projectTextField.isEntered = true
         
         for index in 0..<recentProjectList.count
@@ -381,7 +389,8 @@ extension SelectProjectBottomViewController {
     }
     
     private func createProject(title: String) {
-        self.projectRepository.createProject(title: title) { _ in
+        self.projectRepository.createProject(title: title) { response in
+            self.selectedProjectId = response.id
             self.fetchAllProject()
         }
     }

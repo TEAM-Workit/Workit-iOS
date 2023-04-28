@@ -127,6 +127,7 @@ final class WriteViewController: BaseViewController {
     private var selectedHardAbilityList: [Ability] = []
     private var selectedSoftAbilityList: [Ability] = []
     
+    private var selectedProjectId: Int = 0
     // MARK: View Life Cycle
     
     override func viewDidLoad() {
@@ -310,8 +311,9 @@ extension WriteViewController: SendSelectedAbilityListDelegate {
 // MARK: - Extension (SendSelectedAbilityListDelegate)
 
 extension WriteViewController: SendSelectedProjectDelegate {
-    func sendUpdate(selectedProjectTitle: String) {
+    func sendUpdate(selectedProjectTitle: String, projectId: Int) {
         self.projectButton.setText(text: selectedProjectTitle)
+        self.selectedProjectId = projectId
     }
 }
 
