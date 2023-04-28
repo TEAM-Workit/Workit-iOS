@@ -279,6 +279,22 @@ final class WriteViewController: BaseViewController {
         }
     }
     
+    private func createNewWork() -> NewWork {
+        var abilityIds: [Int] = []
+        _ = self.selectedHardAbilityList.map { abilityIds.append($0.id) }
+        _ = self.selectedSoftAbilityList.map { abilityIds.append($0.id) }
+        
+        let newWork = NewWork(
+            title: self.workTextField.text ?? "",
+            projectId: self.selectedProjectId,
+            description: self.workDescriptionTextView.text,
+            date: self.dateButton.date(),
+            abilityIds: abilityIds
+        )
+        
+        return newWork
+    }
+    
     private func setSaveButtonAction() {
         if let button = self.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
             button.setAction { [weak self] in
