@@ -407,6 +407,20 @@ extension WriteViewController: UITextViewDelegate {
     }
 }
 
+// MARK: - Network
+
+extension WriteViewController {
+    private func createWork(data: NewWork, completion: @escaping () -> Void) {
+        self.workRepository.createWork(data: data) { response in
+            if response != nil {
+                completion()
+            } else {
+                self.showAlert(title: Text.networkError)
+            }
+        }
+    }
+}
+
 // MARK: - UI
 
 extension WriteViewController {

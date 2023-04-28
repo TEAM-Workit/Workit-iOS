@@ -14,4 +14,5 @@ public protocol WorkRepository {
     func fetchWorks() -> Observable<[Work]>
     func fetchWorksDate(start: Date, end: Date) -> Observable<[Work]>
     func fetchWorkDetail(workId: Int, completion: @escaping (WorkDetail) -> Void)
+    func createWork(data: NewWork, completion: @escaping (WorkDetail?) -> Void)
 }
