@@ -298,7 +298,9 @@ final class WorkDetailViewController: BaseViewController {
     }
     
     private func presentEditViewController() {
-        let editViewController: BaseViewController = WriteViewController()
+        let editViewController: WriteViewController = WriteViewController()
+        editViewController.modalPresentationStyle = .fullScreen
+        editViewController.setEditViewController(workId: self.workId)
         
         self.present(editViewController, animated: true)
     }
@@ -390,7 +392,7 @@ extension WorkDetailViewController: UIScrollViewDelegate {
 
 extension WorkDetailViewController {
     private func fetchWorkDetail(workId: Int) {
-        workRepository.fetchWorkDetail(workId: workId) { workDetail in
+        self.workRepository.fetchWorkDetail(workId: workId) { workDetail in
             self.workDetailData = workDetail
             self.setData(workData: self.workDetailData)
         }
