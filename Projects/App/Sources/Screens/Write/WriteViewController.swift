@@ -547,7 +547,6 @@ extension WriteViewController {
     private func updateWork(data: NewWork, workId: Int, completion: @escaping () -> Void) {
         self.workRepository.updateWork(data: data, workId: workId) { response in
             if response != nil {
-                debugPrint("수정 성공: ", response)
                 completion()
             } else {
                 self.showAlert(title: Message.networkError.text)
@@ -557,7 +556,6 @@ extension WriteViewController {
     
     private func fetchWorkDetail(workId: Int) {
         self.workRepository.fetchWorkDetail(workId: workId) { workDetail in
-            debugPrint(workDetail)
             self.dateButton.setDate(date: workDetail.date.toDate(type: .fullPlus) ?? Date())
             self.selectedProjectId = workDetail.project.id
             self.projectButton.setText(text: workDetail.project.title)
