@@ -17,6 +17,7 @@ public protocol WorkService {
     func fetchWorksDate(start: Date, end: Date) -> Observable<BaseResponseType<WorksResponseDTO>>
     func fetchWorkDetail(workId: Int, completion: @escaping (BaseResponseType<WorkDetailDTO>) -> Void)
     func createWork(data: WorkRequestDTO, completion: @escaping (BaseResponseType<WorkDetailDTO>) -> Void)
+    func updateWork(data: WorkRequestDTO, workId: Int, completion: @escaping (BaseResponseType<WorkDetailDTO>) -> Void)
 }
 
 public final class DefaultWorkService: WorkService {
@@ -42,6 +43,15 @@ public final class DefaultWorkService: WorkService {
     
     public func createWork(data: WorkRequestDTO, completion: @escaping (BaseResponseType<WorkDetailDTO>) -> Void) {
         AF.request(WorkRouter.createWork(data: data))
+            .responseDecodable(of: BaseResponseType<WorkDetailDTO>.self) { response in
+                if let result = response.value {
+                    completion(result)
+                }
+            }
+    }
+    
+    public func updateWork(data: WorkRequestDTO, workId: Int, completion: @escaping (BaseResponseType<WorkDetailDTO>) -> Void) {
+        AF.request(WorkRouter.updateWork(data: data, workId: workId))
             .responseDecodable(of: BaseResponseType<WorkDetailDTO>.self) { response in
                 if let result = response.value {
                     completion(result)

@@ -138,6 +138,8 @@ final class WriteViewController: BaseViewController {
     
     private let workRepository: DefaultWorkRepository = DefaultWorkRepository()
     private var selectedProjectId: Int = -1
+    private var isEdit: Bool = false
+    private var editableWorkId: Int = -1
     
     private var isSaveButtonEnabled: [String: Bool] = [
         SaveButtonConditionType.project: false,
@@ -321,8 +323,14 @@ final class WriteViewController: BaseViewController {
         if let button = self.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
             button.setAction { [weak self] in
                 if let self = self {
-                    self.createWork(data: self.createNewWork()) {
-                        self.dismiss(animated: true)
+                    if self.isEdit {
+                        self.updateWork(data: self.createNewWork(), workId: self.editableWorkId) {
+                            self.dismiss(animated: true)
+                        }
+                    } else {
+                        self.createWork(data: self.createNewWork()) {
+                            self.dismiss(animated: true)
+                        }
                     }
                 }
             }
@@ -499,6 +507,17 @@ extension WriteViewController {
     private func createWork(data: NewWork, completion: @escaping () -> Void) {
         self.workRepository.createWork(data: data) { response in
             if response != nil {
+                completion()
+            } else {
+                self.showAlert(title: Message.networkError.text)
+            }
+        }
+    }
+    
+    private func updateWork(data: NewWork, workId: Int, completion: @escaping () -> Void) {
+        self.workRepository.updateWork(data: data, workId: workId) { response in
+            if response != nil {
+                debugPrint("수정 성공: ", response)
                 completion()
             } else {
                 self.showAlert(title: Message.networkError.text)

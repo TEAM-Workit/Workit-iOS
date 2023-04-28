@@ -19,6 +19,8 @@ public enum WorkRouter {
     case fetchWorkDetail(workId: Int)
     /// 워킷 생성
     case createWork(data: WorkRequestDTO)
+    /// 워킷 수정
+    case updateWork(data: WorkRequestDTO, workId: Int)
 }
 
 extension WorkRouter: BaseRequestConvertible {
@@ -33,6 +35,8 @@ extension WorkRouter: BaseRequestConvertible {
             return .get
         case .createWork:
             return .post
+        case .updateWork:
+            return .put
         }
     }
     
@@ -43,6 +47,8 @@ extension WorkRouter: BaseRequestConvertible {
         case .fetchWorksDate:
             return URLConstant.work + "/date"
         case .fetchWorkDetail(let workId):
+            return URLConstant.work + "/\(workId)"
+        case .updateWork(_, let workId):
             return URLConstant.work + "/\(workId)"
         }
     }
@@ -56,7 +62,7 @@ extension WorkRouter: BaseRequestConvertible {
                     "end": end.toString(type: .fullYearDash)]
         case .fetchWorkDetail:
             return nil
-        case let .createWork(data):
+        case let .createWork(data), .updateWork(let data, _):
             return [
                 "date": data.date,
                 "projectId": data.projectId,
@@ -81,7 +87,7 @@ extension WorkRouter: BaseRequestConvertible {
             request = try URLEncoding.queryString.encode(request, with: parameters)
         case .fetchWorkDetail:
             break
-        case .createWork:
+        case .createWork, .updateWork:
             request = try JSONEncoding.default.encode(request, with: parameters)
         }
       
