@@ -34,4 +34,22 @@ public final class DefaultWorkRepository: WorkRepository {
             }
         }
     }
+    
+    public func createWork(data: NewWork, completion: @escaping (WorkDetail?) -> Void) {
+        let requestDTO = WorkRequestDTO.init(
+            date: data.date,
+            projectId: data.projectId,
+            workTitle: data.title,
+            desciption: data.description,
+            abilities: data.abilityIds
+        )
+        
+        NetworkService.shared.work.createWork(data: requestDTO) { data in
+            if let workDetailDTO = data.data {
+                completion(workDetailDTO.toDomain())
+            } else {
+                completion(nil)
+            }
+        }
+    }
 }
