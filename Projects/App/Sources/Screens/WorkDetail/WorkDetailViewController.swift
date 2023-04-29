@@ -289,7 +289,7 @@ final class WorkDetailViewController: BaseViewController {
                 title: Text.remove,
                 style: .destructive,
                 handler: { [weak self] _ in
-                    self?.requestRemoveWork()
+                    self?.requestRemoveWork(workId: self?.workId ?? -1)
                 }
             )
         )
@@ -298,7 +298,9 @@ final class WorkDetailViewController: BaseViewController {
     }
     
     private func presentEditViewController() {
-        let editViewController: BaseViewController = WriteViewController()
+        let editViewController: WriteViewController = WriteViewController()
+        editViewController.modalPresentationStyle = .fullScreen
+        editViewController.setEditViewController(workId: self.workId)
         
         self.present(editViewController, animated: true)
     }
@@ -390,14 +392,21 @@ extension WorkDetailViewController: UIScrollViewDelegate {
 
 extension WorkDetailViewController {
     private func fetchWorkDetail(workId: Int) {
-        workRepository.fetchWorkDetail(workId: workId) { workDetail in
+        self.workRepository.fetchWorkDetail(workId: workId) { workDetail in
             self.workDetailData = workDetail
             self.setData(workData: self.workDetailData)
         }
     }
     
-    private func requestRemoveWork() {
-        debugPrint("삭제 request")
+    private func requestRemoveWork(workId: Int) {
+        self.workRepository.deleteWork(workId: workId) { success in
+            if success {
+                
+                self.navigationController?.popViewController(animated: true)
+            } else {
+                self.showAlert(title: Message.networkError.text)
+            }
+        }
     }
 }
 

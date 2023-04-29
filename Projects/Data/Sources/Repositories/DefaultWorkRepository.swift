@@ -52,4 +52,28 @@ public final class DefaultWorkRepository: WorkRepository {
             }
         }
     }
+    
+    public func updateWork(data: NewWork, workId: Int, completion: @escaping (WorkDetail?) -> Void) {
+        let requestDTO = WorkRequestDTO.init(
+            date: data.date,
+            projectId: data.projectId,
+            workTitle: data.title,
+            desciption: data.description,
+            abilities: data.abilityIds
+        )
+        
+        NetworkService.shared.work.updateWork(data: requestDTO, workId: workId) { data in
+            if let workDetailDTO = data.data {
+                completion(workDetailDTO.toDomain())
+            } else {
+                completion(nil)
+            }
+        }
+    }
+    
+    public func deleteWork(workId: Int, completion: @escaping (Bool) -> Void) {
+        NetworkService.shared.work.deleteWork(workId: workId) { data in
+            completion(data)
+        }
+    }
 }

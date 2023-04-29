@@ -18,6 +18,8 @@ import SnapKit
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
 
+/// 워킷 기록하기
+/// - 수정하기 모드일 경우, setEditViewController(workId) 호출
 final class WriteViewController: BaseViewController {
     
     enum Text {
@@ -138,6 +140,8 @@ final class WriteViewController: BaseViewController {
     
     private let workRepository: DefaultWorkRepository = DefaultWorkRepository()
     private var selectedProjectId: Int = -1
+    private var isEdit: Bool = false
+    private var editableWorkId: Int = -1
     
     private var isSaveButtonEnabled: [String: Bool] = [
         SaveButtonConditionType.project: false,
@@ -321,8 +325,14 @@ final class WriteViewController: BaseViewController {
         if let button = self.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
             button.setAction { [weak self] in
                 if let self = self {
-                    self.createWork(data: self.createNewWork()) {
-                        self.dismiss(animated: true)
+                    if self.isEdit {
+                        self.updateWork(data: self.createNewWork(), workId: self.editableWorkId) {
+                            self.dismiss(animated: true)
+                        }
+                    } else {
+                        self.createWork(data: self.createNewWork()) {
+                            self.dismiss(animated: true)
+                        }
                     }
                 }
             }
@@ -330,7 +340,6 @@ final class WriteViewController: BaseViewController {
     }
     
     private func setSaveButtonState() {
-        let type = SaveButtonConditionType.self
         let condition = self.isSaveButtonEnabled.values
         var state = true
         condition.forEach {
@@ -357,6 +366,35 @@ final class WriteViewController: BaseViewController {
         self.workTextField.setClearButtonAction { [weak self] in
             self?.isSaveButtonEnabled[SaveButtonConditionType.title] = false
         }
+    }
+    
+    func setEditViewController(workId: Int) {
+        self.fetchWorkDetail(workId: workId)
+    }
+    
+    private func divideAbilities(abilities: [Ability]) -> ([Ability], [Ability]) {
+        var softAbilites: [Ability] = []
+        var hardAbilites: [Ability] = []
+        for ability in abilities {
+            if ability.type == .soft {
+                softAbilites.append(
+                    Ability(
+                        id: ability.id,
+                        name: ability.name,
+                        type: ability.type.rawValue
+                    )
+                )
+            } else {
+                hardAbilites.append(
+                    Ability(
+                        id: ability.id,
+                        name: ability.name,
+                        type: ability.type.rawValue
+                    )
+                )
+            }
+        }
+        return (softAbilites, hardAbilites)
     }
 }
 
@@ -503,6 +541,42 @@ extension WriteViewController {
             } else {
                 self.showAlert(title: Message.networkError.text)
             }
+        }
+    }
+    
+    private func updateWork(data: NewWork, workId: Int, completion: @escaping () -> Void) {
+        self.workRepository.updateWork(data: data, workId: workId) { response in
+            if response != nil {
+                completion()
+            } else {
+                self.showAlert(title: Message.networkError.text)
+            }
+        }
+    }
+    
+    private func fetchWorkDetail(workId: Int) {
+        self.workRepository.fetchWorkDetail(workId: workId) { workDetail in
+            self.dateButton.setDate(date: workDetail.date.toDate(type: .fullPlus) ?? Date())
+            self.selectedProjectId = workDetail.project.id
+            self.projectButton.setText(text: workDetail.project.title)
+            self.workTextField.text = workDetail.title
+            
+            let abilities: ([Ability], [Ability]) = self.divideAbilities(abilities: workDetail.abilities)
+            self.selectedSoftAbilityList = abilities.0
+            self.selectedHardAbilityList = abilities.1
+            
+            self.workDescriptionTextView.text = workDetail.description
+            
+            self.softAbilityCollectionView.reloadData()
+            self.hardAbilityCollectionView.reloadData()
+            self.updateAbilityCollectionViewHeight()
+            
+            self.isSaveButtonEnabled[SaveButtonConditionType.project] = true
+            self.isSaveButtonEnabled[SaveButtonConditionType.abilities] = true
+            self.isSaveButtonEnabled[SaveButtonConditionType.title] = true
+            
+            self.isEdit = true
+            self.editableWorkId = workId
         }
     }
 }
