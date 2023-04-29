@@ -366,6 +366,15 @@ final class WriteViewController: BaseViewController {
         self.workTextField.setClearButtonAction { [weak self] in
             self?.isSaveButtonEnabled[SaveButtonConditionType.title] = false
         }
+        
+        self.workTextField.addTarget(self, action: #selector(self.textFieldDidChange(_:)), for: .editingChanged)
+    }
+    
+    @objc
+    private func textFieldDidChange(_ sender: Any?) {
+        if self.workTextField.text?.count ?? 0 > 50 {
+            self.workTextField.deleteBackward()
+        }
     }
     
     func setEditViewController(workId: Int) {
