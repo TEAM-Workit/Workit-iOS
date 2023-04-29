@@ -275,7 +275,7 @@ extension PickAbilityBottomViewController: UITableViewDelegate {
             var selectedAbility: Ability = Ability(
                 id: 0,
                 name: "",
-                type: ""
+                type: "hard"
             )
             if tableView == self.hardAbilityTableView {
                 selectedAbility = hardAbilityList[indexPath.row]
