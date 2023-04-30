@@ -36,7 +36,6 @@ public final class DefaultProjectRepository: ProjectRepository {
                 return projects.map { $0.toProjectDomain() }
             }
     }
-    
 
     public func fetchProjectsDetail(id: Int, startDate: Date?, endDate: Date?) -> Observable<[Work]> {
         return NetworkService.shared.project.fetchProjectsDetail(id: id, startDate: startDate, endDate: endDate)
