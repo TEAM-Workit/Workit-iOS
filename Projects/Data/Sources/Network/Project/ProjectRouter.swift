@@ -14,6 +14,7 @@ import Alamofire
 public enum ProjectRouter {
     case createProject(request: ProjectRequestDTO)
     case fetchProjects
+    case fetchProjectsDetail(projectId: Int, startDate: Date?, endDate: Date?)
     case deleteProject(projectId: Int)
     case modifyProject(projectId: Int, request: ProjectRequestDTO)
     case fetchRecentProjects
@@ -26,6 +27,8 @@ extension ProjectRouter: BaseRequestConvertible {
         case .createProject:
             return .post
         case .fetchProjects, .fetchRecentProjects:
+            return .get
+        case .fetchProjectsDetail:
             return .get
         case .deleteProject:
             return .delete
@@ -40,6 +43,12 @@ extension ProjectRouter: BaseRequestConvertible {
             return URLConstant.project
         case .fetchProjects:
             return URLConstant.project + "/all"
+        case let .fetchProjectsDetail(projectId, startDate, endDate):
+            if let startDate = startDate,
+               let endDate = endDate {
+                return URLConstant.project + "/\(projectId)" + "/collection/date"
+            }
+            return URLConstant.project + "/\(projectId)" + "/collection"
         case let .deleteProject(projectId):
             return URLConstant.project + "/\(projectId)"
         case let .modifyProject(projectId, _):
@@ -53,6 +62,13 @@ extension ProjectRouter: BaseRequestConvertible {
         switch self {
         case let .createProject(request), let .modifyProject(_, request):
             return request.toDictionary
+        case let .fetchProjectsDetail(_, startDate, endDate):
+            if let startDate = startDate,
+               let endDate = endDate {
+                return ["start": startDate.toString(type: .fullYearDash),
+                        "end": endDate.toString(type: .fullYearDash)]
+            }
+            return nil
         default:
             return nil
         }
@@ -68,6 +84,10 @@ extension ProjectRouter: BaseRequestConvertible {
         switch self {
         case .createProject, .modifyProject:
             request = try JSONEncoding.default.encode(request, with: parameters)
+        case let .fetchProjectsDetail(_, startDate, endDate):
+            if startDate != nil && endDate != nil {
+                request = try URLEncoding.queryString.encode(request, with: parameters)
+            }
         default:
             break
         }

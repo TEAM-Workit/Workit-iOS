@@ -14,7 +14,7 @@ import RxSwift
 import SnapKit
 
 protocol CalendarBottomSheetDelegate: AnyObject {
-    func sendSelectedDate(start: Date, end: Date)
+    func sendSelectedDate(start: Date?, end: Date?)
 }
 
 final class CalendarBottomSheetViewController: BaseViewController {
@@ -127,6 +127,8 @@ final class CalendarBottomSheetViewController: BaseViewController {
         /// dayItemClosure 다시 불러짐
         self.calendarView.setContent(self.makeContent())
     }
+
+    var canClearAll: Bool = false
     
     // MARK: - Initializer
     
@@ -179,15 +181,20 @@ final class CalendarBottomSheetViewController: BaseViewController {
         self.resetButton.rx.tap
             .withUnretained(self)
             .bind { owner, _ in
-                /// 오늘날짜로 재설정
-                let today = owner.calendar.day(containing: Date())
-                owner.calendarSelection = .singleDay(today)
-                owner.dateSelectPublisher.onNext(owner.calendarSelection)
-                owner.calendarView.setContent(owner.makeContent())
-                owner.calendarView.scroll(
-                    toMonthContaining: Date(),
-                    scrollPosition: .centered,
-                    animated: true)
+                if owner.canClearAll {
+                    self.calendarSelection = .none
+                    self.scrollToSelectedMonth()
+                    self.topView.setDateRange(startDate: nil, endDate: nil)
+                } else {
+                    let today = owner.calendar.day(containing: Date())
+                    owner.calendarSelection = .singleDay(today)
+                    owner.dateSelectPublisher.onNext(owner.calendarSelection)
+                    owner.calendarView.setContent(owner.makeContent())
+                    owner.calendarView.scroll(
+                        toMonthContaining: Date(),
+                        scrollPosition: .centered,
+                        animated: true)
+                }
             }
             .disposed(by: disposeBag)
         
@@ -205,8 +212,9 @@ final class CalendarBottomSheetViewController: BaseViewController {
                         end: owner.calendar.date(from: range.upperBound.components) ?? Date())
                 case .none:
                     owner.delegate?.sendSelectedDate(
-                        start: Date(),
-                        end: Date())
+                        start: nil,
+                        end: nil
+                    )
                 }
                 owner.dismiss(animated: true)
             }
@@ -214,23 +222,34 @@ final class CalendarBottomSheetViewController: BaseViewController {
     }
     // swiftlint:enable function_body_length
     
-    internal func setCalenderInitialDate(fromDate: Date, toDate: Date) {
+    internal func setCalenderInitialDate(fromDate: Date? = nil, toDate: Date? = nil) {
         /// 단일날짜인경우
-        if fromDate == toDate {
-            let day = calendar.day(containing: fromDate)
-            self.calendarSelection = .singleDay(day)
-        } else {
-            /// 단일 날짜가 아닌 경우
-            let range = DayRange(
-                containing: ClosedRange(uncheckedBounds: (fromDate, toDate)),
-                in: calendar)
-            self.calendarSelection = .dayRange(range)
+        if let fromDate = fromDate,
+           let toDate = toDate {
+            if fromDate == toDate {
+                let day = calendar.day(containing: fromDate)
+                self.calendarSelection = .singleDay(day)
+            } else if fromDate < toDate {
+                let range = DayRange(
+                    containing: ClosedRange(uncheckedBounds: (fromDate, toDate)),
+                    in: calendar)
+                self.calendarSelection = .dayRange(range)
+            }
+            self.scrollToSelectedMonth(to: fromDate)
+            
+            return
         }
+        
+        self.calendarSelection = .none
+        self.scrollToSelectedMonth()
+    }
+    
+    func scrollToSelectedMonth(to month: Date = Date()) {
         self.calendarView.setContent(makeContent())
         /// 첫 화면에서 해당 날짜로 이동하도록 함
         /// dayRange의 경우에는 첫번째 날짜로 이동함
         self.calendarView.scroll(
-            toMonthContaining: fromDate,
+            toMonthContaining: month,
             scrollPosition: .centered, animated: false)
         self.dateSelectPublisher.onNext(self.calendarSelection)
     }
