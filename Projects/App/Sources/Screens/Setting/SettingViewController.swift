@@ -12,11 +12,10 @@ import DesignSystem
 import Global
 import UIKit
 
-import RxCocoa
-import RxSwift
+import ReactorKit
 import SnapKit
 
-class SettingViewController: UIViewController {
+class SettingViewController: UIViewController, View {
     
     enum Setting: Int, CaseIterable {
         case project
@@ -40,7 +39,7 @@ class SettingViewController: UIViewController {
         static let withdraw = "탈퇴하기"
     }
     
-    private let disposeBag = DisposeBag()
+    public var disposeBag = DisposeBag()
     
     // MARK: - UIComponents
     
@@ -68,11 +67,45 @@ class SettingViewController: UIViewController {
         
         self.setTableView()
         self.setLayout()
-        self.bind()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         self.setNavigationBar()
+    }
+    
+    // MARK: - Bind (ReactorKit)
+    
+    func bind(reactor: SettingReactor) {
+        bindAction(reactor: reactor)
+        bindState(reactor: reactor)
+    }
+    
+    func bindAction(reactor: SettingReactor) {
+        self.withdrawButton.rx.tap
+            .withUnretained(self)
+            .bind { owner, _ in
+                let withdrawViewController = WithdrawalViewController()
+                withdrawViewController.reactor = WithdrawalReactor()
+                withdrawViewController.modalPresentationStyle = .fullScreen
+                owner.present(withdrawViewController, animated: true)
+            }
+            .disposed(by: disposeBag)
+        
+        self.rx.viewDidLoad
+            .map { Reactor.Action.viewDidLoad }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+    
+    func bindState(reactor: SettingReactor) {
+        reactor.state
+            .map { $0.userInformation }
+            .withUnretained(self)
+            .bind { owner, user in
+                owner.profileView.setUsername(text: user.nickname)
+                owner.profileView.setEmail(text: user.email)
+            }
+            .disposed(by: disposeBag)
     }
     
     // MARK: - Methods
@@ -108,18 +141,6 @@ class SettingViewController: UIViewController {
             backgroundColor: .wkMainPurple,
             tintColor: .wkWhite)
         self.navigationItem.title = "설정"
-    }
-    
-    private func bind() {
-        self.withdrawButton.rx.tap
-            .withUnretained(self)
-            .bind { owner, _ in
-                let withdrawViewController = WithdrawalViewController()
-                withdrawViewController.reactor = WithdrawalReactor()
-                withdrawViewController.modalPresentationStyle = .fullScreen
-                owner.present(withdrawViewController, animated: true)
-            }
-            .disposed(by: disposeBag)
     }
 }
 

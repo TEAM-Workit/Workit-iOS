@@ -13,6 +13,7 @@ import Alamofire
 public enum UserRouter {
     /// 유저 이름 조회
     case fetchNickname
+    case fetchUserInformation
 }
 
 extension UserRouter: BaseRequestConvertible {
@@ -21,6 +22,8 @@ extension UserRouter: BaseRequestConvertible {
         switch self {
         case .fetchNickname:
             return .get
+        case .fetchUserInformation:
+            return .get
         }
     }
     
@@ -28,12 +31,14 @@ extension UserRouter: BaseRequestConvertible {
         switch self {
         case .fetchNickname:
             return URLConstant.user + "/nickname"
+        case .fetchUserInformation:
+            return URLConstant.user
         }
     }
     
     var parameters: Parameters? {
         switch self {
-        case .fetchNickname:
+        case .fetchNickname, .fetchUserInformation:
             return nil
         }
     }
@@ -46,7 +51,7 @@ extension UserRouter: BaseRequestConvertible {
         request.headers = HTTPHeaders(headers)
         
         switch self {
-        case .fetchNickname:
+        case .fetchNickname, .fetchUserInformation:
            break
         }
       
