@@ -18,6 +18,7 @@ final class RootViewChange {
         case home
         case login
         case onboarding
+        case splash
     }
     
     private init() {}
@@ -46,6 +47,10 @@ final class RootViewChange {
             let onboardingViewController = OnboardingViewController()
             onboardingViewController.reactor = OnboardingReactor()
             delegate.window?.rootViewController = onboardingViewController
+            
+        case .splash:
+            let splashViewController = SplashViewController()
+            delegate.window?.rootViewController = splashViewController
         }
     }
 }

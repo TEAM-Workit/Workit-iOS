@@ -24,16 +24,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        
       //  UserDefaultsManager.shared.accessToken = nil
-        
-        if UserDefaultsManager.shared.accessToken == nil {
-            RootViewChange.shared.setRootViewController(.onboarding)
-            window?.makeKeyAndVisible()
-            return
-        }
-        
-        RootViewChange.shared.setRootViewController(.login)
+        RootViewChange.shared.setRootViewController(.splash)
         window?.makeKeyAndVisible()
     }
     
