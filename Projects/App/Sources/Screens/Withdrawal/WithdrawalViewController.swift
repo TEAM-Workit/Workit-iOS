@@ -14,6 +14,7 @@ import ReactorKit
 import RxSwift
 import SnapKit
 
+// swiftlint:disable all
 final class WithdrawalViewController: BaseViewController, View {
     var disposeBag: RxSwift.DisposeBag = DisposeBag()
     
@@ -215,6 +216,11 @@ final class WithdrawalViewController: BaseViewController, View {
             .map { _ in Reactor.Action.withdrawButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        self.withDrawalReasonView.rx.didSelectReason
+            .map { Reactor.Action.selectReason($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
     
     private func bindState(reactor: WithdrawalReactor) {
@@ -234,6 +240,15 @@ final class WithdrawalViewController: BaseViewController, View {
             .bind { _ in
                 UserDefaultsManager.shared.removeToken()
                 RootViewChange.shared.setRootViewController(.splash)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.isEnableClickWithdrawButton }
+            .distinctUntilChanged()
+            .withUnretained(self)
+            .bind { owner, isEnable in
+                owner.withDrawalBottomView.setWithdrawButtonState(isEnabled: isEnable)
             }
             .disposed(by: disposeBag)
     }
@@ -315,3 +330,4 @@ final class WithdrawalViewController: BaseViewController, View {
         self.present(alert, animated: true)
     }
 }
+// swiftlint:enable all

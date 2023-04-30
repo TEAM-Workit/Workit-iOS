@@ -17,22 +17,27 @@ final class WithdrawalReactor: Reactor {
     init() {
         initialState = .init(
             agreeButtonSelected: false,
-            isCompletedWithDraw: false)
+            isCompletedWithDraw: false,
+            isEnableClickWithdrawButton: false)
     }
     
     enum Action {
         case agreeButtonTap
         case withdrawButtonDidTap
+        case selectReason(String?)
     }
     
     struct State {
+        var reason: String?
         var agreeButtonSelected: Bool
         var isCompletedWithDraw: Bool
+        var isEnableClickWithdrawButton: Bool
     }
     
     enum Mutation {
         case changeAgreeButtonState
         case withDraw
+        case setReason(String?)
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
@@ -42,6 +47,9 @@ final class WithdrawalReactor: Reactor {
             
         case .withdrawButtonDidTap:
             return Observable.just(Mutation.withDraw)
+            
+        case .selectReason(let reason):
+            return Observable.just(Mutation.setReason(reason))
         }
     }
     
@@ -51,11 +59,24 @@ final class WithdrawalReactor: Reactor {
         switch mutation {
         case .changeAgreeButtonState:
             newState.agreeButtonSelected.toggle()
-
+            newState.isEnableClickWithdrawButton = setEnableWithdrawButton(
+                reason: newState.reason,
+                isAgree: newState.agreeButtonSelected)
+            
         case .withDraw:
             newState.isCompletedWithDraw = true
+            
+        case .setReason(let reason):
+            newState.reason = reason
+            newState.isEnableClickWithdrawButton = setEnableWithdrawButton(
+                reason: newState.reason,
+                isAgree: newState.agreeButtonSelected)
         }
         
         return newState
+    }
+    
+    private func setEnableWithdrawButton(reason: String?, isAgree: Bool) -> Bool {
+        return isAgree && (reason != nil)
     }
 }

@@ -28,8 +28,12 @@ final class WithdrawalBottomView: UIView {
     
     fileprivate let withdrawButton: WKRoundedButton = {
         let button = WKRoundedButton()
-        button.setEnabledColor(color: .wkMainNavy)
+        button.setBackgroundColor(.wkMainNavy, for: .normal)
+        button.setBackgroundColor(.wkBlack15, for: .disabled)
+        button.setTitleColor(.wkWhite, for: .normal)
+        button.setTitleColor(.wkBlack45, for: .disabled)
         button.setTitle("탈퇴하기", for: .normal)
+        button.isEnabled = false
         return button
     }()
     
@@ -60,6 +64,10 @@ final class WithdrawalBottomView: UIView {
     
     internal func changeAgreeButtonState(isSelected: Bool) {
         self.agreeButton.isSelected = isSelected
+    }
+    
+    internal func setWithdrawButtonState(isEnabled: Bool) {
+        self.withdrawButton.isEnabled = isEnabled
     }
 }
 
