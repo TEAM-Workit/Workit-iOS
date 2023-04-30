@@ -123,6 +123,9 @@ extension ProjectViewController: UICollectionViewDelegate {
             projectUseCase: DefaultProjectUseCase(
                 projectRepository: DefaultProjectRepository()
             ),
+            abilityUseCase: DefaultAbilityUseCase(
+                abilityRepository: DefaultAbilityRepository()
+            ),
             viewType: .project,
             id: self.reactor?.currentState.projects[indexPath.row].id ?? 0
         )

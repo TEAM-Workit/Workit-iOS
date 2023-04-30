@@ -37,9 +37,16 @@ final class DetailReactor: Reactor {
     }
     
     let projectUseCase: ProjectUseCase
+    let abilityUseCase: AbilityUseCase
     
-    init(projectUseCase: ProjectUseCase, viewType: PreviousView, id: Int) {
+    init(
+        projectUseCase: ProjectUseCase,
+        abilityUseCase: AbilityUseCase,
+        viewType: PreviousView,
+        id: Int
+    ) {
         self.projectUseCase = projectUseCase
+        self.abilityUseCase = abilityUseCase
     
         self.initialState = .init(works: [], viewType: viewType, id: id)
     }
@@ -55,10 +62,26 @@ final class DetailReactor: Reactor {
                 )
                 .map { Mutation.works($0) }
         case .loadWorksInAbliity:
-            return .empty()
+            return self.abilityUseCase
+                .fetchAbilityDetail(
+                    id: currentState.id,
+                    startDate: currentState.dateRange.startDate,
+                    endDate: currentState.dateRange.endDate
+                )
+                .map { Mutation.works($0.works) }
         case let .setDate(startDate, endDate):
             let date = Observable.just(Mutation.setDate(startDate, endDate))
-            if currentState.viewType == .project {
+            switch currentState.viewType {
+            case .ability:
+                let works = abilityUseCase
+                    .fetchAbilityDetail(
+                        id: currentState.id,
+                        startDate: startDate,
+                        endDate: endDate
+                    )
+                    .map { Mutation.works($0.works) }
+                return Observable.concat(date, works)
+            case .project:
                 let works = projectUseCase
                     .fetchProjectsDetail(
                         id: currentState.id,
@@ -68,7 +91,6 @@ final class DetailReactor: Reactor {
                     .map { Mutation.works($0) }
                 return Observable.concat(date, works)
             }
-            return .empty()
         }
     }
     
@@ -80,8 +102,6 @@ final class DetailReactor: Reactor {
             newState.works = works
         case let .setDate(startDate, endDate):
             newState.dateRange = (startDate, endDate)
-        default:
-            break
         }
         
         return newState

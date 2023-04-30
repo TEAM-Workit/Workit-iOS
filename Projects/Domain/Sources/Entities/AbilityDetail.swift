@@ -7,3 +7,13 @@
 //
 
 import Foundation
+
+public struct AbilityDetail {
+    public let abilityName: String
+    public let works: [Work]
+    
+    public init(abilityName: String, works: [Work]) {
+        self.abilityName = abilityName
+        self.works = works
+    }
+}

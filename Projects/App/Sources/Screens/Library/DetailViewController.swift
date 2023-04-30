@@ -82,10 +82,18 @@ class DetailViewController: BaseViewController, View {
     }
     
     private func bindAction(reactor: DetailReactor) {
-        self.rx.viewDidLoad
-            .map { _ in Reactor.Action.loadWorksInProject }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
+        switch previousView {
+        case .ability:
+            self.rx.viewDidLoad
+                .map { _ in Reactor.Action.loadWorksInAbliity }
+                .bind(to: reactor.action)
+                .disposed(by: disposeBag)
+        case .project:
+            self.rx.viewDidLoad
+                .map { _ in Reactor.Action.loadWorksInProject }
+                .bind(to: reactor.action)
+                .disposed(by: disposeBag)
+        }
         
         self.dateButton.rx.tap
             .subscribe(onNext: {
