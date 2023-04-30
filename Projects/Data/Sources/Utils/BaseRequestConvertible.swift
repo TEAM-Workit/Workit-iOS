@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Global
 
 import Alamofire
 
@@ -20,7 +21,7 @@ extension BaseRequestConvertible {
     
     var headers: [String: String] {
         return ["Content-Type": "application/json",
-                "Authorization": SecretKey.testAccessToken]
+                "Authorization": UserDefaultsManager.shared.accessToken ?? ""]
     }
 }
 

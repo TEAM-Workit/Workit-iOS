@@ -8,6 +8,7 @@
 
 import DesignSystem
 import UIKit
+import Global
 
 import RxKakaoSDKAuth
 import KakaoSDKAuth
@@ -23,10 +24,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        
-        let viewController = WKNavigationConroller(rootViewController: HomeViewController())
-        viewController.view.backgroundColor = UIColor.wkWhite
-        window?.rootViewController = LoginViewController()
+      //  UserDefaultsManager.shared.accessToken = nil
+        RootViewChange.shared.setRootViewController(.splash)
         window?.makeKeyAndVisible()
     }
     

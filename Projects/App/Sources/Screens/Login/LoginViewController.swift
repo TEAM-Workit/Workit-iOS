@@ -130,6 +130,7 @@ final class LoginViewController: BaseViewController {
                 }
                 .bind(onNext: { authToken in
                     UserDefaultsManager.shared.accessToken = authToken.accessToken
+                    RootViewChange.shared.setRootViewController(.home)
                 })
                 .disposed(by: disposeBag)
         } else {
@@ -143,6 +144,7 @@ final class LoginViewController: BaseViewController {
                 }
                 .bind(onNext: { authToken in
                     UserDefaultsManager.shared.accessToken = authToken.accessToken
+                    RootViewChange.shared.setRootViewController(.home)
                 })
                 .disposed(by: disposeBag)
         }

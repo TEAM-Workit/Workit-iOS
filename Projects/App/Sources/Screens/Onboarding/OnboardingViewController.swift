@@ -119,6 +119,15 @@ final class OnboardingViewController: BaseViewController, View {
                 owner.nextButton.setTitle(title, for: .normal)
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.startButtonTap }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .bind { _ in
+                RootViewChange.shared.setRootViewController(.login)
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Methods

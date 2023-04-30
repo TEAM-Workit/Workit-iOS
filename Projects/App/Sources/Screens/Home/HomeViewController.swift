@@ -143,8 +143,15 @@ final class HomeViewController: BaseViewController, View {
             backgroundColor: .clear,
             tintColor: .wkWhite)
         let button = WKNavigationButton(image: Image.wkMenu)
+        button.addTarget(self, action: #selector(settingButtonDidTap), for: .touchUpInside)
         let barbuttonitem = UIBarButtonItem(customView: button)
         self.navigationItem.rightBarButtonItem = barbuttonitem
+    }
+    
+    @objc private func settingButtonDidTap() {
+        let settingViewController = UINavigationController(rootViewController: SettingViewController())
+        settingViewController.modalPresentationStyle = .fullScreen
+        self.present(settingViewController, animated: true)
     }
 
     override func setLayout() {

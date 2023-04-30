@@ -67,6 +67,7 @@ final class WithdrawalReasonView: UIView {
     }()
     
     private let disposeBag = DisposeBag()
+    fileprivate let reasonPublisher = PublishSubject<(String?)>()
     
     init() {
         super.init(frame: .zero)
@@ -98,6 +99,7 @@ final class WithdrawalReasonView: UIView {
             .bind { owner, _ in
                 owner.etcReasonTextView.layer.borderColor = UIColor.wkBlack15.cgColor
                 owner.etcReasonTextView.layer.borderWidth = 1
+                owner.reasonPublisher.onNext(owner.etcReasonTextView.text ?? "")
             }
             .disposed(by: disposeBag)
     }
@@ -136,6 +138,7 @@ final class WithdrawalReasonView: UIView {
                 self?.reasonSelectButton.setTitle("    이유 선택", for: .normal)
                 self?.reasonSelectButton.setTitleColor(.wkBlack30, for: .normal)
                 self?.etcReasonTextView.isHidden = true
+                self?.reasonPublisher.onNext(nil)
                 self?.endEditing(true)
             }]
             + reasons.map({ [weak self] text in
@@ -143,6 +146,7 @@ final class WithdrawalReasonView: UIView {
                     self?.reasonSelectButton.setTitle("    " + text, for: .normal)
                     self?.reasonSelectButton.setTitleColor(.wkBlack, for: .normal)
                     self?.etcReasonTextView.isHidden = true
+                    self?.reasonPublisher.onNext(text)
                     self?.endEditing(true)
                 }
             })
@@ -152,5 +156,12 @@ final class WithdrawalReasonView: UIView {
                 self?.etcReasonTextView.isHidden = false
             }]
         )
+    }
+}
+
+extension Reactive where Base: WithdrawalReasonView {
+    
+    var didSelectReason: Observable<String?> {
+        return base.reasonPublisher.asObservable()
     }
 }

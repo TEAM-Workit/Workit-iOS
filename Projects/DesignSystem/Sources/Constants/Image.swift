@@ -43,4 +43,6 @@ public enum Image {
     public static let wkOnboarding3 = Assets.wkOnboarding3.image
     public static let wkUncheck = Assets.wkUncheck.image
     public static let wkCheck = Assets.wkCheck.image
+    public static let imgSplashLogo = Assets.imgSplashLogo.image
+    public static let imgSplashTextLogo = Assets.imgSplashTextLogo.image
 }
