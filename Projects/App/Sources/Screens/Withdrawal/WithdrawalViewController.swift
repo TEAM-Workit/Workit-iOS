@@ -7,11 +7,14 @@
 //
 
 import DesignSystem
+import Global
 import UIKit
 
 import ReactorKit
+import RxSwift
 import SnapKit
 
+// swiftlint:disable all
 final class WithdrawalViewController: BaseViewController, View {
     var disposeBag: RxSwift.DisposeBag = DisposeBag()
     
@@ -21,6 +24,42 @@ final class WithdrawalViewController: BaseViewController, View {
         static let navigationTitle: String = "회원탈퇴"
         static let withdrawTitle: String = "정말 떠나시는 건가요?"
         static let description: String = "지금 워킷을 떠나시면 워킷의 모든 기록들이 사라지게 돼요. 이전에 기록한 역량, 프로젝트별 기록은 더 이상 확인하실 수 없어요."
+    }
+    
+    enum AlertType {
+        case requestWithdraw
+        case completeWithdraw
+        
+        var title: String? {
+            return nil
+        }
+        
+        var message: String? {
+            switch self {
+            case .requestWithdraw:
+                return "정말 탈퇴하시겠습니까?"
+            case .completeWithdraw:
+                return "탈퇴 완료 되었습니다."
+            }
+        }
+        
+        var okButton: (title: String, style: UIAlertAction.Style) {
+            switch self {
+            case .requestWithdraw:
+                return ("탈퇴하기", .destructive)
+            case .completeWithdraw:
+                return ("확인", .default)
+            }
+        }
+        
+        var cancelButton: (title: String, style: UIAlertAction.Style)? {
+            switch self {
+            case .requestWithdraw:
+                return ("취소", .cancel)
+            case .completeWithdraw:
+                return nil
+            }
+        }
     }
     
     private let navigationView = UIView()
@@ -61,6 +100,8 @@ final class WithdrawalViewController: BaseViewController, View {
     
     private let withDrawalReasonView = WithdrawalReasonView()
     private let withDrawalBottomView = WithdrawalBottomView()
+    
+    private let withDrawPublisher = PublishSubject<()>()
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -123,8 +164,8 @@ final class WithdrawalViewController: BaseViewController, View {
             let keyboardRectangle = keyboardFrame.cgRectValue
             self.scrollView.contentOffset.y = 200
             UIView.animate(
-                withDuration: 0.3
-                , animations: {
+                withDuration: 0.3,
+                animations: {
                     self.withDrawalBottomView.transform = CGAffineTransform(translationX: 0, y: -keyboardRectangle.height)
                 }
             )
@@ -154,6 +195,32 @@ final class WithdrawalViewController: BaseViewController, View {
                 owner.view.endEditing(true)
             }
             .disposed(by: disposeBag)
+        
+        self.withDrawalBottomView.rx.withdrawButtonDidTap
+            .withUnretained(self)
+            .bind { owner, _ in
+                owner.presentAlert(
+                    type: .requestWithdraw,
+                    okAction: { _ in
+                        owner.presentAlert(
+                            type: .completeWithdraw,
+                            okAction: { _ in
+                                owner.withDrawPublisher.onNext(())
+                            }
+                        )
+                    })
+            }
+            .disposed(by: disposeBag)
+        
+        self.withDrawPublisher
+            .map { _ in Reactor.Action.withdrawButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        self.withDrawalReasonView.rx.didSelectReason
+            .map { Reactor.Action.selectReason($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
     
     private func bindState(reactor: WithdrawalReactor) {
@@ -163,6 +230,25 @@ final class WithdrawalViewController: BaseViewController, View {
             .withUnretained(self)
             .bind { owner, isSelected in
                 owner.withDrawalBottomView.changeAgreeButtonState(isSelected: isSelected)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.isCompletedWithDraw }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .bind { _ in
+                UserDefaultsManager.shared.removeToken()
+                RootViewChange.shared.setRootViewController(.splash)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.isEnableClickWithdrawButton }
+            .distinctUntilChanged()
+            .withUnretained(self)
+            .bind { owner, isEnable in
+                owner.withDrawalBottomView.setWithdrawButtonState(isEnabled: isEnable)
             }
             .disposed(by: disposeBag)
     }
@@ -226,4 +312,22 @@ final class WithdrawalViewController: BaseViewController, View {
             make.height.equalTo(88)
         }
     }
+    
+    func presentAlert(type: AlertType, okAction: ((UIAlertAction) -> Void)? = nil) {
+        let alert = UIAlertController(
+            title: type.title,
+            message: type.message,
+            preferredStyle: .alert)
+        
+        if let cancel = type.cancelButton {
+            let cancelAlert = UIAlertAction(title: cancel.title, style: cancel.style)
+            alert.addAction(cancelAlert)
+        }
+        
+        let okAlert = UIAlertAction(title: type.okButton.title, style: type.okButton.style, handler: okAction)
+        alert.addAction(okAlert)
+        
+        self.present(alert, animated: true)
+    }
 }
+// swiftlint:enable all

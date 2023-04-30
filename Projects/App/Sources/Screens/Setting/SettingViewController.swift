@@ -12,6 +12,8 @@ import DesignSystem
 import Global
 import UIKit
 
+import RxCocoa
+import RxSwift
 import SnapKit
 
 class SettingViewController: UIViewController {
@@ -37,6 +39,8 @@ class SettingViewController: UIViewController {
     enum Text {
         static let withdraw = "탈퇴하기"
     }
+    
+    private let disposeBag = DisposeBag()
     
     // MARK: - UIComponents
     
@@ -64,6 +68,7 @@ class SettingViewController: UIViewController {
         
         self.setTableView()
         self.setLayout()
+        self.bind()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -103,6 +108,18 @@ class SettingViewController: UIViewController {
             backgroundColor: .wkMainPurple,
             tintColor: .wkWhite)
         self.navigationItem.title = "설정"
+    }
+    
+    private func bind() {
+        self.withdrawButton.rx.tap
+            .withUnretained(self)
+            .bind { owner, _ in
+                let withdrawViewController = WithdrawalViewController()
+                withdrawViewController.reactor = WithdrawalReactor()
+                withdrawViewController.modalPresentationStyle = .fullScreen
+                owner.present(withdrawViewController, animated: true)
+            }
+            .disposed(by: disposeBag)
     }
 }
 

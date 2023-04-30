@@ -49,7 +49,9 @@ final class OnboardingReactor: Reactor {
         initialState = .init(
             page: 0,
             onboardings: self.onboardings,
-            buttonTitle: Text.next)
+            buttonTitle: Text.next,
+            startButtonTap: false
+        )
     }
 
     enum Action {
@@ -62,6 +64,7 @@ final class OnboardingReactor: Reactor {
         var page: Int
         var onboardings: [Onboarding]
         var buttonTitle: String
+        var startButtonTap: Bool
     }
 
     enum Mutation {
@@ -92,6 +95,11 @@ final class OnboardingReactor: Reactor {
             newState.buttonTitle = getButtonTitle(page: page)
             
         case .setNextPage:
+            if newState.page >= Number.lastPage {
+                newState.startButtonTap = true
+                break
+            }
+            
             if newState.page < Number.lastPage {
                 newState.page += 1
             }
