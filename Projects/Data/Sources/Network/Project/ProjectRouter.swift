@@ -82,8 +82,7 @@ extension ProjectRouter: BaseRequestConvertible {
         case .createProject, .modifyProject:
             request = try JSONEncoding.default.encode(request, with: parameters)
         case let .fetchProjectsDetail(_, startDate, endDate):
-            if let _ = startDate,
-               let _ = endDate {
+            if startDate != nil && endDate != nil {
                 request = try URLEncoding.queryString.encode(request, with: parameters)
             }
         default:
