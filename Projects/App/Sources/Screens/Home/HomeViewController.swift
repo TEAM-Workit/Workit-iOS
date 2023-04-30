@@ -6,6 +6,7 @@
 //  Copyright © 2022 com.workit. All rights reserved.
 //
 
+import Data
 import DesignSystem
 import Domain
 import UIKit
@@ -155,9 +156,11 @@ final class HomeViewController: BaseViewController, View {
     }
     
     @objc private func settingButtonDidTap() {
-        let settingViewController = UINavigationController(rootViewController: SettingViewController())
-        settingViewController.modalPresentationStyle = .fullScreen
-        self.present(settingViewController, animated: true)
+        let settingViewController = SettingViewController()
+        settingViewController.reactor = SettingReactor(userUseCase: DefaultUserUseCase(userRepository: DefaultUserRepository()))
+        let navigationController = WKNavigationConroller(rootViewController: settingViewController)
+        navigationController.modalPresentationStyle = .fullScreen
+        self.present(navigationController, animated: true)
     }
 
     override func setLayout() {
