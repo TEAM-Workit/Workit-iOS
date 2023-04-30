@@ -99,8 +99,8 @@ final class WorkDetailViewController: BaseViewController {
     // MARK: Properties
     
     var workId: Int = -1
-    private var softAbilityList: [WriteAbility] = []
-    private var hardAbilityList: [WriteAbility] = []
+    private var softAbilityList: [Ability] = []
+    private var hardAbilityList: [Ability] = []
     
     private var workRepository: WorkRepository = DefaultWorkRepository()
     private var workDetailData: WorkDetail = WorkDetail(
@@ -219,7 +219,7 @@ final class WorkDetailViewController: BaseViewController {
         self.workTitleLabel.text = workData.title
         self.dateLabel.text = workData.date.toDate(type: .fullPlus)?.toString(type: .simpleDot)
         
-        let abilities: ([WriteAbility], [WriteAbility]) = self.divideAbilities(abilities: workData.abilities)
+        let abilities: ([Ability], [Ability]) = self.divideAbilities(abilities: workData.abilities)
         self.softAbilityList = abilities.0
         self.hardAbilityList = abilities.1
         
@@ -244,24 +244,24 @@ final class WorkDetailViewController: BaseViewController {
         }
     }
     
-    private func divideAbilities(abilities: [Ability]) -> ([WriteAbility], [WriteAbility]) {
-        var softAbilites: [WriteAbility] = []
-        var hardAbilites: [WriteAbility] = []
+    private func divideAbilities(abilities: [Ability]) -> ([Ability], [Ability]) {
+        var softAbilites: [Ability] = []
+        var hardAbilites: [Ability] = []
         for ability in abilities {
             if ability.type == .soft {
                 softAbilites.append(
-                    WriteAbility(
-                        abilityId: ability.id,
-                        abilityName: ability.name,
-                        abilityType: ability.type.rawValue
+                    Ability(
+                        id: ability.id,
+                        name: ability.name,
+                        type: ability.type.rawValue
                     )
                 )
             } else {
                 hardAbilites.append(
-                    WriteAbility(
-                        abilityId: ability.id,
-                        abilityName: ability.name,
-                        abilityType: ability.type.rawValue
+                    Ability(
+                        id: ability.id,
+                        name: ability.name,
+                        type: ability.type.rawValue
                     )
                 )
             }
@@ -289,7 +289,7 @@ final class WorkDetailViewController: BaseViewController {
                 title: Text.remove,
                 style: .destructive,
                 handler: { [weak self] _ in
-                    self?.requestRemoveWork()
+                    self?.requestRemoveWork(workId: self?.workId ?? -1)
                 }
             )
         )
@@ -298,7 +298,9 @@ final class WorkDetailViewController: BaseViewController {
     }
     
     private func presentEditViewController() {
-        let editViewController: BaseViewController = WriteViewController()
+        let editViewController: WriteViewController = WriteViewController()
+        editViewController.modalPresentationStyle = .fullScreen
+        editViewController.setEditViewController(workId: self.workId)
         
         self.present(editViewController, animated: true)
     }
@@ -390,14 +392,21 @@ extension WorkDetailViewController: UIScrollViewDelegate {
 
 extension WorkDetailViewController {
     private func fetchWorkDetail(workId: Int) {
-        workRepository.fetchWorkDetail(workId: workId) { workDetail in
+        self.workRepository.fetchWorkDetail(workId: workId) { workDetail in
             self.workDetailData = workDetail
             self.setData(workData: self.workDetailData)
         }
     }
     
-    private func requestRemoveWork() {
-        debugPrint("삭제 request")
+    private func requestRemoveWork(workId: Int) {
+        self.workRepository.deleteWork(workId: workId) { success in
+            if success {
+                
+                self.navigationController?.popViewController(animated: true)
+            } else {
+                self.showAlert(title: Message.networkError.text)
+            }
+        }
     }
 }
 

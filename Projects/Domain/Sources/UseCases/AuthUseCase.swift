@@ -11,7 +11,7 @@ import Global
 
 import RxSwift
 
-protocol AuthUseCase {
+public protocol AuthUseCase {
     func postSocialLogin(requestValue: PostSocialLoginRequestValue) -> Observable<AuthToken>
 }
 
@@ -36,7 +36,7 @@ public struct PostSocialLoginRequestValue {
     let socialId: String
     let nickName: String?
     
-    public init(socialType: SocialType, socialId: String, nickName: String?) {
+    public init(socialType: SocialType, socialId: String, nickName: String? = nil) {
         self.socialType = socialType
         self.socialId = socialId
         self.nickName = nickName

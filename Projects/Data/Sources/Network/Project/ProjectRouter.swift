@@ -17,6 +17,7 @@ public enum ProjectRouter {
     case fetchProjectsDetail(projectId: Int, startDate: Date?, endDate: Date?)
     case deleteProject(projectId: Int)
     case modifyProject(projectId: Int, request: ProjectRequestDTO)
+    case fetchRecentProjects
 }
 
 extension ProjectRouter: BaseRequestConvertible {
@@ -25,7 +26,7 @@ extension ProjectRouter: BaseRequestConvertible {
         switch self {
         case .createProject:
             return .post
-        case .fetchProjects:
+        case .fetchProjects, .fetchRecentProjects:
             return .get
         case .fetchProjectsDetail:
             return .get
@@ -52,6 +53,8 @@ extension ProjectRouter: BaseRequestConvertible {
             return URLConstant.project + "/\(projectId)"
         case let .modifyProject(projectId, _):
             return URLConstant.project + "/\(projectId)"
+        case .fetchRecentProjects:
+            return URLConstant.project + "/recent"
         }
     }
     

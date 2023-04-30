@@ -1,5 +1,9 @@
 import UIKit
 
+import RxKakaoSDKCommon
+import RxKakaoSDKAuth
+import KakaoSDKAuth
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -9,6 +13,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+        RxKakaoSDK.initSDK(appKey: "41248bd7434ad5d295065a3fc85577ea")
         return true
     }
 }

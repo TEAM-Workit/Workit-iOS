@@ -6,6 +6,8 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Data
+import Domain
 import DesignSystem
 import Global
 import UIKit
@@ -19,7 +21,7 @@ import SnapKit
 // MARK: - Protocols
 
 protocol SendSelectedProjectDelegate: AnyObject {
-    func sendUpdate(selectedProjectTitle: String)
+    func sendUpdate(selectedProjectTitle: String, projectId: Int)
 }
 
 final class SelectProjectBottomViewController: BaseViewController {
@@ -94,37 +96,15 @@ final class SelectProjectBottomViewController: BaseViewController {
     
     // MARK: Properties
     
-    private var recentProjectList: [RecentProject] = [
-        RecentProject(id: 0, title: "카카카카카카카카카카카카카카카카카카카카"),
-        RecentProject(id: 1, title: "어쩌구 프로젝트"),
-        RecentProject(id: 2, title: "솝텀 프로젝트"),
-        RecentProject(id: 3, title: "워킷"),
-        RecentProject(id: 4, title: "어쩌구 프로젝트"),
-        RecentProject(id: 5, title: "솝텀 프로젝트"),
-        RecentProject(id: 6, title: "워킷")
-    ]
-    
-    private var allProjectList: [SearchProjectTableViewCellModel] = [
-        SearchProjectTableViewCellModel(id: 0, title: "카카카카카카카카카카카카카카카카카카카카"),
-        SearchProjectTableViewCellModel(id: 1, title: "어쩌구 프로젝트"),
-        SearchProjectTableViewCellModel(id: 2, title: "솝텀 프로젝트"),
-        SearchProjectTableViewCellModel(id: 3, title: "워킷"),
-        SearchProjectTableViewCellModel(id: 4, title: "어쩌구 프로젝트"),
-        SearchProjectTableViewCellModel(id: 5, title: "솝텀 프로젝트"),
-        SearchProjectTableViewCellModel(id: 6, title: "워킷"),
-        SearchProjectTableViewCellModel(id: 7, title: "워킷프로젝트"),
-        SearchProjectTableViewCellModel(id: 8, title: "뮤멘트"),
-        SearchProjectTableViewCellModel(id: 9, title: "플젝"),
-        SearchProjectTableViewCellModel(id: 10, title: "프로젝트"),
-        SearchProjectTableViewCellModel(id: 11, title: "워킷프로젝트"),
-        SearchProjectTableViewCellModel(id: 12, title: "뮤멘트")
-    ]
-    
+    private var recentProjectList: [RecentProject] = []
+    private var allProjectList: [SearchProjectTableViewCellModel] = []
     private var filteredProjectList: [SearchProjectTableViewCellModel] = []
     
     weak var delegate: SendSelectedProjectDelegate?
+    private let projectRepository: ProjectRepository = DefaultProjectRepository()
     var searchProjectDataSource: UITableViewDiffableDataSource<Section, SearchProjectTableViewCellModel>!
     var searchProjectSnapshot: NSDiffableDataSourceSnapshot<Section, SearchProjectTableViewCellModel>!
+    private var selectedProjectId: Int = 0
     
     private let disposeBag: DisposeBag = DisposeBag()
     
@@ -145,6 +125,8 @@ final class SelectProjectBottomViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.fetchAllProject()
+        self.fetchRecentProject()
         self.setLayout()
         self.setCloseButtonAction()
         self.setDoneButtonAction()
@@ -180,8 +162,13 @@ final class SelectProjectBottomViewController: BaseViewController {
     private func setDoneButtonAction() {
         self.doneButton.setAction { [weak self] in
             if let title = self?.projectTextField.text as? String {
-                self?.delegate?.sendUpdate(selectedProjectTitle: title)
-                self?.dismiss(animated: true)
+                if let projectId = self?.selectedProjectId {
+                    self?.delegate?.sendUpdate(
+                        selectedProjectTitle: title,
+                        projectId: projectId
+                    )
+                    self?.dismiss(animated: true)
+                }
             }
         }
     }
@@ -197,7 +184,7 @@ final class SelectProjectBottomViewController: BaseViewController {
         self.doneButton.isEnabled = self.projectTextField.isEntered
     }
     
-    func setSelectedAbilityList(abilityList: [WriteAbility]) {
+    func setSelectedAbilityList(abilityList: [Ability]) {
         // TODO: 리스폰스에 있는 ability id를 보고 구현...
     }
     
@@ -264,7 +251,6 @@ final class SelectProjectBottomViewController: BaseViewController {
         }
         
         self.searchProjectSnapshot.appendItems(self.filteredProjectList)
-        debugPrint(self.filteredProjectList)
         self.searchProjectDataSource.apply(self.searchProjectSnapshot)
         
         self.updateSearchProjectTableViewHeight()
@@ -317,6 +303,7 @@ extension SelectProjectBottomViewController: UICollectionViewDelegateFlowLayout 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.projectTextField.endEditing(true)
         self.projectTextField.text = self.recentProjectList[indexPath.row].title
+        self.selectedProjectId = self.recentProjectList[indexPath.row].id
         self.projectTextField.isEntered = true
         self.setDoneButtonEnabled()
     }
@@ -328,11 +315,12 @@ extension SelectProjectBottomViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if self.filteredProjectList[indexPath.row].id == -1 {
-            // TODO: 프로젝트 생성 request
+            self.createProject(title: self.filteredProjectList[indexPath.row].title)
         }
         
         self.projectTextField.endEditing(true)
         self.projectTextField.text = self.filteredProjectList[indexPath.row].title
+        self.selectedProjectId = self.filteredProjectList[indexPath.row].id
         self.projectTextField.isEntered = true
         
         for index in 0..<recentProjectList.count
@@ -364,6 +352,47 @@ extension SelectProjectBottomViewController: UITextFieldDelegate {
         guard let stringRange = Range(range, in: currentText) else { return false }
         let changedText = currentText.replacingCharacters(in: stringRange, with: string)
         return changedText.count <= 20
+    }
+}
+
+// MARK: - Network
+
+extension SelectProjectBottomViewController {
+    
+    private func fetchRecentProject() {
+        self.recentProjectList = []
+        self.projectRepository.fetchRecentProjects { projects in
+            _ = projects.map { project in
+                self.recentProjectList.append(
+                    RecentProject(
+                        id: project.id,
+                        title: project.title
+                    )
+                )
+            }
+            self.recentProjectCollectionView.reloadData()
+        }
+    }
+    
+    private func fetchAllProject() {
+        self.allProjectList = []
+        self.projectRepository.fetchProjects { projects in
+            _ = projects.map { project in
+                self.allProjectList.append(
+                    SearchProjectTableViewCellModel(
+                        id: project.id,
+                        title: project.title
+                    )
+                )
+            }
+        }
+    }
+    
+    private func createProject(title: String) {
+        self.projectRepository.createProject(title: title) { response in
+            self.selectedProjectId = response.id
+            self.fetchAllProject()
+        }
     }
 }
 

@@ -12,9 +12,9 @@ public enum TagType: String {
     
     public init(rawValue: String) {
         switch rawValue {
-        case "HARD":
+        case "HARD", "hard":
             self = .hard
-        case "SOFT":
+        case "SOFT", "soft":
             self = .soft
         default:
             fatalError("HARD, SOFT 아님")
