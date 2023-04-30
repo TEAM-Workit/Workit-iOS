@@ -154,6 +154,11 @@ final class WithdrawalViewController: BaseViewController, View {
                 owner.view.endEditing(true)
             }
             .disposed(by: disposeBag)
+        
+        self.withDrawalBottomView.rx.withdrawButtonDidTap
+            .map { _ in Reactor.Action.withdrawButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
     
     private func bindState(reactor: WithdrawalReactor) {
@@ -163,6 +168,15 @@ final class WithdrawalViewController: BaseViewController, View {
             .withUnretained(self)
             .bind { owner, isSelected in
                 owner.withDrawalBottomView.changeAgreeButtonState(isSelected: isSelected)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.isCompletedWithDraw }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .bind { _ in
+                RootViewChange.shared.setRootViewController(.onboarding)
             }
             .disposed(by: disposeBag)
     }

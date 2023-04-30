@@ -15,25 +15,33 @@ final class WithdrawalReactor: Reactor {
     var initialState: State
     
     init() {
-        initialState = .init(agreeButtonSelected: false)
+        initialState = .init(
+            agreeButtonSelected: false,
+            isCompletedWithDraw: false)
     }
     
     enum Action {
         case agreeButtonTap
+        case withdrawButtonDidTap
     }
     
     struct State {
         var agreeButtonSelected: Bool
+        var isCompletedWithDraw: Bool
     }
     
     enum Mutation {
         case changeAgreeButtonState
+        case withDraw
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .agreeButtonTap:
             return Observable.just(Mutation.changeAgreeButtonState)
+            
+        case .withdrawButtonDidTap:
+            return Observable.just(Mutation.withDraw)
         }
     }
     
@@ -43,6 +51,9 @@ final class WithdrawalReactor: Reactor {
         switch mutation {
         case .changeAgreeButtonState:
             newState.agreeButtonSelected.toggle()
+
+        case .withDraw:
+            newState.isCompletedWithDraw = true
         }
         
         return newState

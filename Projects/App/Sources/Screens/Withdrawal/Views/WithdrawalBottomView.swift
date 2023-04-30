@@ -68,4 +68,8 @@ extension Reactive where Base: WithdrawalBottomView {
     var agreeButtonDidTap: ControlEvent<Void> {
         return base.agreeButton.rx.tap
     }
+    
+    var withdrawButtonDidTap: ControlEvent<Void> {
+        return base.withdrawButton.rx.tap
+    }
 }
