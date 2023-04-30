@@ -7,6 +7,7 @@
 //
 
 import DesignSystem
+import Global
 import UIKit
 
 import ReactorKit
@@ -176,7 +177,8 @@ final class WithdrawalViewController: BaseViewController, View {
             .distinctUntilChanged()
             .filter { $0 }
             .bind { _ in
-                RootViewChange.shared.setRootViewController(.onboarding)
+                UserDefaultsManager.shared.removeToken()
+                RootViewChange.shared.setRootViewController(.splash)
             }
             .disposed(by: disposeBag)
     }
