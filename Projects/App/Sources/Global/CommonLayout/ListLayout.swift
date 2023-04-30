@@ -17,7 +17,7 @@ struct ListLayout {
             using: config,
             layoutEnvironment: layoutEnvironment)
         section.interGroupSpacing = 12
-        section.contentInsets = .init(top: 0, leading: 20, bottom: 104, trailing: 20)
+        section.contentInsets = .init(top: 20, leading: 20, bottom: 104, trailing: 20)
         return section
     }
 }
