@@ -118,7 +118,6 @@ final class WorkDetailViewController: BaseViewController {
         super.viewDidLoad()
         
         self.setNavigationBar()
-        self.setBackButtonAction()
         self.setMenuButtonAction()
         self.setScrollView()
         self.setLayout()
@@ -134,20 +133,12 @@ final class WorkDetailViewController: BaseViewController {
     // MARK: Methods
     
     private func setNavigationBar() {
-        self.navigationController?.navigationBar.topItem?.rightBarButtonItem = UIBarButtonItem(customView: WKNavigationButton(image: Image.wkKebapA))
-        self.navigationController?.navigationBar.topItem?.leftBarButtonItem = UIBarButtonItem(customView: WKNavigationButton(image: Image.wkArrowBig))
-    }
-    
-    private func setBackButtonAction() {
-        if let button = self.navigationController?.navigationBar.topItem?.leftBarButtonItem?.customView as? UIButton {
-            button.setAction { [weak self] in
-                self?.navigationController?.popViewController(animated: true)
-            }
-        }
+        let rightButtonItem = UIBarButtonItem(customView: WKNavigationButton(image: Image.wkKebapA))
+        self.navigationItem.rightBarButtonItem = rightButtonItem
     }
     
     private func setMenuButtonAction() {
-        if let button = self.navigationController?.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
+        if let button = self.navigationItem.rightBarButtonItem?.customView as? UIButton {
             button.setAction { [weak self] in
                 let actionSheet = UIAlertController(
                     title: nil,
