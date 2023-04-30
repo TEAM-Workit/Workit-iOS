@@ -125,6 +125,7 @@ final class WriteViewController: BaseViewController {
         label.textAlignment = .right
         label.font = .b3Sb
         label.textColor = .wkBlack30
+        label.text = "0 / 1000"
         return label
     }()
     
@@ -405,6 +406,19 @@ final class WriteViewController: BaseViewController {
         }
         return (softAbilites, hardAbilites)
     }
+    
+    private func setWorkDescriptionCountLabel() {
+        self.workDescriptionCountLabel.text = "\(workDescriptionTextView.text.count) / 1000"
+        self.workDescriptionCountLabel.setFontColor(
+            to: "\(workDescriptionTextView.text.count)",
+            font: .b3Sb,
+            color: workDescriptionTextView.text.count == 1000 ? .wkMainPurple : .wkBlack30
+        )
+        
+        if self.workDescriptionTextView.text.count > 1000 {
+            self.workDescriptionTextView.deleteBackward()
+        }
+    }
 }
 
 // MARK: - Extension (UICollectionViewDelegateFlowLayout)
@@ -538,6 +552,10 @@ extension WriteViewController: UITextViewDelegate {
             animated: true
         )
     }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        self.setWorkDescriptionCountLabel()
+    }
 }
 
 // MARK: - Network
@@ -584,6 +602,7 @@ extension WriteViewController {
             self.isSaveButtonEnabled[SaveButtonConditionType.abilities] = true
             self.isSaveButtonEnabled[SaveButtonConditionType.title] = true
             
+            self.setWorkDescriptionCountLabel()
             self.isEdit = true
             self.editableWorkId = workId
         }
