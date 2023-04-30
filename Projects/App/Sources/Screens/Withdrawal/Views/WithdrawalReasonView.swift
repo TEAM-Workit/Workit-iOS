@@ -99,7 +99,6 @@ final class WithdrawalReasonView: UIView {
             .bind { owner, _ in
                 owner.etcReasonTextView.layer.borderColor = UIColor.wkBlack15.cgColor
                 owner.etcReasonTextView.layer.borderWidth = 1
-                owner.reasonPublisher.onNext(owner.etcReasonTextView.text ?? "")
             }
             .disposed(by: disposeBag)
     }
@@ -153,6 +152,7 @@ final class WithdrawalReasonView: UIView {
             + [UIAction(title: "기타", state: .on) { [weak self] _ in
                 self?.reasonSelectButton.setTitle("    " + "기타", for: .normal)
                 self?.reasonSelectButton.setTitleColor(.wkBlack, for: .normal)
+                self?.reasonPublisher.onNext("기타")
                 self?.etcReasonTextView.isHidden = false
             }]
         )
