@@ -115,6 +115,7 @@ extension AbilityViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detailViewController = DetailViewController(previousView: .ability)
         detailViewController.reactor = DetailReactor(
+            title: self.reactor?.currentState.abilities[indexPath.row].name ?? "",
             projectUseCase: DefaultProjectUseCase(
                 projectRepository: DefaultProjectRepository()
             ),

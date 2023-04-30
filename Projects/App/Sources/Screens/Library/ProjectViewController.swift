@@ -120,6 +120,7 @@ extension ProjectViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detailViewController = DetailViewController(previousView: .project)
         detailViewController.reactor = DetailReactor(
+            title: self.reactor?.currentState.projects[indexPath.row].name ?? "",
             projectUseCase: DefaultProjectUseCase(
                 projectRepository: DefaultProjectRepository()
             ),

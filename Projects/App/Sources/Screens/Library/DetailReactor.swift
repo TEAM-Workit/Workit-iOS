@@ -19,6 +19,7 @@ final class DetailReactor: Reactor {
     }
     
     struct State {
+        var title: String
         var works: [Work]
         var viewType: PreviousView
         var id: Int
@@ -40,6 +41,7 @@ final class DetailReactor: Reactor {
     let abilityUseCase: AbilityUseCase
     
     init(
+        title: String,
         projectUseCase: ProjectUseCase,
         abilityUseCase: AbilityUseCase,
         viewType: PreviousView,
@@ -48,7 +50,7 @@ final class DetailReactor: Reactor {
         self.projectUseCase = projectUseCase
         self.abilityUseCase = abilityUseCase
     
-        self.initialState = .init(works: [], viewType: viewType, id: id)
+        self.initialState = .init(title: title, works: [], viewType: viewType, id: id)
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
