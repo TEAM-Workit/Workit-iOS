@@ -26,4 +26,54 @@ public final class DefaultWorkRepository: WorkRepository {
             .compactMap { $0.data }
             .map { $0.toDomain() }
     }
+    
+    public func fetchWorkDetail(workId: Int, completion: @escaping (WorkDetail) -> Void) {
+        NetworkService.shared.work.fetchWorkDetail(workId: workId) { data in
+            if let workDetailDTO = data.data {
+                completion(workDetailDTO.toDomain())
+            }
+        }
+    }
+    
+    public func createWork(data: NewWork, completion: @escaping (WorkDetail?) -> Void) {
+        let requestDTO = WorkRequestDTO.init(
+            date: data.date,
+            projectId: data.projectId,
+            workTitle: data.title,
+            desciption: data.description,
+            abilities: data.abilityIds
+        )
+        
+        NetworkService.shared.work.createWork(data: requestDTO) { data in
+            if let workDetailDTO = data.data {
+                completion(workDetailDTO.toDomain())
+            } else {
+                completion(nil)
+            }
+        }
+    }
+    
+    public func updateWork(data: NewWork, workId: Int, completion: @escaping (WorkDetail?) -> Void) {
+        let requestDTO = WorkRequestDTO.init(
+            date: data.date,
+            projectId: data.projectId,
+            workTitle: data.title,
+            desciption: data.description,
+            abilities: data.abilityIds
+        )
+        
+        NetworkService.shared.work.updateWork(data: requestDTO, workId: workId) { data in
+            if let workDetailDTO = data.data {
+                completion(workDetailDTO.toDomain())
+            } else {
+                completion(nil)
+            }
+        }
+    }
+    
+    public func deleteWork(workId: Int, completion: @escaping (Bool) -> Void) {
+        NetworkService.shared.work.deleteWork(workId: workId) { data in
+            completion(data)
+        }
+    }
 }

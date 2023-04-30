@@ -6,6 +6,7 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Domain
 import DesignSystem
 import Global
 import UIKit
@@ -74,9 +75,9 @@ final class SelectAbilityTableViewCell: UITableViewCell {
     
     // MARK: Methods
     
-    func setData(data: WriteAbility, isHard: Bool) {
+    func setData(data: Ability, isHard: Bool) {
         self.isHardAbility = isHard
-        self.titleLabel.text = data.abilityName
+        self.titleLabel.text = data.name
         self.titleLabel.sizeToFit()
     }
 }

@@ -6,14 +6,20 @@
 //  Copyright © 2022 com.workit. All rights reserved.
 //
 
+import Data
+import Domain
 import DesignSystem
 import Global
 import UIKit
 
+import RxSwift
 import SnapKit
 
 // swiftlint:disable file_length
+// swiftlint:disable type_body_length
 
+/// 워킷 기록하기
+/// - 수정하기 모드일 경우, setEditViewController(workId) 호출
 final class WriteViewController: BaseViewController {
     
     enum Text {
@@ -31,6 +37,12 @@ final class WriteViewController: BaseViewController {
         static let abilityAddButton = "역량 추가하기"
         static let workDescriptionLabel = "업무 내용"
         static let workDescriptionPlaceholder = "업무의 구체적인 과정과 배운 점을 남겨주세요!"
+    }
+    
+    enum SaveButtonConditionType {
+        static let project = "project"
+        static let title = "title"
+        static let abilities = "abilities"
     }
     
     // MARK: - UIComponents
@@ -123,9 +135,23 @@ final class WriteViewController: BaseViewController {
     
     private var keyboardHeight: CGFloat = 0
     
-    private var selectedHardAbilityList: [WriteAbility] = []
-    private var selectedSoftAbilityList: [WriteAbility] = []
+    private var selectedHardAbilityList: [Ability] = []
+    private var selectedSoftAbilityList: [Ability] = []
     
+    private let workRepository: DefaultWorkRepository = DefaultWorkRepository()
+    private var selectedProjectId: Int = -1
+    private var isEdit: Bool = false
+    private var editableWorkId: Int = -1
+    
+    private var isSaveButtonEnabled: [String: Bool] = [
+        SaveButtonConditionType.project: false,
+        SaveButtonConditionType.title: false,
+        SaveButtonConditionType.abilities: false
+    ] { didSet { self.setSaveButtonState() } }
+    
+    private let disposeBag: DisposeBag = DisposeBag()
+    
+    // swiftlint:enable type_body_length
     // MARK: View Life Cycle
     
     override func viewDidLoad() {
@@ -139,6 +165,8 @@ final class WriteViewController: BaseViewController {
         self.setProjectButtonAction()
         self.setDateButtonAction()
         self.setCloseButtonAction()
+        self.setSaveButtonAction()
+        self.setWorkTextField()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -276,6 +304,107 @@ final class WriteViewController: BaseViewController {
             }
         }
     }
+    
+    private func createNewWork() -> NewWork {
+        var abilityIds: [Int] = []
+        _ = self.selectedHardAbilityList.map { abilityIds.append($0.id) }
+        _ = self.selectedSoftAbilityList.map { abilityIds.append($0.id) }
+        
+        let newWork = NewWork(
+            title: self.workTextField.text ?? "",
+            projectId: self.selectedProjectId,
+            description: self.workDescriptionTextView.text,
+            date: self.dateButton.date(),
+            abilityIds: abilityIds
+        )
+        
+        return newWork
+    }
+    
+    private func setSaveButtonAction() {
+        if let button = self.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
+            button.setAction { [weak self] in
+                if let self = self {
+                    if self.isEdit {
+                        self.updateWork(data: self.createNewWork(), workId: self.editableWorkId) {
+                            self.dismiss(animated: true)
+                        }
+                    } else {
+                        self.createWork(data: self.createNewWork()) {
+                            self.dismiss(animated: true)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private func setSaveButtonState() {
+        let condition = self.isSaveButtonEnabled.values
+        var state = true
+        condition.forEach {
+            state = state && $0
+        }
+        
+        if let button = self.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
+            DispatchQueue.main.async {
+                button.isEnabled = state
+            }
+        }
+    }
+    
+    private func setWorkTextField() {
+        self.workTextField.rx.text
+            .orEmpty
+            .distinctUntilChanged()
+            .withUnretained(self)
+            .subscribe(onNext: { (owner, changedText) in
+                owner.isSaveButtonEnabled[SaveButtonConditionType.title] = !changedText.isEmpty
+            })
+            .disposed(by: self.disposeBag)
+        
+        self.workTextField.setClearButtonAction { [weak self] in
+            self?.isSaveButtonEnabled[SaveButtonConditionType.title] = false
+        }
+        
+        self.workTextField.addTarget(self, action: #selector(self.textFieldDidChange(_:)), for: .editingChanged)
+    }
+    
+    @objc
+    private func textFieldDidChange(_ sender: Any?) {
+        if self.workTextField.text?.count ?? 0 > 50 {
+            self.workTextField.deleteBackward()
+        }
+    }
+    
+    func setEditViewController(workId: Int) {
+        self.fetchWorkDetail(workId: workId)
+    }
+    
+    private func divideAbilities(abilities: [Ability]) -> ([Ability], [Ability]) {
+        var softAbilites: [Ability] = []
+        var hardAbilites: [Ability] = []
+        for ability in abilities {
+            if ability.type == .soft {
+                softAbilites.append(
+                    Ability(
+                        id: ability.id,
+                        name: ability.name,
+                        type: ability.type.rawValue
+                    )
+                )
+            } else {
+                hardAbilites.append(
+                    Ability(
+                        id: ability.id,
+                        name: ability.name,
+                        type: ability.type.rawValue
+                    )
+                )
+            }
+        }
+        return (softAbilites, hardAbilites)
+    }
 }
 
 // MARK: - Extension (UICollectionViewDelegateFlowLayout)
@@ -290,9 +419,10 @@ extension WriteViewController: SingleDayCalendarBottomSheetDelegate {
 // MARK: - Extension (SendSelectedAbilityListDelegate)
 
 extension WriteViewController: SendSelectedAbilityListDelegate {
-    func sendUpdate(hardAbilityList: [WriteAbility], softAbilityList: [WriteAbility]) {
+    func sendUpdate(hardAbilityList: [Ability], softAbilityList: [Ability]) {
         self.selectedHardAbilityList = hardAbilityList
         self.selectedSoftAbilityList = softAbilityList
+        self.isSaveButtonEnabled[SaveButtonConditionType.abilities] = true
         
         self.updateAbilityCollectionViewHeight()
         
@@ -309,10 +439,14 @@ extension WriteViewController: SendSelectedAbilityListDelegate {
 // MARK: - Extension (SendSelectedAbilityListDelegate)
 
 extension WriteViewController: SendSelectedProjectDelegate {
-    func sendUpdate(selectedProjectTitle: String) {
+    func sendUpdate(selectedProjectTitle: String, projectId: Int) {
         self.projectButton.setText(text: selectedProjectTitle)
+        self.selectedProjectId = projectId
+        self.isSaveButtonEnabled[SaveButtonConditionType.project] = true
     }
 }
+
+// MARK: - Extension (UICollectionViewDataSource)
 
 extension WriteViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -403,6 +537,56 @@ extension WriteViewController: UITextViewDelegate {
             CGPoint(x: 0, y: self.scrollView.contentSize.height - self.scrollView.bounds.height),
             animated: true
         )
+    }
+}
+
+// MARK: - Network
+
+extension WriteViewController {
+    private func createWork(data: NewWork, completion: @escaping () -> Void) {
+        self.workRepository.createWork(data: data) { response in
+            if response != nil {
+                completion()
+            } else {
+                self.showAlert(title: Message.networkError.text)
+            }
+        }
+    }
+    
+    private func updateWork(data: NewWork, workId: Int, completion: @escaping () -> Void) {
+        self.workRepository.updateWork(data: data, workId: workId) { response in
+            if response != nil {
+                completion()
+            } else {
+                self.showAlert(title: Message.networkError.text)
+            }
+        }
+    }
+    
+    private func fetchWorkDetail(workId: Int) {
+        self.workRepository.fetchWorkDetail(workId: workId) { workDetail in
+            self.dateButton.setDate(date: workDetail.date.toDate(type: .fullPlus) ?? Date())
+            self.selectedProjectId = workDetail.project.id
+            self.projectButton.setText(text: workDetail.project.title)
+            self.workTextField.text = workDetail.title
+            
+            let abilities: ([Ability], [Ability]) = self.divideAbilities(abilities: workDetail.abilities)
+            self.selectedSoftAbilityList = abilities.0
+            self.selectedHardAbilityList = abilities.1
+            
+            self.workDescriptionTextView.text = workDetail.description
+            
+            self.softAbilityCollectionView.reloadData()
+            self.hardAbilityCollectionView.reloadData()
+            self.updateAbilityCollectionViewHeight()
+            
+            self.isSaveButtonEnabled[SaveButtonConditionType.project] = true
+            self.isSaveButtonEnabled[SaveButtonConditionType.abilities] = true
+            self.isSaveButtonEnabled[SaveButtonConditionType.title] = true
+            
+            self.isEdit = true
+            self.editableWorkId = workId
+        }
     }
 }
 

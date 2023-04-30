@@ -16,4 +16,5 @@ public final class NetworkService {
     public let work: WorkService = DefaultWorkService()
     public let user: UserService = DefaultUserService()
     public let project: ProjectService = DefaultProjectService()
+    public let ability: AbilityService = DefaultAbilityService()
 }
