@@ -217,7 +217,7 @@ final class WorkDetailViewController: BaseViewController {
     private func setData(workData: WorkDetail) {
         self.projectTitleLabel.text = workData.project.title
         self.workTitleLabel.text = workData.title
-        self.dateLabel.text = workData.date.toDate(type: .fullPlus)?.toString(type: .simpleDot)
+        self.dateLabel.text = workData.date.toDate(type: .full)?.toString(type: .simpleDot)
         
         let abilities: ([Ability], [Ability]) = self.divideAbilities(abilities: workData.abilities)
         self.softAbilityList = abilities.0

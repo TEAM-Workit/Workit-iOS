@@ -17,7 +17,7 @@ public struct WorkRequestDTO: Encodable {
     let abilities: [Int]
     
     public init(date: Date, projectId: Int, workTitle: String, desciption: String, abilities: [Int]) {
-        self.date = date.toString(type: .fullPlus)
+        self.date = date.toString(type: .full)
         print(self.date)
         self.projectId = projectId
         self.workTitle = workTitle

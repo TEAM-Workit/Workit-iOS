@@ -565,7 +565,7 @@ extension WriteViewController {
     
     private func fetchWorkDetail(workId: Int) {
         self.workRepository.fetchWorkDetail(workId: workId) { workDetail in
-            self.dateButton.setDate(date: workDetail.date.toDate(type: .fullPlus) ?? Date())
+            self.dateButton.setDate(date: workDetail.date.toDate(type: .full) ?? Date())
             self.selectedProjectId = workDetail.project.id
             self.projectButton.setText(text: workDetail.project.title)
             self.workTextField.text = workDetail.title

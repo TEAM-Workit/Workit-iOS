@@ -21,7 +21,6 @@ public enum DateType: String {
     case fullYearDot = "yyyy.MM.dd"
     /// yyyy-MM-dd'T'HH:mm:ss.SSSZ
     case full = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-    case fullPlus = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 }
 
 extension Date {
