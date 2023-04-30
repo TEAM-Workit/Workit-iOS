@@ -58,6 +58,7 @@ class UserProfileView: UIView {
     }
     
     private func setBackgroundUI() {
+        self.backgroundColor = .wkWhite
         self.containerView.backgroundColor = UIColor.white
         self.containerView.makeRounded(radius: 5)
         self.containerView.layer.borderWidth = 1

@@ -15,7 +15,7 @@ import UIKit
 import ReactorKit
 import SnapKit
 
-class SettingViewController: UIViewController, View {
+class SettingViewController: BaseViewController, View {
     
     enum Setting: Int, CaseIterable {
         case project
@@ -46,6 +46,17 @@ class SettingViewController: UIViewController, View {
     
     // MARK: - UIComponents
     
+    private lazy var dismissButton: UIButton = WKNavigationButton(image: Image.wkX)
+    
+    private lazy var navigationBar: WKNavigationBar = {
+        let navigationBar: WKNavigationBar = WKNavigationBar()
+        navigationBar.topItem?.leftBarButtonItem = UIBarButtonItem(customView: self.dismissButton)
+        navigationBar.barTintColor = .wkMainPurple
+        navigationBar.tintColor = .wkWhite
+        dismissButton.addTarget(self, action: #selector(dismissButtonDidTapped), for: .touchUpInside)
+        return navigationBar
+    }()
+    
     private let profileView = UserProfileView()
     
     private let withdrawButton: UIButton = {
@@ -68,6 +79,8 @@ class SettingViewController: UIViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.setUI()
+        self.setNavigationBar()
         self.setTableView()
         self.setLayout()
     }
@@ -113,17 +126,25 @@ class SettingViewController: UIViewController, View {
     
     // MARK: - Methods
     
+    private func setUI() {
+        self.view.backgroundColor = .wkMainPurple
+    }
+    
     private func setTableView() {
         self.tableView.delegate = self
         self.tableView.dataSource = self
         self.tableView.isScrollEnabled = false
     }
 
-    private func setLayout() {
-        self.view.addSubviews([profileView, tableView, withdrawButton])
+    override func setLayout() {
+        self.view.addSubviews([navigationBar, tableView, profileView, withdrawButton])
 
+        self.navigationBar.snp.makeConstraints { make in
+            make.top.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
+       }
+        
         self.profileView.snp.makeConstraints { make in
-            make.top.equalTo(self.view.safeAreaLayoutGuide)
+            make.top.equalTo(self.navigationBar.snp.bottom)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(120)
         }
@@ -140,10 +161,13 @@ class SettingViewController: UIViewController, View {
     }
 
     private func setNavigationBar() {
-        self.navigationController?.setNavigationBarApperance(
-            backgroundColor: .wkMainPurple,
-            tintColor: .wkWhite)
-        self.navigationItem.title = "설정"
+        self.navigationController?.isNavigationBarHidden = true
+        self.navigationBar.topItem?.title = "설정"
+        self.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.wkWhite]
+    }
+    
+    @objc private func dismissButtonDidTapped() {
+        self.dismiss(animated: true)
     }
 }
 
