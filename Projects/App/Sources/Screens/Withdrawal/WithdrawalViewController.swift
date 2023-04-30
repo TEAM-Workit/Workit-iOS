@@ -221,6 +221,13 @@ final class WithdrawalViewController: BaseViewController, View {
             .map { Reactor.Action.selectReason($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        self.closeButton.rx.tap
+            .withUnretained(self)
+            .bind { owner, _ in
+                owner.dismiss(animated: true)
+            }
+            .disposed(by: disposeBag)
     }
     
     private func bindState(reactor: WithdrawalReactor) {
