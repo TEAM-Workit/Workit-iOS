@@ -37,6 +37,9 @@ class SettingViewController: UIViewController, View {
     
     enum Text {
         static let withdraw = "탈퇴하기"
+        static let logoutTitle = "로그아웃 하시겠습니까?"
+        static let cancel = "취소"
+        static let confirm = "확인"
     }
     
     public var disposeBag = DisposeBag()
@@ -167,7 +170,16 @@ extension SettingViewController: UITableViewDelegate {
         case .policy:
             return
         case .logout:
-            return
+            let alert = UIAlertController(title: Text.logoutTitle,
+                                          message: nil,
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: Text.cancel, style: .cancel))
+            alert.addAction(UIAlertAction(title: Text.confirm, style: .default) { _ in
+                UserDefaultsManager.shared.removeToken()
+                RootViewChange.shared.setRootViewController(.splash)
+            })
+            
+            self.present(alert, animated: true, completion: nil)
         case .none:
             return
         }
