@@ -6,6 +6,7 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Data
 import Domain
 import DesignSystem
 import UIKit
@@ -76,7 +77,7 @@ class AbilityViewController: BaseViewController, PageTabProtocol, View {
         self.view.addSubview(listCollectionView)
         
         self.listCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            make.top.equalTo(view.safeAreaLayoutGuide)
             make.leading.bottom.trailing.equalToSuperview()
         }
     }
@@ -113,6 +114,17 @@ class AbilityViewController: BaseViewController, PageTabProtocol, View {
 extension AbilityViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detailViewController = DetailViewController(previousView: .ability)
+        detailViewController.reactor = DetailReactor(
+            title: self.reactor?.currentState.abilities[indexPath.row].name ?? "",
+            projectUseCase: DefaultProjectUseCase(
+                projectRepository: DefaultProjectRepository()
+            ),
+            abilityUseCase: DefaultAbilityUseCase(
+                abilityRepository: DefaultAbilityRepository()
+            ),
+            viewType: .ability,
+            id: self.reactor?.currentState.abilities[indexPath.row].id ?? 0
+        )
         self.navigationController?.pushViewController(detailViewController, animated: true)
     }
 }

@@ -71,7 +71,6 @@ class DetailViewController: BaseViewController, View {
     
     private func setNavigationBar() {
         self.navigationController?.setNavigationBarApperance()
-        self.navigationItem.title = previousView == .ability ? "역량으로 보기 상세" : "프로젝트로 보기 상세"
     }
     
     // MARK: - Bind (Reactorkit)
@@ -82,10 +81,18 @@ class DetailViewController: BaseViewController, View {
     }
     
     private func bindAction(reactor: DetailReactor) {
-        self.rx.viewDidLoad
-            .map { _ in Reactor.Action.loadWorksInProject }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
+        switch previousView {
+        case .ability:
+            self.rx.viewDidLoad
+                .map { _ in Reactor.Action.loadWorksInAbliity }
+                .bind(to: reactor.action)
+                .disposed(by: disposeBag)
+        case .project:
+            self.rx.viewDidLoad
+                .map { _ in Reactor.Action.loadWorksInProject }
+                .bind(to: reactor.action)
+                .disposed(by: disposeBag)
+        }
         
         self.dateButton.rx.tap
             .subscribe(onNext: {
@@ -125,6 +132,10 @@ class DetailViewController: BaseViewController, View {
     
     func setUI() {
         self.dateButton.setDate(fromDate: nil, toDate: nil)
+        self.listCollectionView.collectionView.delegate = self
+        if let title = self.reactor?.currentState.title {
+            self.navigationItem.title = title
+        }
     }
     
     override func setLayout() {
@@ -184,5 +195,13 @@ extension DetailViewController: CalendarBottomSheetDelegate {
     func sendSelectedDate(start: Date?, end: Date?) {
         self.dateButton.setDate(fromDate: start, toDate: end)
         self.dateChangePublisher.onNext((start, end))
+    }
+}
+
+extension DetailViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let viewController = WorkDetailViewController()
+        viewController.workId = self.reactor?.currentState.works[indexPath.row].id ?? -1
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
 }
