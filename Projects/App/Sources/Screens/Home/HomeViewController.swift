@@ -45,6 +45,11 @@ final class HomeViewController: BaseViewController, View {
     // MARK: - UIComponenets
     
     private let bannerView = HomeBannerView()
+    private let homeEmptyView: HomeEmptyView = {
+        let view = HomeEmptyView()
+        view.isHidden = true
+        return view
+    }()
 
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
@@ -109,6 +114,7 @@ final class HomeViewController: BaseViewController, View {
             .distinctUntilChanged()
             .withUnretained(self)
             .bind { owner, works in
+                owner.homeEmptyView.isHidden = !works.isEmpty
                 owner.applySnapshot(works: works)
             }
             .disposed(by: disposeBag)
@@ -156,6 +162,7 @@ final class HomeViewController: BaseViewController, View {
 
     override func setLayout() {
         self.view.addSubviews([bannerView, collectionView])
+        self.collectionView.addSubview(homeEmptyView)
 
         self.bannerView.snp.makeConstraints { make in
             make.top.equalTo(self.view.safeAreaLayoutGuide)
@@ -166,6 +173,11 @@ final class HomeViewController: BaseViewController, View {
         self.collectionView.snp.makeConstraints { make in
             make.top.leading.trailing.equalTo(self.view.safeAreaLayoutGuide)
             make.bottom.equalToSuperview()
+        }
+        
+        self.homeEmptyView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().inset(266 + 80)
         }
     }
 
