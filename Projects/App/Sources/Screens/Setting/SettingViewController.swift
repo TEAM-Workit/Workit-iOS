@@ -102,7 +102,9 @@ class SettingViewController: BaseViewController, View {
             .withUnretained(self)
             .bind { owner, _ in
                 let withdrawViewController = WithdrawalViewController()
-                withdrawViewController.reactor = WithdrawalReactor()
+                withdrawViewController.reactor = WithdrawalReactor(
+                    userUseCase: DefaultUserUseCase(
+                        userRepository: DefaultUserRepository()))
                 withdrawViewController.modalPresentationStyle = .fullScreen
                 owner.present(withdrawViewController, animated: true)
             }

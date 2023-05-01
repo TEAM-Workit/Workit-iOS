@@ -11,6 +11,7 @@ import RxSwift
 public protocol UserUseCase {
     func fetchUserNickname() -> Observable<User>
     func fetchUserInformation() -> Observable<User>
+    func deleteUser(description: String) -> Observable<Bool>
 }
 
 public final class DefaultUserUseCase: UserUseCase {
@@ -27,5 +28,9 @@ public final class DefaultUserUseCase: UserUseCase {
     
     public func fetchUserInformation() -> Observable<User> {
         return userRepository.fetchUserInformation()
+    }
+    
+    public func deleteUser(description: String) -> Observable<Bool> {
+        return userRepository.deleteUser(description: description)
     }
 }

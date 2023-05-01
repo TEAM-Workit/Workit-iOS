@@ -14,6 +14,8 @@ public enum UserRouter {
     /// 유저 이름 조회
     case fetchNickname
     case fetchUserInformation
+    /// 유저 탈퇴
+    case deleteUser(description: String)
 }
 
 extension UserRouter: BaseRequestConvertible {
@@ -24,6 +26,8 @@ extension UserRouter: BaseRequestConvertible {
             return .get
         case .fetchUserInformation:
             return .get
+        case .deleteUser:
+            return .delete
         }
     }
     
@@ -33,6 +37,8 @@ extension UserRouter: BaseRequestConvertible {
             return URLConstant.user + "/nickname"
         case .fetchUserInformation:
             return URLConstant.user
+        case .deleteUser:
+            return URLConstant.user
         }
     }
     
@@ -40,6 +46,8 @@ extension UserRouter: BaseRequestConvertible {
         switch self {
         case .fetchNickname, .fetchUserInformation:
             return nil
+        case .deleteUser(let description):
+            return ["description": description]
         }
     }
     
@@ -53,6 +61,8 @@ extension UserRouter: BaseRequestConvertible {
         switch self {
         case .fetchNickname, .fetchUserInformation:
            break
+        case .deleteUser:
+            request = try JSONEncoding.default.encode(request, with: parameters)
         }
       
         return request
