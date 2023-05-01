@@ -135,6 +135,8 @@ final class WorkDetailViewController: BaseViewController {
     private func setNavigationBar() {
         let rightButtonItem = UIBarButtonItem(customView: WKNavigationButton(image: Image.wkKebapA))
         self.navigationItem.rightBarButtonItem = rightButtonItem
+        self.navigationController?.setNavigationBarApperance(backgroundColor: .wkWhite,
+                                                             tintColor: .wkBlack)
     }
     
     private func setMenuButtonAction() {

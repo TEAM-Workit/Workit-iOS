@@ -152,7 +152,8 @@ class DetailViewController: BaseViewController, View {
         }
         
         self.emptyView.snp.makeConstraints { make in
-            make.centerX.centerY.equalToSuperview()
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().offset(-60)
         }
     }
     

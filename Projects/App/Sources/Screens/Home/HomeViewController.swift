@@ -59,6 +59,7 @@ final class HomeViewController: BaseViewController, View {
         collectionView.register(cell: WKEmptyCollectionViewCell.self)
         collectionView.register(cell: WKProjectCollectionViewCell.self)
         collectionView.registerHeader(MyWorkitHeaderView.self)
+        collectionView.delegate = self
         return collectionView
     }()
 
@@ -84,9 +85,12 @@ final class HomeViewController: BaseViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.setNavigationBar()
         self.setLayout()
         self.setUI()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.setNavigationBar()
     }
     
     func bind(reactor: HomeReactor) {
@@ -293,17 +297,10 @@ extension HomeViewController: CalendarBottomSheetDelegate {
     }
 }
 
-struct Workit: Hashable {
-    let uuid = UUID()
-    let title: String
-
-    static func getData() -> [Workit] {
-        return [Workit(title: "zz"),
-                Workit(title: "zz"),
-                Workit(title: "zz"),
-                Workit(title: "zz"),
-                Workit(title: "zz"),
-                Workit(title: "zz"),
-                Workit(title: "zz")]
+extension HomeViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let viewController = WorkDetailViewController()
+        viewController.workId = self.reactor?.currentState.works[indexPath.row].id ?? -1
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
 }
