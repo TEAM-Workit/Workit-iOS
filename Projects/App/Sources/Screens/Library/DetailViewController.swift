@@ -83,12 +83,12 @@ class DetailViewController: BaseViewController, View {
     private func bindAction(reactor: DetailReactor) {
         switch previousView {
         case .ability:
-            self.rx.viewDidLoad
+            self.rx.viewWillAppear
                 .map { _ in Reactor.Action.loadWorksInAbliity }
                 .bind(to: reactor.action)
                 .disposed(by: disposeBag)
         case .project:
-            self.rx.viewDidLoad
+            self.rx.viewWillAppear
                 .map { _ in Reactor.Action.loadWorksInProject }
                 .bind(to: reactor.action)
                 .disposed(by: disposeBag)

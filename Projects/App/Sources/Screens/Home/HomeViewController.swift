@@ -100,7 +100,6 @@ final class HomeViewController: BaseViewController, View {
     
     private func bindAction(reactor: HomeReactor) {
         rx.viewWillAppear
-            .take(1)
             .map { _ in Reactor.Action.viewWillAppear }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
