@@ -74,6 +74,7 @@ extension Project {
             infoPlist: infoPlist,
             sources: ["Sources/**"],
             resources: ["Resources/**"],
+            entitlements: "App.entitlements",
             scripts: [.swiftlint],
             dependencies: dependencies + []
         )
