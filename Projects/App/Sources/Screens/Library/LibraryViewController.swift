@@ -29,12 +29,17 @@ final class LibraryViewController: BaseViewController {
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
+        self.setUI()
         self.setReactor()
         self.setPageTab()
         self.setLayout()
     }
     
     // MARK: - Methods
+    
+    func setUI() {
+        self.view.backgroundColor = .wkWhite
+    }
     
     func setPageTab() {
         self.pageTab.setup(viewControllers: viewControllers, target: self)

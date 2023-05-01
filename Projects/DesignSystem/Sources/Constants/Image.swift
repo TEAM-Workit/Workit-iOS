@@ -45,4 +45,9 @@ public enum Image {
     public static let wkCheck = Assets.wkCheck.image
     public static let imgSplashLogo = Assets.imgSplashLogo.image
     public static let imgSplashTextLogo = Assets.imgSplashTextLogo.image
+    public static let wkHomeTab = Assets.property1HomeProperty2Selected.image
+    public static let wkHomeTabUnselected = Assets.property1HomeProperty2Unselected.image
+    public static let wkLibraryTab = Assets.property1MoaProperty2Selected.image
+    public static let wkLibraryTabUnselected = Assets.property1MoaProperty2Unselected.image
+    public static let wkWrite = Assets.wkWrite.image
 }

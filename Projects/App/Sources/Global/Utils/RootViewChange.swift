@@ -31,12 +31,8 @@ final class RootViewChange {
         
         switch newRoot {
         case .home:
-            let homeViewcontroller = HomeViewController()
-            homeViewcontroller.reactor = HomeReactor(
-                workUseCase: DefaultWorkUseCase(workRepository: DefaultWorkRepository()),
-                userUseCase: DefaultUserUseCase(userRepository: DefaultUserRepository()))
-            let homeNavigationViewController = UINavigationController(rootViewController: homeViewcontroller)
-            delegate.window?.rootViewController = homeNavigationViewController
+            let mainTabController = MainTabbarController()
+            delegate.window?.rootViewController = mainTabController
             
         case .login:
             let loginViewController = LoginViewController(

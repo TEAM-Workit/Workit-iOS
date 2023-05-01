@@ -190,16 +190,16 @@ extension SettingViewController: UITableViewDelegate {
             projectViewController.reactor = ProjectManagementReactor(projectUseCase: useCase)
             self.navigationController?.pushViewController(projectViewController, animated: true)
         case .service:
-            let url = URL(string: "https://www.notion.so/c422fef3eb30451cab9e6d6aa7b98024")
+            let url = URL(string: "https://www.notion.so/workit-team/About-Workit-1efde21df0ec4d358a87d1d6acb49801?pvs=4")
             let view: SFSafariViewController = SFSafariViewController(url: url!)
             self.present(view, animated: true, completion: nil)
         case .inquiry:
-            let url = URL(string: "https://docs.google.com/forms/d/e/1FAIpQLSc0Be8Zo4MaOawOI93tRdFce1pAr_Xf5WIExCX7tTeesZBB_w/viewform")
+            let url = URL(string: "https://forms.gle/ZzG7zY1mc7DAZ7ot9")
             let view: SFSafariViewController = SFSafariViewController(url: url!)
             self.present(view, animated: true, completion: nil)
         
         case .policy:
-            let url = URL(string: "https://www.notion.so/5ddeafa7cd2c4c378cdf23a34aec316b")
+            let url = URL(string: "https://www.notion.so/workit-team/Workit-9fd68a7ce34e4b23ad0f20bcd9841569?pvs=4")
             let view: SFSafariViewController = SFSafariViewController(url: url!)
             self.present(view, animated: true, completion: nil)
         case .logout:
