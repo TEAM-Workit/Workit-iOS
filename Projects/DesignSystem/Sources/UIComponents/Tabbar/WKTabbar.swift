@@ -12,7 +12,7 @@ protocol WKTabbarDelegate: AnyObject {
     func wkTabbar(_ tabbar: WKTabbar, didSelectedItemAt index: Int)
 }
 
-final class WKTabbar: UIView {
+final public class WKTabbar: UIView {
     @objc public var centerButtonActionHandler: () -> () = {}
     
     // MARK: - UIComponents
@@ -41,12 +41,12 @@ final class WKTabbar: UIView {
     
     // MARK: - override Methods
     
-    override func draw(_ rect: CGRect) {
+    public override func draw(_ rect: CGRect) {
         self.addShape()
         self.setCenterButton()
     }
     
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         guard !clipsToBounds && !isHidden && alpha > 0 else { return nil }
         for member in subviews.reversed() {
             let subPoint = member.convert(point, from: self)

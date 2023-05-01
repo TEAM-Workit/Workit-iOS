@@ -13,7 +13,7 @@ import SnapKit
 open class WKTabbarController: UITabBarController {
     // MARK: - UIComponents
     
-    private lazy var wkTabbar = WKTabbar()
+    public lazy var wkTabbar = WKTabbar()
     
     open override func viewDidLoad() {
         self.setLayout()
