@@ -6,6 +6,7 @@
 //  Copyright © 2022 com.workit. All rights reserved.
 //
 
+import AuthenticationServices
 import DesignSystem
 import Domain
 import Global
@@ -114,6 +115,13 @@ final class LoginViewController: BaseViewController {
                 owner.kakaoLogin()
             }
             .disposed(by: disposeBag)
+        
+        appleLoginButton.rx.tap
+            .withUnretained(self)
+            .bind { owner, _ in
+                owner.appleLogin()
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Methods
@@ -148,6 +156,16 @@ final class LoginViewController: BaseViewController {
                 })
                 .disposed(by: disposeBag)
         }
+    }
+    
+    private func appleLogin() {
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.email, .fullName]
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
     }
 
     override func setLayout() {
@@ -186,5 +204,43 @@ final class LoginViewController: BaseViewController {
         self.loginButtonStackView.addArrangedSubviews([kakaoLoginButton, appleLoginButton, agreeLabel])
         self.loginButtonStackView.setCustomSpacing(8, after: kakaoLoginButton)
         self.loginButtonStackView.setCustomSpacing(25, after: appleLoginButton)
+    }
+}
+
+extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return self.view.window!
+    }
+    
+    // Apple ID 연동 성공 시
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        switch authorization.credential {
+        case let appleIDCredential as ASAuthorizationAppleIDCredential:
+            #if DEBUG
+            print("token", String(data: appleIDCredential.identityToken!, encoding: .utf8) ?? "")
+            print("username", appleIDCredential.fullName?.formatted() ?? "")
+            #endif
+            
+            let token = String(data: appleIDCredential.identityToken!, encoding: .utf8) ?? ""
+            let request = PostSocialLoginRequestValue(
+                socialType: .APPLE,
+                socialId: token,
+                nickName: appleIDCredential.fullName?.formatted() ?? ""
+            )
+            
+            self.authUseCase.postSocialLogin(requestValue: request)
+                .bind { authToken in
+                    UserDefaultsManager.shared.accessToken = authToken.accessToken
+                    RootViewChange.shared.setRootViewController(.home)
+                }
+                .disposed(by: disposeBag)
+            
+        default:
+            break
+        }
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        print("연동 실패")
     }
 }
