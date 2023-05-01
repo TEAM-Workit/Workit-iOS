@@ -17,6 +17,7 @@ import KakaoSDKUser
 import ReactorKit
 import RxSwift
 import SnapKit
+import SafariServices
 
 final class LoginViewController: BaseViewController {
     
@@ -106,6 +107,8 @@ final class LoginViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.addTapGesture()
     }
     
     private func bindAction() {
@@ -125,6 +128,12 @@ final class LoginViewController: BaseViewController {
     }
 
     // MARK: - Methods
+    
+    private func addTapGesture() {
+        let taps = UITapGestureRecognizer(target: self, action: #selector(didTapHyperlink(_:)))
+        agreeLabel.isUserInteractionEnabled = true
+        agreeLabel.addGestureRecognizer(taps)
+    }
     
     private func kakaoLogin() {
         if UserApi.isKakaoTalkLoginAvailable() {
@@ -155,6 +164,36 @@ final class LoginViewController: BaseViewController {
                     RootViewChange.shared.setRootViewController(.home)
                 })
                 .disposed(by: disposeBag)
+        }
+    }
+    
+    @objc
+    private func didTapHyperlink(_ sender: UITapGestureRecognizer) {
+        guard let content = agreeLabel.text else { return }
+        
+        let termsURL = [
+            "https://www.notion.so/c422fef3eb30451cab9e6d6aa7b98024",
+            "https://www.notion.so/5ddeafa7cd2c4c378cdf23a34aec316b"
+        ]
+        
+        let ranges: [NSRange] = [
+            (content as NSString).range(of: Text.termOfService),
+            (content as NSString).range(of: Text.privacyPolicy)
+        ]
+        
+        let tapLocation = sender.location(in: agreeLabel)
+        let index = agreeLabel.indexOfAttributedTextCharacterAtPoint(point: tapLocation)
+        
+        for range in ranges where range.checkTargetWordSelectedRange(contain: index) {
+            guard let target = ranges.firstIndex(of: range) else { return }
+            let scheme = termsURL[target]
+            guard
+                let encodingScheme = scheme.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+                let url = URL(string: encodingScheme.trimmingSpace()), UIApplication.shared.canOpenURL(url)
+            else { return }
+            
+            let safariViewController = SFSafariViewController(url: url)
+            present(safariViewController, animated: true)
         }
     }
     
