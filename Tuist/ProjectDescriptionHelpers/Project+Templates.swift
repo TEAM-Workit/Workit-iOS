@@ -62,7 +62,7 @@ extension Project {
         infoPlist: ProjectDescription.InfoPlist)
     -> [Target] {
             
-        let bundleId = "\(workitOrganizationName).\(name)"
+        let bundleId = "com.workit.jeonsuyeol"
 
         let mainTarget = Target(
             name: name,
@@ -74,6 +74,7 @@ extension Project {
             infoPlist: infoPlist,
             sources: ["Sources/**"],
             resources: ["Resources/**"],
+            entitlements: "App.entitlements",
             scripts: [.swiftlint],
             dependencies: dependencies + []
         )
