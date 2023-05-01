@@ -13,7 +13,7 @@ protocol WKTabbarDelegate: AnyObject {
 }
 
 final public class WKTabbar: UIView {
-    @objc public var centerButtonActionHandler: () -> () = {}
+    @objc public var centerButtonActionHandler: () -> Void = {}
     
     // MARK: - UIComponents
     
@@ -153,17 +153,17 @@ extension WKTabbar {
     func createPath() -> CGPath {
         let path = UIBezierPath()
         
-        let f = CGFloat(Number.buttonHeight / 2.0) + Number.padding
+        let value = CGFloat(Number.buttonHeight / 2.0) + Number.padding
         let radius = Number.circleRadius
         
         path.move(to: .zero)
-        path.addLine(to: CGPoint(x: frame.width / 2.0  - f - (radius / 2.0), y: 0))
-        path.addQuadCurve(to: CGPoint(x: frame.width / 2.0  - f, y: (radius / 2.0)),
-                          controlPoint: CGPoint(x: frame.width / 2.0  - f, y: 0))
-        path.addArc(withCenter: CGPoint(x: frame.width / 2.0 , y: (radius / 2.0)),
-                    radius: f, startAngle: .pi, endAngle: 0, clockwise: false)
-        path.addQuadCurve(to: CGPoint(x: frame.width / 2.0 + f + (radius / 2.0), y: 0),
-                          controlPoint: CGPoint(x: frame.width / 2.0  + f, y: 0))
+        path.addLine(to: CGPoint(x: frame.width / 2.0  - value - (radius / 2.0), y: 0))
+        path.addQuadCurve(to: CGPoint(x: frame.width / 2.0  - value, y: (radius / 2.0)),
+                          controlPoint: CGPoint(x: frame.width / 2.0  - value, y: 0))
+        path.addArc(withCenter: CGPoint(x: frame.width / 2.0, y: (radius / 2.0)),
+                    radius: value, startAngle: .pi, endAngle: 0, clockwise: false)
+        path.addQuadCurve(to: CGPoint(x: frame.width / 2.0 + value + (radius / 2.0), y: 0),
+                          controlPoint: CGPoint(x: frame.width / 2.0  + value, y: 0))
         path.addLine(to: CGPoint(x: frame.width, y: 0))
         path.addLine(to: CGPoint(x: frame.width, y: Number.height))
         path.addLine(to: CGPoint(x: 0.0, y: Number.height))
