@@ -19,4 +19,10 @@ public final class DefaultUserRepository: UserRepository {
             .compactMap { $0.data }
             .map { $0.toDomain() }
     }
+    
+    public func fetchUserInformation() -> Observable<User> {
+        return NetworkService.shared.user.fetchUserInformation()
+            .compactMap { $0.data }
+            .map { $0.toDomain() }
+    }
 }

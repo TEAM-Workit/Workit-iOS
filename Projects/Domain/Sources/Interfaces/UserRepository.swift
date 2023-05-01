@@ -10,4 +10,5 @@ import RxSwift
 
 public protocol UserRepository {
     func fetchUserNickname() -> Observable<User>
+    func fetchUserInformation() -> Observable<User>
 }

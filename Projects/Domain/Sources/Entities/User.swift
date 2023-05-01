@@ -8,8 +8,10 @@
 
 public struct User {
     public let nickname: String
+    public let email: String
     
-    public init(nickname: String) {
+    public init(nickname: String, email: String = "") {
         self.nickname = nickname
+        self.email = email
     }
 }

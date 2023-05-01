@@ -75,6 +75,8 @@ final class ProjectManagementViewController: BaseViewController, View {
     // MARK: - LifeCycles
     
     override func viewDidLoad() {
+        self.view.backgroundColor = .wkWhite
+        self.navigationController?.isNavigationBarHidden = false
         self.setNavigationBar()
         self.setLayout()
         self.createDataSource()

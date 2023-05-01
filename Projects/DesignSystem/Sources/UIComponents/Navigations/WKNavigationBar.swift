@@ -25,7 +25,7 @@ public class WKNavigationBar: UINavigationBar {
     private func setStyle() {
         self.pushItem(UINavigationItem(), animated: true)
         self.shadowImage = UIImage()
-        self.isTranslucent = true
+        self.isTranslucent = false
         self.barTintColor = UIColor.wkWhite
         self.tintColor = UIColor.wkBlack
     }

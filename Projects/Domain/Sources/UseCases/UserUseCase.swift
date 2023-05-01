@@ -10,6 +10,7 @@ import RxSwift
 
 public protocol UserUseCase {
     func fetchUserNickname() -> Observable<User>
+    func fetchUserInformation() -> Observable<User>
 }
 
 public final class DefaultUserUseCase: UserUseCase {
@@ -22,5 +23,9 @@ public final class DefaultUserUseCase: UserUseCase {
     
     public func fetchUserNickname() -> Observable<User> {
         return userRepository.fetchUserNickname()
+    }
+    
+    public func fetchUserInformation() -> Observable<User> {
+        return userRepository.fetchUserInformation()
     }
 }
