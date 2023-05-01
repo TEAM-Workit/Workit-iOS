@@ -9,51 +9,30 @@
 import UIKit
 
 protocol WKTabbarDelegate: AnyObject {
-    func wkTabbar(_ tabbar: WKTabbar, _ didSelectedItemAt: Int)
+    func wkTabbar(_ tabbar: WKTabbar, didSelectedItemAt index: Int)
 }
 
-final class WKTabbar: UITabBar {
-    
+final class WKTabbar: UIView {
     @objc public var centerButtonActionHandler: () -> () = {}
     
     // MARK: - UIComponents
     
-    private lazy var stackView: UIStackView = {
-        let stackview = UIStackView()
-        stackView.axis = .horizontal
-        stackView.distribution = .equalSpacing
-        stackView.alignment = .center
-        stackView.spacing = 44.0
-        return stackview
-    }()
+    private lazy var stackView = UIStackView()
     
     private var shapeLayer: CALayer?
     
     // MARK: - Properties
     
-    weak var tabbarController: UITabBarController?
+    weak var delegate: WKTabbarDelegate?
     
-    // MARK: - Actions
-    
-    @objc
-    func centerButtonAction(sender: UIButton) {
-        self.centerButtonActionHandler()
-    }
-    
-    @objc
-    func itemDidTapped(_ sender: UITapGestureRecognizer) {
-        if let item = sender.view as? WKTabbarItem,
-           let index = self.stackView.arrangedSubviews.firstIndex(of: item) {
-            self.changeAppearence(selectedIndex: index)
-        }
-    }
+    // MARK: - Initializer
     
     override init(frame: CGRect = .zero) {
         super.init(frame: frame)
         
+        self.setStackView()
         self.setLayout()
         self.addShape()
-        self.setCenterButton()
     }
     
     required init?(coder: NSCoder) {
@@ -90,15 +69,23 @@ final class WKTabbar: UITabBar {
         self.addSubview(centerButton)
     }
     
+    private func setStackView() {
+        self.stackView.axis = .horizontal
+        self.stackView.distribution = .equalSpacing
+    }
+    
     public func setItems(_ items: [WKTabbarItem]) {
-//        items.forEach { item in
-//            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(itemDidTapped(_:)))
-//            item.addGestureRecognizer(tapGestureRecognizer)
-//            self.stackView.addArrangedSubview(item)
-//        }
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(itemDidTapped(_:)))
-        items[0].addGestureRecognizer(tapGestureRecognizer)
-        self.stackView.addArrangedSubview(items[0])
+        items.forEach { item in
+            item.isUserInteractionEnabled = true
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(itemDidTapped(_:)))
+            item.addGestureRecognizer(tapGestureRecognizer)
+            self.stackView.addArrangedSubview(item)
+        }
+        
+        let firstTab = self.stackView.arrangedSubviews[0]
+        if let tab = firstTab as? WKTabbarItem {
+            tab.isSelected = true
+        }
     }
     
     private func changeAppearence(selectedIndex: Int) {
@@ -112,15 +99,29 @@ final class WKTabbar: UITabBar {
     private func setLayout() {
         self.addSubview(stackView)
         
-        let stackWidth: CGFloat = 375 - 156 + 28
         self.stackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(6)
-            $0.width.equalTo(stackWidth / 375 * UIScreen.main.bounds.width)
+            $0.top.equalToSuperview().inset(5)
+            $0.width.equalTo(260 / 375 * UIScreen.main.bounds.width)
             $0.height.equalTo(58)
         }
     }
     
+    // MARK: - Actions
+    
+    @objc
+    func centerButtonAction(sender: UIButton) {
+        self.centerButtonActionHandler()
+    }
+    
+    @objc
+    func itemDidTapped(_ sender: UITapGestureRecognizer) {
+        if let item = sender.view as? WKTabbarItem,
+           let index = self.stackView.arrangedSubviews.firstIndex(of: item) {
+            self.changeAppearence(selectedIndex: index)
+            self.delegate?.wkTabbar(self, didSelectedItemAt: index)
+        }
+    }
 }
 
 extension WKTabbar {

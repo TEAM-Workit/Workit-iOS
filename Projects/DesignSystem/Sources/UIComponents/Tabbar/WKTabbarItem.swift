@@ -15,7 +15,11 @@ public class WKTabbarItem: UIView {
     // MARK: - UI Components
     
     private let imageView: UIImageView = UIImageView()
-    private let titleLabel: UILabel = UILabel()
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .c2B
+        return label
+    }()
     var selectedImage = UIImage()
     var deselectedImage = UIImage()
     
@@ -41,16 +45,23 @@ public class WKTabbarItem: UIView {
 
     // MARK: - Initializer
     
-    init(selectedImage: UIImage = UIImage(),
-         deselectedImage: UIImage = UIImage(),
-         selectedColor: UIColor,
-         deselectedColor: UIColor) {
-        super.init(frame: CGRect(x: 0, y: 0, width: 24, height: 39))
+    init(
+        title: String = "",
+        selectedImage: UIImage = UIImage(),
+        deselectedImage: UIImage = UIImage(),
+        selectedColor: UIColor,
+        deselectedColor: UIColor
+    ) {
+        super.init(frame: CGRect(x: 0, y: 0, width: 96, height: 186))
         
+        self.titleLabel.text = title
         self.selectedImage = selectedImage
         self.deselectedImage = deselectedImage
         self.selectedColor = selectedColor
         self.deselectedColor = deselectedColor
+        
+        setUI()
+        setLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -74,7 +85,7 @@ public class WKTabbarItem: UIView {
         
         self.titleLabel.snp.makeConstraints { make in
             make.top.equalTo(imageView.snp.bottom)
-            make.leading.trailing.equalToSuperview()
+            make.centerX.equalTo(imageView)
         }
     }
  

@@ -123,4 +123,8 @@ public extension UIFont {
     class var c2R: UIFont {
         return DesignSystemFontFamily.Suit.regular.font(size: 10)
     }
+    
+    class var c2B: UIFont {
+        return DesignSystemFontFamily.Suit.semiBold.font(size: 10)
+    }
 }
