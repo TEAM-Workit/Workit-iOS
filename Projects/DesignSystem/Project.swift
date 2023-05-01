@@ -17,7 +17,8 @@ let project = Project.framework(
         .external(name: "RxCocoa"),
         .external(name: "SnapKit"),
         .external(name: "RxGesture"),
-        .project(target: "Global", path: "../Global")
+        .project(target: "Global", path: "../Global"),
+        .project(target: "Domain", path: "../Domain")
     ],
     additionalPackageDependencies: [],
     packages: [])

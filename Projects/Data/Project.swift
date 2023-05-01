@@ -13,6 +13,7 @@ let project = Project.framework(
     platform: .iOS,
     dependencies: [
         .external(name: "RxAlamofire"),
+        .project(target: "Domain", path: "../Domain"),
         .project(target: "Global", path: "../Global")
     ],
     additionalPackageDependencies: [],
