@@ -6,6 +6,7 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Domain
 import Foundation
 
 import ReactorKit
@@ -13,8 +14,10 @@ import ReactorKit
 final class WithdrawalReactor: Reactor {
     
     var initialState: State
+    let userUseCase: UserUseCase
     
-    init() {
+    init(userUseCase: UserUseCase) {
+        self.userUseCase = userUseCase
         initialState = .init(
             agreeButtonSelected: false,
             isCompletedWithDraw: false,
@@ -46,7 +49,10 @@ final class WithdrawalReactor: Reactor {
             return Observable.just(Mutation.changeAgreeButtonState)
             
         case .withdrawButtonDidTap:
-            return Observable.just(Mutation.withDraw)
+            let successWithdraw = userUseCase.deleteUser(description: currentState.reason ?? "")
+                .filter { $0 }
+                .map { _ in Mutation.withDraw }
+            return successWithdraw
             
         case .selectReason(let reason):
             return Observable.just(Mutation.setReason(reason))

@@ -12,6 +12,7 @@ import RxSwift
 public protocol UserService {
     func fetchNickname() -> Observable<BaseResponseType<UserNicknameResponseDTO>>
     func fetchUserInformation() -> Observable<BaseResponseType<UserInformationResponseDTO>>
+    func deleteUser(description: String) -> Observable<BaseResponseType<VoidType>>
 }
 
 public final class DefaultUserService: UserService {
@@ -24,5 +25,10 @@ public final class DefaultUserService: UserService {
     public func fetchUserInformation() -> Observable<BaseResponseType<UserInformationResponseDTO>> {
         return RxAlamofire.requestJSON(UserRouter.fetchUserInformation)
             .expectingObject(ofType: BaseResponseType<UserInformationResponseDTO>.self)
+    }
+    
+    public func deleteUser(description: String) -> Observable<BaseResponseType<VoidType>> {
+        return RxAlamofire.requestJSON(UserRouter.deleteUser(description: description))
+            .expectingObject(ofType: BaseResponseType<VoidType>.self)
     }
 }

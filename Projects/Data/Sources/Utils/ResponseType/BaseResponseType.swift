@@ -16,3 +16,5 @@ public struct BaseResponseType<T: Decodable>: Decodable {
         return StatusCase(rawValue: status)
     }
 }
+
+public struct VoidType: Decodable {}

@@ -25,4 +25,9 @@ public final class DefaultUserRepository: UserRepository {
             .compactMap { $0.data }
             .map { $0.toDomain() }
     }
+    
+    public func deleteUser(description: String) -> Observable<Bool> {
+        return NetworkService.shared.user.deleteUser(description: description)
+            .map { $0.success }
+    }
 }
