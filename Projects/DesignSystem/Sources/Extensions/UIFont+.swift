@@ -129,6 +129,6 @@ public extension UIFont {
     }
     
     class var c2B: UIFont {
-        return DesignSystemFontFamily.Suit.semiBold.font(size: 10)
+        return DesignSystemFontFamily.Pretendard.semiBold.font(size: 10)
     }
 }
