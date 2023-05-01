@@ -10,6 +10,7 @@ import Data
 import Domain
 import DesignSystem
 import Global
+import SafariServices
 import UIKit
 
 import ReactorKit
@@ -186,13 +187,19 @@ extension SettingViewController: UITableViewDelegate {
             let useCase = DefaultProjectUseCase(projectRepository: DefaultProjectRepository())
             projectViewController.reactor = ProjectManagementReactor(projectUseCase: useCase)
             self.navigationController?.pushViewController(projectViewController, animated: true)
-            return
         case .service:
-            return
+            let url = URL(string: "https://www.notion.so/c422fef3eb30451cab9e6d6aa7b98024")
+            let view: SFSafariViewController = SFSafariViewController(url: url!)
+            self.present(view, animated: true, completion: nil)
         case .inquiry:
-            return
+            let url = URL(string: "https://docs.google.com/forms/d/e/1FAIpQLSc0Be8Zo4MaOawOI93tRdFce1pAr_Xf5WIExCX7tTeesZBB_w/viewform")
+            let view: SFSafariViewController = SFSafariViewController(url: url!)
+            self.present(view, animated: true, completion: nil)
+        
         case .policy:
-            return
+            let url = URL(string: "https://www.notion.so/5ddeafa7cd2c4c378cdf23a34aec316b")
+            let view: SFSafariViewController = SFSafariViewController(url: url!)
+            self.present(view, animated: true, completion: nil)
         case .logout:
             let alert = UIAlertController(title: Text.logoutTitle,
                                           message: nil,
@@ -202,7 +209,6 @@ extension SettingViewController: UITableViewDelegate {
                 UserDefaultsManager.shared.removeToken()
                 RootViewChange.shared.setRootViewController(.splash)
             })
-            
             self.present(alert, animated: true, completion: nil)
         case .none:
             return
