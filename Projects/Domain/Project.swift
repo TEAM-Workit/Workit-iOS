@@ -4,4 +4,9 @@ import ProjectDescription
 let project = Project.framework(
     name: "Domain",
     platform: .iOS,
-    dependencies: [])
+    dependencies: [
+        .external(name: "RxSwift"),
+        .project(target: "Global", path: "../Global")
+    ],
+    additionalPackageDependencies: [],
+    packages: [])

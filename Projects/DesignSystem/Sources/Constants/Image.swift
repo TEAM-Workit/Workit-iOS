@@ -34,9 +34,15 @@ public enum Image {
     public static let wkCapabilityPlus = Assets.wkCapabilityPlus.image
     public static let wkBackButton = Assets.wkArrowBig.image
     public static let wkArrowSmall = Assets.wkArrowSmall.image
-    public static let wkWrite = Assets.wkWrite.image
-    public static let wkHomeTab = Assets.property1HomeProperty2Selected.image
-    public static let wkHomeTabUnselected = Assets.property1HomeProperty2Unselected.image
-    public static let wkLibraryTab = Assets.property1MoaProperty2Selected.image
-    public static let wkLibraryTabUnselected = Assets.property1MoaProperty2Unselected.image
+    public static let imgWorkitTextLogo = Assets.imgWorkitTextLogo.image
+    public static let wkSkillChooseCheck = Assets.wkSkillChooseCheck.image
+    public static let wkSkillChoosePlus = Assets.wkSkillChoosePlus.image
+    public static let wkArrowSmallNext = Assets.wkArrowSmallNext.image
+    public static let wkOnboarding1 = Assets.wkOnboarding1.image
+    public static let wkOnboarding2 = Assets.wkOnboarding2.image
+    public static let wkOnboarding3 = Assets.wkOnboarding3.image
+    public static let wkUncheck = Assets.wkUncheck.image
+    public static let wkCheck = Assets.wkCheck.image
+    public static let imgSplashLogo = Assets.imgSplashLogo.image
+    public static let imgSplashTextLogo = Assets.imgSplashTextLogo.image
 }

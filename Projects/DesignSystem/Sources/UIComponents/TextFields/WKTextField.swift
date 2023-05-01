@@ -45,6 +45,7 @@ public class WKTextField: UITextField {
             .withUnretained(self)
             .subscribe(onNext: { (owner, changedText) in
                 owner.clearButton.isHidden = changedText.isEmpty
+                self.backgroundColor = .wkWhite
             })
             .disposed(by: disposeBag)
         
@@ -53,12 +54,22 @@ public class WKTextField: UITextField {
             .bind { (owner, _) in
                 owner.text = ""
                 owner.clearButton.isHidden = true
+                self.backgroundColor = .wkWhite
             }
             .disposed(by: disposeBag)
     }
     
-    func removeClearButton() {
+    public func removeClearButton() {
         self.clearButton.removeFromSuperview()
+    }
+    
+    public func showClearButton() {
+        self.setDefaultLayout()
+        self.clearButton.isHidden = false
+    }
+    
+    public func setClearButtonAction(_ closure: @escaping () -> Void) {
+        self.clearButton.addAction(UIAction { _ in closure() }, for: .touchUpInside)
     }
 }
 
@@ -98,6 +109,7 @@ extension WKTextField {
             .subscribe(onNext: { (owner, _) in
                 owner.layer.borderColor = UIColor.wkMainPurple.cgColor
                 owner.layer.borderWidth = 2
+                owner.backgroundColor = .wkWhite
             })
             .disposed(by: disposeBag)
         

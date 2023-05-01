@@ -11,10 +11,16 @@ import Foundation
 public enum DateType: String {
     /// yy.MM.dd.
     case dot = "yy.MM.dd."
+    /// yy.MM.dd
+    case simpleDot = "yy.MM.dd"
     /// yy-MM-dd
     case dash = "yy-MM-dd"
-    /// yyyy-MM-dd'T'HH:mm:ss.SSS'Z
-    case full = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z"
+    /// yyyy-MM-dd
+    case fullYearDash = "yyyy-MM-dd"
+    /// yyyy.MM.dd
+    case fullYearDot = "yyyy.MM.dd"
+    /// yyyy-MM-dd'T'HH:mm:ss.SSSZ
+    case full = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 }
 
 extension Date {

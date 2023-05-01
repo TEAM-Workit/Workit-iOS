@@ -11,5 +11,10 @@ import ProjectDescription
 let project = Project.framework(
     name: "Data",
     platform: .iOS,
-    dependencies: [])
-
+    dependencies: [
+        .external(name: "RxAlamofire"),
+        .project(target: "Global", path: "../Global")
+    ],
+    additionalPackageDependencies: [],
+    packages: [],
+    infoPlist:.file(path: "Plists/Info.plist"))

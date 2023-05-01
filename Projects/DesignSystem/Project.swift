@@ -12,20 +12,13 @@ let project = Project.framework(
     name: "DesignSystem",
     platform: .iOS,
     dependencies: [
+        .external(name: "HorizonCalendar"),
+        .external(name: "RxSwift"),
+        .external(name: "RxCocoa"),
+        .external(name: "SnapKit"),
+        .external(name: "RxGesture"),
         .project(target: "Global", path: "../Global")
     ],
-    additionalPackageDependencies: [
-        .package(product: "RxSwift"),
-        .package(product: "SnapKit"),
-        .package(product: "RxCocoa"),
-        .package(product: "RxGesture")
-    ],
-    packages: [
-        .remote(url: "https://github.com/SnapKit/SnapKit.git",
-                requirement: .upToNextMajor(from: "5.0.1")),
-        .remote(url: "https://github.com/ReactiveX/RxSwift.git",
-                requirement: .upToNextMinor(from: "6.5.0")),
-        .remote(url: "https://github.com/RxSwiftCommunity/RxGesture",
-                requirement: .upToNextMajor(from: "4.0.0"))
-    ])
+    additionalPackageDependencies: [],
+    packages: [])
 

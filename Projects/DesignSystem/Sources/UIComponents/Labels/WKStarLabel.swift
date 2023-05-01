@@ -17,8 +17,8 @@ public class WKStarLabel: UILabel {
     private lazy var starLabel: UILabel = {
         let label: UILabel = UILabel()
         label.text = "*"
-        label.textColor = UIColor.wkMainPurple
-        label.font = UIFont.b1Sb
+        label.textColor = .wkMainPurple
+        label.font = .b1Sb
         label.textAlignment = .center
         return label
     }()

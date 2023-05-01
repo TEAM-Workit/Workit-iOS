@@ -35,14 +35,16 @@ extension Project {
         platform: Platform,
         dependencies: [TargetDependency] = [],
         additionalPackageDependencies: [TargetDependency] = [],
-        packages: [ProjectDescription.Package] = []
+        packages: [ProjectDescription.Package] = [],
+        infoPlist: ProjectDescription.InfoPlist = .default
     ) -> Project {
         
         let targets = makeFrameworkTargets(
             name: name,
             platform: platform,
             dependencies: dependencies,
-            additionalPackageDependencies: additionalPackageDependencies)
+            additionalPackageDependencies: additionalPackageDependencies, 
+            infoPlist: infoPlist)
         
         return Project(
             name: name,
@@ -60,7 +62,7 @@ extension Project {
         infoPlist: ProjectDescription.InfoPlist)
     -> [Target] {
             
-        let bundleId = "\(workitOrganizationName).\(name)"
+        let bundleId = "com.workit.jeonsuyeol"
 
         let mainTarget = Target(
             name: name,
@@ -72,14 +74,9 @@ extension Project {
             infoPlist: infoPlist,
             sources: ["Sources/**"],
             resources: ["Resources/**"],
+            entitlements: "App.entitlements",
             scripts: [.swiftlint],
-            dependencies: dependencies + [
-                .package(product: "ReactorKit"),
-                .package(product: "SnapKit"),
-                .package(product: "Alamofire"),
-                .package(product: "RxCocoa"),
-                .package(product: "RxGesture")
-            ]
+            dependencies: dependencies + []
         )
         
         let testTarget = Target(
@@ -101,7 +98,8 @@ extension Project {
         name: String,
         platform: Platform,
         dependencies: [TargetDependency],
-        additionalPackageDependencies: [TargetDependency]
+        additionalPackageDependencies: [TargetDependency],
+        infoPlist: ProjectDescription.InfoPlist
     ) -> [Target] {
         
         let bundleId = "\(workitOrganizationName).\(name)"
@@ -112,7 +110,7 @@ extension Project {
             product: .framework,
             bundleId: bundleId,
             deploymentTarget: targetVersion,
-            infoPlist: .default,
+            infoPlist: infoPlist,
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             dependencies: dependencies + additionalPackageDependencies)

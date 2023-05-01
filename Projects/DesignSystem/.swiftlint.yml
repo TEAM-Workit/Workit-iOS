@@ -1,0 +1,15 @@
+disabled_rules:
+- line_length
+- trailing_whitespace
+- orphaned_doc_comment
+- nesting
+- todo
+
+excluded:
+- /Project.swift
+
+identifier_name:
+  excluded:
+    - id
+    - x
+    - y
