@@ -23,6 +23,15 @@ public struct UserDefaultsManager {
         }
     }
     
+    public var fcmToken: String? {
+        get {
+            return UserDefaults.standard.object(forKey: "fcmToken") as? String ?? nil
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "fcmToken")
+        }
+    }
+    
     public func removeToken() {
         UserDefaults.standard.removeObject(forKey: "accessToken")
     }

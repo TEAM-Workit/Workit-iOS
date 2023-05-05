@@ -1,3 +1,4 @@
+import Global
 import UIKit
 
 import FirebaseCore
@@ -33,6 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
     
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        UserDefaultsManager.shared.fcmToken = fcmToken
         print("✅ fcmToken", fcmToken ?? "nil")
     }
     
