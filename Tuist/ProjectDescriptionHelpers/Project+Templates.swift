@@ -76,7 +76,10 @@ extension Project {
             resources: ["Resources/**"],
             entitlements: "App.entitlements",
             scripts: [.swiftlint],
-            dependencies: dependencies + []
+            dependencies: dependencies + [],
+            settings: .settings(
+                base: .init()
+                    .otherLinkerFlags(["$(OTHER_LDFLAGS) -ObjC"]))
         )
         
         let testTarget = Target(
