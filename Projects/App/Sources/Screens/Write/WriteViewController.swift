@@ -339,6 +339,7 @@ final class WriteViewController: BaseViewController {
     private func setSaveButtonAction() {
         if let button = self.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
             button.setAction { [weak self] in
+                button.isUserInteractionEnabled = false
                 if let self = self {
                     if self.isEdit {
                         self.updateWork(data: self.createNewWork(), workId: self.editableWorkId) {
@@ -576,21 +577,29 @@ extension WriteViewController: UITextViewDelegate {
 
 extension WriteViewController {
     private func createWork(data: NewWork, completion: @escaping () -> Void) {
+        guard let saveButton = self.navigationBar.topItem?.leftBarButtonItem?.customView as? UIButton
+        else { return }
+        
         self.workRepository.createWork(data: data) { response in
             if response != nil {
                 completion()
             } else {
                 self.showAlert(title: Message.networkError.text)
+                saveButton.isUserInteractionEnabled = true
             }
         }
     }
     
     private func updateWork(data: NewWork, workId: Int, completion: @escaping () -> Void) {
+        guard let saveButton = self.navigationBar.topItem?.leftBarButtonItem?.customView as? UIButton
+        else { return }
+        
         self.workRepository.updateWork(data: data, workId: workId) { response in
             if response != nil {
                 completion()
             } else {
                 self.showAlert(title: Message.networkError.text)
+                saveButton.isUserInteractionEnabled = true
             }
         }
     }
