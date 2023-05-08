@@ -23,7 +23,7 @@ final class SingleDayCalendarBottomSheetViewController: BaseViewController {
     
     enum Text {
         static let okMessage = "확인"
-        static let reset = "초기화"
+        static let reset = "TODAY"
     }
     
     // MARK: - UIComponenets
@@ -211,7 +211,6 @@ final class SingleDayCalendarBottomSheetViewController: BaseViewController {
         self.resetButton.snp.makeConstraints { make in
             make.centerY.equalTo(self.okButton)
             make.leading.equalToSuperview().inset(20)
-            make.width.equalTo(63)
             make.height.equalTo(24)
         }
         
