@@ -211,7 +211,6 @@ final class SingleDayCalendarBottomSheetViewController: BaseViewController {
         self.bottomView.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(500 + self.bottomView.layer.cornerRadius)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(500 + self.bottomView.layer.cornerRadius)
         }
         
         self.okButton.snp.makeConstraints { make in
@@ -227,9 +226,10 @@ final class SingleDayCalendarBottomSheetViewController: BaseViewController {
         }
         
         self.calendarView.snp.makeConstraints { make in
-            make.top.equalTo(self.okButton.snp.bottom).offset(20)
+            make.top.equalTo(self.okButton.snp.bottom).offset(40)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(360)
+            make.bottom.equalToSuperview().inset(40)
         }
     }
     
