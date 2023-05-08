@@ -105,6 +105,7 @@ final class PickAbilityBottomViewController: BaseViewController {
     
     private var selectedHardAbilityList: [Ability] = []
     private var selectedSoftAbilityList: [Ability] = []
+    private var selectedAbilityIdList: [Int] = []
     
     private let hardCellReuseIdentifier: String = "hardCell"
     private let softCellReuseIdentifier: String = "softCell"
@@ -118,6 +119,13 @@ final class PickAbilityBottomViewController: BaseViewController {
         super.init(nibName: nil, bundle: nil)
         
         self.setUI()
+    }
+    
+    init(selectedAbilityIdList: [Int]) {
+        super.init(nibName: nil, bundle: nil)
+        
+        self.setUI()
+        self.selectedAbilityIdList = selectedAbilityIdList
     }
     
     required init?(coder: NSCoder) {
@@ -210,8 +218,24 @@ final class PickAbilityBottomViewController: BaseViewController {
         )
     }
     
-    func setSelectedAbilityList(abilityList: [Ability]) {
-        // TODO: 리스폰스에 있는 ability id를 보고 구현...
+    private func setSelectedAbilityCell(abilityIdList: [Int]) {
+        if !abilityIdList.isEmpty {
+            for id in abilityIdList {
+                if let selectedIndex = self.hardAbilityList.firstIndex(
+                    where: { $0.id == id }
+                ) {
+                    tableView(self.hardAbilityTableView, didSelectRowAt: IndexPath(row: selectedIndex, section: 0))
+                    self.hardAbilityTableView.selectRow(at: IndexPath(row: selectedIndex, section: 0), animated: false, scrollPosition: .none)
+                }
+                
+                if let selectedIndex = self.softAbilityList.firstIndex(
+                    where: { $0.id == id }
+                ) {
+                    tableView(self.softAbilityTableView, didSelectRowAt: IndexPath(row: selectedIndex, section: 0))
+                    self.softAbilityTableView.selectRow(at: IndexPath(row: selectedIndex, section: 0), animated: false, scrollPosition: .none)
+                }
+            }
+        }
     }
 }
 
@@ -427,6 +451,7 @@ extension PickAbilityBottomViewController {
                 self.hardAbilityTableView.reloadData()
                 self.softAbilityTableView.reloadData()
             }
+            self.setSelectedAbilityCell(abilityIdList: self.selectedAbilityIdList)
         })
     }
 }

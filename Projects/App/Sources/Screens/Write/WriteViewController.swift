@@ -191,9 +191,16 @@ final class WriteViewController: BaseViewController {
     
     private func setAbilityAddButtonAction() {
         self.abilityAddButton.setAction { [weak self] in
-            let bottomViewController: PickAbilityBottomViewController = PickAbilityBottomViewController()
-            bottomViewController.delegate = self
-            self?.present(bottomViewController, animated: true)
+            if let viewController = self {
+                let bottomViewController: PickAbilityBottomViewController = PickAbilityBottomViewController(
+                    selectedAbilityIdList: viewController.createAbilityIdList(
+                        hardList: viewController.selectedHardAbilityList,
+                        softList: viewController.selectedSoftAbilityList
+                    )
+                )
+                bottomViewController.delegate = viewController
+                self?.present(bottomViewController, animated: true)
+            }
         }
     }
     
@@ -307,19 +314,26 @@ final class WriteViewController: BaseViewController {
     }
     
     private func createNewWork() -> NewWork {
-        var abilityIds: [Int] = []
-        _ = self.selectedHardAbilityList.map { abilityIds.append($0.id) }
-        _ = self.selectedSoftAbilityList.map { abilityIds.append($0.id) }
-        
         let newWork = NewWork(
             title: self.workTextField.text ?? "",
             projectId: self.selectedProjectId,
             description: self.workDescriptionTextView.text,
             date: self.dateButton.date(),
-            abilityIds: abilityIds
+            abilityIds: self.createAbilityIdList(
+                hardList: self.selectedHardAbilityList,
+                softList: self.selectedSoftAbilityList
+            )
         )
         
         return newWork
+    }
+    
+    private func createAbilityIdList(hardList: [Ability], softList: [Ability]) -> [Int] {
+        var abilityIds: [Int] = []
+        _ = hardList.map { abilityIds.append($0.id) }
+        _ = softList.map { abilityIds.append($0.id) }
+        
+        return abilityIds
     }
     
     private func setSaveButtonAction() {
