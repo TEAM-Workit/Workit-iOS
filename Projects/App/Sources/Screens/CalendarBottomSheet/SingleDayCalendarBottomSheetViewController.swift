@@ -124,6 +124,7 @@ final class SingleDayCalendarBottomSheetViewController: BaseViewController {
         
         self.view.backgroundColor = .wkBlack.withAlphaComponent(0.7)
         self.calendarView.daySelectionHandler = daySelectionClosure
+        self.setBackgroundViewTapAction()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -192,6 +193,17 @@ final class SingleDayCalendarBottomSheetViewController: BaseViewController {
         .dayItemProvider(dayItemClosure)
     }
     
+    private func setBackgroundViewTapAction() {
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissAction(_:)))
+        self.view.addGestureRecognizer(gesture)
+        gesture.delegate = self
+    }
+    
+    @objc
+    private func dismissAction(_ gesture: UITapGestureRecognizer) {
+        self.dismiss(animated: true)
+    }
+    
     internal override func setLayout() {
         self.view.addSubviews([bottomView])
         self.bottomView.addSubviews([okButton, resetButton, calendarView])
@@ -233,6 +245,17 @@ final class SingleDayCalendarBottomSheetViewController: BaseViewController {
             animations: {
                 self.view.layoutIfNeeded()
             })
+    }
+}
+
+// MARK: - Extension (UIGestureRecognizerDelegate)
+
+extension SingleDayCalendarBottomSheetViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if let isBackgroundViewTap = touch.view?.isDescendant(of: self.bottomView) {
+            return !isBackgroundViewTap
+        }
+        return false
     }
 }
 
