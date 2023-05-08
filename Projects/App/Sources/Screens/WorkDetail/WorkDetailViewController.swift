@@ -28,7 +28,7 @@ final class WorkDetailViewController: BaseViewController {
         static let edit = "수정"
         static let remove = "삭제"
         static let cancel = "취소"
-        static let descriptionPlaceholder = "업무 내용이 아직 입력되지 않았어요!"
+        static let descriptionPlaceholder = "입력된 업무 내용이 없어요. 기록을 수정하여 업무 과정을 더욱 구체적으로 남겨보세요."
     }
     
     // MARK: - UIComponents
@@ -220,7 +220,15 @@ final class WorkDetailViewController: BaseViewController {
         
         self.projectTitleLabel.sizeToFit()
         self.workTitleLabel.sizeToFit()
-        self.workDescriptionTextView.sizeToFit()
+        
+        if workData.description == "" {
+            self.workDescriptionTextView.snp.remakeConstraints { make in
+                make.top.equalTo(self.workDescriptionLabel.snp.bottom).offset(12)
+                make.leading.trailing.equalToSuperview().inset(20)
+                make.bottom.equalToSuperview().inset(40)
+                make.height.equalTo(54)
+            }
+        }
         
         self.softAbilityCollectionView.reloadData()
         self.hardAbilityCollectionView.reloadData()
