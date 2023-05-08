@@ -83,6 +83,7 @@ extension WKTextView {
         self.textColor = .wkBlack
         self.font = .b1M
         self.autocorrectionType = .no
+        self.tintColor = .wkMainPurple
     }
     
     private func setEditableStyle() {
