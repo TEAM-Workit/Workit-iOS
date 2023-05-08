@@ -23,7 +23,7 @@ final class SingleDayCalendarBottomSheetViewController: BaseViewController {
     
     enum Text {
         static let okMessage = "확인"
-        static let reset = "초기화"
+        static let reset = "TODAY"
     }
     
     // MARK: - UIComponenets
@@ -124,6 +124,7 @@ final class SingleDayCalendarBottomSheetViewController: BaseViewController {
         
         self.view.backgroundColor = .wkBlack.withAlphaComponent(0.7)
         self.calendarView.daySelectionHandler = daySelectionClosure
+        self.setBackgroundViewTapAction()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -192,6 +193,17 @@ final class SingleDayCalendarBottomSheetViewController: BaseViewController {
         .dayItemProvider(dayItemClosure)
     }
     
+    private func setBackgroundViewTapAction() {
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissAction(_:)))
+        self.view.addGestureRecognizer(gesture)
+        gesture.delegate = self
+    }
+    
+    @objc
+    private func dismissAction(_ gesture: UITapGestureRecognizer) {
+        self.dismiss(animated: true)
+    }
+    
     internal override func setLayout() {
         self.view.addSubviews([bottomView])
         self.bottomView.addSubviews([okButton, resetButton, calendarView])
@@ -199,7 +211,6 @@ final class SingleDayCalendarBottomSheetViewController: BaseViewController {
         self.bottomView.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(500 + self.bottomView.layer.cornerRadius)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(500 + self.bottomView.layer.cornerRadius)
         }
         
         self.okButton.snp.makeConstraints { make in
@@ -211,14 +222,14 @@ final class SingleDayCalendarBottomSheetViewController: BaseViewController {
         self.resetButton.snp.makeConstraints { make in
             make.centerY.equalTo(self.okButton)
             make.leading.equalToSuperview().inset(20)
-            make.width.equalTo(63)
             make.height.equalTo(24)
         }
         
         self.calendarView.snp.makeConstraints { make in
-            make.top.equalTo(self.okButton.snp.bottom).offset(20)
+            make.top.equalTo(self.okButton.snp.bottom).offset(40)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(360)
+            make.bottom.equalToSuperview().inset(40)
         }
     }
     
@@ -234,6 +245,17 @@ final class SingleDayCalendarBottomSheetViewController: BaseViewController {
             animations: {
                 self.view.layoutIfNeeded()
             })
+    }
+}
+
+// MARK: - Extension (UIGestureRecognizerDelegate)
+
+extension SingleDayCalendarBottomSheetViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if let isBackgroundViewTap = touch.view?.isDescendant(of: self.bottomView) {
+            return !isBackgroundViewTap
+        }
+        return false
     }
 }
 
