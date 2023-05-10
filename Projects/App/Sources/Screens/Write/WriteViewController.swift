@@ -191,9 +191,16 @@ final class WriteViewController: BaseViewController {
     
     private func setAbilityAddButtonAction() {
         self.abilityAddButton.setAction { [weak self] in
-            let bottomViewController: PickAbilityBottomViewController = PickAbilityBottomViewController()
-            bottomViewController.delegate = self
-            self?.present(bottomViewController, animated: true)
+            if let viewController = self {
+                let bottomViewController: PickAbilityBottomViewController = PickAbilityBottomViewController(
+                    selectedAbilityIdList: viewController.createAbilityIdList(
+                        hardList: viewController.selectedHardAbilityList,
+                        softList: viewController.selectedSoftAbilityList
+                    )
+                )
+                bottomViewController.delegate = viewController
+                self?.present(bottomViewController, animated: true)
+            }
         }
     }
     
@@ -307,24 +314,32 @@ final class WriteViewController: BaseViewController {
     }
     
     private func createNewWork() -> NewWork {
-        var abilityIds: [Int] = []
-        _ = self.selectedHardAbilityList.map { abilityIds.append($0.id) }
-        _ = self.selectedSoftAbilityList.map { abilityIds.append($0.id) }
-        
         let newWork = NewWork(
             title: self.workTextField.text ?? "",
             projectId: self.selectedProjectId,
             description: self.workDescriptionTextView.text,
             date: self.dateButton.date(),
-            abilityIds: abilityIds
+            abilityIds: self.createAbilityIdList(
+                hardList: self.selectedHardAbilityList,
+                softList: self.selectedSoftAbilityList
+            )
         )
         
         return newWork
     }
     
+    private func createAbilityIdList(hardList: [Ability], softList: [Ability]) -> [Int] {
+        var abilityIds: [Int] = []
+        _ = hardList.map { abilityIds.append($0.id) }
+        _ = softList.map { abilityIds.append($0.id) }
+        
+        return abilityIds
+    }
+    
     private func setSaveButtonAction() {
         if let button = self.navigationBar.topItem?.rightBarButtonItem?.customView as? UIButton {
             button.setAction { [weak self] in
+                button.isUserInteractionEnabled = false
                 if let self = self {
                     if self.isEdit {
                         self.updateWork(data: self.createNewWork(), workId: self.editableWorkId) {
@@ -562,21 +577,29 @@ extension WriteViewController: UITextViewDelegate {
 
 extension WriteViewController {
     private func createWork(data: NewWork, completion: @escaping () -> Void) {
+        guard let saveButton = self.navigationBar.topItem?.leftBarButtonItem?.customView as? UIButton
+        else { return }
+        
         self.workRepository.createWork(data: data) { response in
             if response != nil {
                 completion()
             } else {
                 self.showAlert(title: Message.networkError.text)
+                saveButton.isUserInteractionEnabled = true
             }
         }
     }
     
     private func updateWork(data: NewWork, workId: Int, completion: @escaping () -> Void) {
+        guard let saveButton = self.navigationBar.topItem?.leftBarButtonItem?.customView as? UIButton
+        else { return }
+        
         self.workRepository.updateWork(data: data, workId: workId) { response in
             if response != nil {
                 completion()
             } else {
                 self.showAlert(title: Message.networkError.text)
+                saveButton.isUserInteractionEnabled = true
             }
         }
     }

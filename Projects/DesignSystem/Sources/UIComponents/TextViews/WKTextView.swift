@@ -83,6 +83,7 @@ extension WKTextView {
         self.textColor = .wkBlack
         self.font = .b1M
         self.autocorrectionType = .no
+        self.tintColor = .wkMainPurple
     }
     
     private func setEditableStyle() {
@@ -135,12 +136,15 @@ extension WKTextView {
         self.placeholderLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(self.textContainerInset.top)
             make.left.equalToSuperview().inset(self.textContainerInset.left)
+            make.right.equalToSuperview().inset(self.textContainerInset.right)
+            make.bottom.equalToSuperview().inset(self.textContainerInset.bottom)
         }
     }
     
     public func setPlaceholder(text: String) {
         self.placeholderLabel.textColor = .wkBlack30
         self.placeholderLabel.font = .b1M
+        self.placeholderLabel.numberOfLines = 0
         self.placeholderLabel.text = text
         self.setPlaceholderLayout()
         
