@@ -11,7 +11,7 @@ import Foundation
 import RxSwift
 
 public protocol ProjectUseCase {
-    func createProject(title: String) -> Observable<Project>
+    func createProject(title: String) -> Observable<Project?>
     func fetchProjects() -> Observable<[Project]>
     func fetchProjectsDetail(id: Int, startDate: Date?, endDate: Date?) -> Observable<[Work]>
     func deleteProject(id: Int) -> Observable<Int>
@@ -25,7 +25,7 @@ public final class DefaultProjectUseCase: ProjectUseCase {
         self.projectRepository = projectRepository
     }
 
-    public func createProject(title: String) -> Observable<Project> {
+    public func createProject(title: String) -> Observable<Project?> {
         return projectRepository.createProject(title: title)
     }
     
