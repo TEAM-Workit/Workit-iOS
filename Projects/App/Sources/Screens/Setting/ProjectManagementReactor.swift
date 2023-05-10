@@ -93,6 +93,7 @@ final class ProjectManagementReactor: Reactor {
         }
     }
     
+    // swiftlint:disable cyclomatic_complexity
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         
@@ -140,6 +141,7 @@ final class ProjectManagementReactor: Reactor {
         
         return newState
     }
+    // swiftlint:enable cyclomatic_complexity
     
     func isOnlyContainsSpacing(newTitle: String) -> Bool {
         let replacedString = newTitle.replacingOccurrences(of: " ", with: "")

@@ -142,7 +142,7 @@ final class ProjectManagementViewController: BaseViewController, View {
         reactor.state
             .map { $0.isDuplicatedProject }
             .withUnretained(self)
-            .bind { owner, isDuplicatedProject in
+            .bind { _, isDuplicatedProject in
                 if isDuplicatedProject {
                     
                 }
