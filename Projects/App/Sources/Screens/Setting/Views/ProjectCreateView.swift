@@ -21,7 +21,11 @@ class ProjectCreateView: UIView {
         label.text = "프로젝트 생성"
         return label
     }()
-    let textField = UITextField()
+    let textField: UITextField = {
+        let textField = UITextField()
+        textField.font = .b1M
+        return textField
+    }()
     let createButton = WKRoundedButton()
     private let underlineView: UIView = {
         let view = UIView()
@@ -49,7 +53,7 @@ class ProjectCreateView: UIView {
     // MARK: - Methods
     
     private func setUI() {
-        self.textField.placeholder = "새로운 프로젝트명을 입력하세요."
+        self.textField.placeholder = "새로운 프로젝트명을 입력해주세요"
         self.createButton.setTitle("생성", for: .normal)
     }
     
