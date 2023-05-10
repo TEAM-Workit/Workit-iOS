@@ -15,7 +15,7 @@ final class AbilityReactor: Reactor {
     var initialState: State = .init()
     
     enum Action {
-        case viewDidLoad
+        case viewWillAppear
     }
     
     struct State {
@@ -34,7 +34,7 @@ final class AbilityReactor: Reactor {
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .viewDidLoad:
+        case .viewWillAppear:
             let projects = libraryUseCase.abilities()
             return projects.map { Mutation.abilities($0) }
         }
