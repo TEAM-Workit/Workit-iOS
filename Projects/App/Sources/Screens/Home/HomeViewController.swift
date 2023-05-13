@@ -59,7 +59,6 @@ final class HomeViewController: BaseViewController, View {
         collectionView.register(cell: WKEmptyCollectionViewCell.self)
         collectionView.register(cell: WKProjectCollectionViewCell.self)
         collectionView.registerHeader(MyWorkitHeaderView.self)
-        collectionView.delegate = self
         return collectionView
     }()
 
@@ -109,6 +108,18 @@ final class HomeViewController: BaseViewController, View {
                 Reactor.Action.setDate(fromDate, toDate)
             }
             .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        collectionView.rx.itemSelected
+            .filter { indexPath in
+                indexPath.section == 1
+            }
+            .withUnretained(self)
+            .bind { owner, indexPath in
+                let viewController = WorkDetailViewController()
+                viewController.workId = owner.reactor?.currentState.works[indexPath.row].id ?? -1
+                owner.navigationController?.pushViewController(viewController, animated: true)
+            }
             .disposed(by: disposeBag)
     }
     
@@ -293,13 +304,5 @@ extension HomeViewController: CalendarBottomSheetDelegate {
            let end = end {
             dateChangePublisher.onNext((start, end))
         }
-    }
-}
-
-extension HomeViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let viewController = WorkDetailViewController()
-        viewController.workId = self.reactor?.currentState.works[indexPath.row].id ?? -1
-        self.navigationController?.pushViewController(viewController, animated: true)
     }
 }

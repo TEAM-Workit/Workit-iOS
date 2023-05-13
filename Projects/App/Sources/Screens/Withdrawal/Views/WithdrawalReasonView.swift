@@ -48,6 +48,12 @@ final class WithdrawalReasonView: UIView {
         return button
     }()
     
+    private let arrowImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = Image.wkArrowSmall
+        return imageView
+    }()
+    
     private let etcReasonTextView: UITextView = {
         let textView = UITextView()
         textView.layer.borderWidth = 1
@@ -106,6 +112,7 @@ final class WithdrawalReasonView: UIView {
     private func setLayout() {
         self.addSubviews([reasonTitleLabel, stackView])
         self.stackView.addArrangedSubviews([reasonSelectButton, etcReasonTextView])
+        self.reasonSelectButton.addSubview(arrowImageView)
         
         self.reasonTitleLabel.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
@@ -126,6 +133,12 @@ final class WithdrawalReasonView: UIView {
         
         self.snp.makeConstraints { make in
             make.height.equalTo(200)
+        }
+        
+        self.arrowImageView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(12)
+            make.centerY.equalToSuperview()
+            make.width.height.equalTo(20)
         }
     }
     

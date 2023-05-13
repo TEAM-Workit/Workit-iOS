@@ -120,13 +120,13 @@ public final class WKProjectCollectionViewCell: UICollectionViewCell {
 
         self.dateLabel.snp.makeConstraints { make in
             make.trailing.equalToSuperview()
-            make.centerY.equalToSuperview()
+            make.centerY.equalToSuperview().offset(4)
         }
         
         self.projectLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalTo(self.dateLabel.snp.leading).inset(-11)
-            make.centerY.equalToSuperview()
+            make.centerY.equalToSuperview().offset(4)
         }
         
         self.tagLabel.snp.makeConstraints { make in

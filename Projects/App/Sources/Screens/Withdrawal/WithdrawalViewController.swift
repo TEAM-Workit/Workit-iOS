@@ -94,6 +94,7 @@ final class WithdrawalViewController: BaseViewController, View {
         label.text = Text.description
         label.font = DesignSystemFontFamily.Pretendard.medium.font(size: 16)
         label.textColor = .wkBlack85
+        label.setLineSpacing(lineSpacing: 5)
         label.numberOfLines = 0
         return label
     }()
@@ -301,6 +302,7 @@ final class WithdrawalViewController: BaseViewController, View {
         self.titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
             make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(26)
         }
         
         self.descriptionLabel.snp.makeConstraints { make in

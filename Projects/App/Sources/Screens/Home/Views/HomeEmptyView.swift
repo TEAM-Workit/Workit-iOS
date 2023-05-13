@@ -35,6 +35,7 @@ final class HomeEmptyView: UIView {
         label.font = .b2M
         label.textColor = .wkBlack30
         label.numberOfLines = 2
+        label.setLineSpacing(lineSpacing: 3)
         label.textAlignment = .center
         return label
     }()

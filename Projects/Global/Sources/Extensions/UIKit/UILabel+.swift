@@ -53,21 +53,50 @@ extension UILabel {
     public func indexOfAttributedTextCharacterAtPoint(point: CGPoint) -> Int {
         assert(self.attributedText != nil, "This method is developed for attributed string")
         let textStorage = NSTextStorage(attributedString: self.attributedText!)
-
+        
         let layoutManager = NSLayoutManager()
         textStorage.addLayoutManager(layoutManager)
-
+        
         let textContainer = NSTextContainer(size: self.frame.size)
         textContainer.lineFragmentPadding = 0
         textContainer.maximumNumberOfLines = self.numberOfLines
         textContainer.lineBreakMode = self.lineBreakMode
         layoutManager.addTextContainer(textContainer)
-
+        
         let index = layoutManager.characterIndex(
             for: point,
             in: textContainer,
             fractionOfDistanceBetweenInsertionPoints: nil
         )
         return index
+    }
+    
+    /// 행간 설정
+    public func setLineSpacing(lineSpacing: CGFloat) {
+        if let text = self.text {
+            let attributedStr = NSMutableAttributedString(string: text)
+            let style = NSMutableParagraphStyle()
+            style.lineSpacing = lineSpacing
+            attributedStr.addAttribute(
+                NSAttributedString.Key.paragraphStyle,
+                value: style,
+                range: NSRange(location: 0, length: attributedStr.length))
+            self.attributedText = attributedStr
+        }
+    }
+    
+    /// 밑줄 추가
+    public func setUnderLineAttributes(lineTexts: [String]) {
+        guard let title = self.text else { return }
+        let attributeString = NSMutableAttributedString(string: title)
+        
+        for text in lineTexts {
+            attributeString.addAttribute(
+                NSAttributedString.Key.underlineStyle,
+                value: 1,
+                range: (title as NSString).range(of: text)
+            )
+        }
+        self.attributedText = attributeString
     }
 }

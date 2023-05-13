@@ -30,8 +30,12 @@ final class LoginViewController: BaseViewController {
     enum Text {
         static let workitDescription = "사회초년생을 위한 커리어 기록"
         static let agreeMessage = "로그인 시 이용약관과 개인정보 처리 방침에 동의하게 됩니다."
-        static let termOfService = "이용약관"
-        static let privacyPolicy = "개인정보 처리 방침"
+        static let termOfService = (
+            text: "이용약관",
+            url: "https://workit-team.notion.site/c422fef3eb30451cab9e6d6aa7b98024")
+        static let privacyPolicy = (
+            text: "개인정보 처리 방침",
+            url: "https://workit-team.notion.site/5ddeafa7cd2c4c378cdf23a34aec316b")
     }
 
     // MARK: - UIComponenets
@@ -69,7 +73,8 @@ final class LoginViewController: BaseViewController {
         label.font = .b3R
         label.textAlignment = .center
         label.textColor = .wkBlack65
-        label.changeFont(targetStrings: [Text.termOfService, Text.privacyPolicy], font: .b3Sb)
+        label.changeFont(targetStrings: [Text.termOfService.text, Text.privacyPolicy.text], font: .b3Sb)
+        label.setUnderLineAttributes(lineTexts: [Text.termOfService.text, Text.privacyPolicy.text])
         return label
     }()
 
@@ -172,26 +177,26 @@ final class LoginViewController: BaseViewController {
         guard let content = agreeLabel.text else { return }
         
         let termsURL = [
-            "https://www.notion.so/c422fef3eb30451cab9e6d6aa7b98024",
-            "https://www.notion.so/5ddeafa7cd2c4c378cdf23a34aec316b"
+            Text.termOfService.url,
+            Text.privacyPolicy.url
         ]
         
         let ranges: [NSRange] = [
-            (content as NSString).range(of: Text.termOfService),
-            (content as NSString).range(of: Text.privacyPolicy)
+            (content as NSString).range(of: Text.termOfService.text),
+            (content as NSString).range(of: Text.privacyPolicy.text)
         ]
         
         let tapLocation = sender.location(in: agreeLabel)
         let index = agreeLabel.indexOfAttributedTextCharacterAtPoint(point: tapLocation)
-        
         for range in ranges where range.checkTargetWordSelectedRange(contain: index) {
             guard let target = ranges.firstIndex(of: range) else { return }
             let scheme = termsURL[target]
+
             guard
                 let encodingScheme = scheme.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
                 let url = URL(string: encodingScheme.trimmingSpace()), UIApplication.shared.canOpenURL(url)
             else { return }
-            
+
             let safariViewController = SFSafariViewController(url: url)
             present(safariViewController, animated: true)
         }
@@ -208,7 +213,7 @@ final class LoginViewController: BaseViewController {
     }
 
     override func setLayout() {
-        self.view.addSubviews([self.logoStackView, self.loginButtonStackView])
+        self.view.addSubviews([self.logoStackView, self.loginButtonStackView, self.agreeLabel])
 
         self.logoStackView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
@@ -216,7 +221,7 @@ final class LoginViewController: BaseViewController {
         }
 
         self.loginButtonStackView.snp.makeConstraints { make in
-            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(46)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(71)
             make.leading.trailing.equalToSuperview().inset(20)
         }
 
@@ -236,13 +241,17 @@ final class LoginViewController: BaseViewController {
         self.appleLoginButton.snp.makeConstraints { make in
             make.height.equalTo(48)
         }
+        
+        self.agreeLabel.snp.makeConstraints { make in
+            make.top.equalTo(self.loginButtonStackView.snp.bottom).offset(25)
+            make.centerX.equalToSuperview()
+        }
     }
 
     private func setStackView() {
         self.logoStackView.addArrangedSubviews([workitLogoImageView, workitLabel])
-        self.loginButtonStackView.addArrangedSubviews([kakaoLoginButton, appleLoginButton, agreeLabel])
+        self.loginButtonStackView.addArrangedSubviews([kakaoLoginButton, appleLoginButton])
         self.loginButtonStackView.setCustomSpacing(8, after: kakaoLoginButton)
-        self.loginButtonStackView.setCustomSpacing(25, after: appleLoginButton)
     }
 }
 
