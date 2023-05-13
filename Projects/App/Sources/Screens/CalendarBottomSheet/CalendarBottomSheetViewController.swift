@@ -21,7 +21,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
     
     enum Text {
         static let okMessage = "확인"
-        static let reset = "초기화"
+        static let reset = "TODAY"
     }
     
     // MARK: - UIComponenets
@@ -316,7 +316,7 @@ final class CalendarBottomSheetViewController: BaseViewController {
         self.resetButton.snp.makeConstraints { make in
             make.top.equalTo(self.calendarView.snp.bottom).offset(25)
             make.leading.equalToSuperview().inset(20)
-            make.width.equalTo(63)
+            make.width.equalTo(100)
             make.height.equalTo(24)
         }
         
