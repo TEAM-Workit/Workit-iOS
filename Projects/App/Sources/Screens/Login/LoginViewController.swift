@@ -70,6 +70,7 @@ final class LoginViewController: BaseViewController {
         label.textAlignment = .center
         label.textColor = .wkBlack65
         label.changeFont(targetStrings: [Text.termOfService, Text.privacyPolicy], font: .b3Sb)
+        label.setUnderLineAttributes(lineTexts: [Text.termOfService, Text.privacyPolicy])
         return label
     }()
 

@@ -84,4 +84,19 @@ extension UILabel {
             self.attributedText = attributedStr
         }
     }
+    
+    /// 밑줄 추가
+    public func setUnderLineAttributes(lineTexts: [String]) {
+        guard let title = self.text else { return }
+        let attributeString = NSMutableAttributedString(string: title)
+        
+        for text in lineTexts {
+            attributeString.addAttribute(
+                NSAttributedString.Key.underlineStyle,
+                value: 1,
+                range: (title as NSString).range(of: text)
+            )
+        }
+        self.attributedText = attributeString
+    }
 }
