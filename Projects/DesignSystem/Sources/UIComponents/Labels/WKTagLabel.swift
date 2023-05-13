@@ -51,10 +51,10 @@ public final class WKTagLabel: PaddingLabel {
     
     private func setColor(type: TagType) {
         switch type {
-        case .hard:
+        case .soft:
             self.backgroundColor = .wkSubPurple15
             self.textColor = .wkMainPurple
-        case .soft:
+        case .hard:
             self.backgroundColor = .wkSubNavy20
             self.textColor = .wkMainNavy
         }
