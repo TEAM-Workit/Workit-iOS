@@ -54,7 +54,7 @@ final class WithdrawalReasonView: UIView {
         return imageView
     }()
     
-    private let etcReasonTextView: UITextView = {
+    fileprivate let etcReasonTextView: UITextView = {
         let textView = UITextView()
         textView.layer.borderWidth = 1
         textView.makeRounded(radius: 5)
@@ -176,5 +176,9 @@ extension Reactive where Base: WithdrawalReasonView {
     
     var didSelectReason: Observable<String?> {
         return base.reasonPublisher.asObservable()
+    }
+    
+    var etcReasonText: ControlProperty<String?> {
+        return base.etcReasonTextView.rx.text
     }
 }

@@ -28,6 +28,7 @@ final class WithdrawalReactor: Reactor {
         case agreeButtonTap
         case withdrawButtonDidTap
         case selectReason(String?)
+        case etcReasonTextViewDidChange(String?)
     }
     
     struct State {
@@ -35,12 +36,14 @@ final class WithdrawalReactor: Reactor {
         var agreeButtonSelected: Bool
         var isCompletedWithDraw: Bool
         var isEnableClickWithdrawButton: Bool
+        var etcReasonText: String?
     }
     
     enum Mutation {
         case changeAgreeButtonState
         case withDraw
         case setReason(String?)
+        case setEtcReason(String?)
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
@@ -49,13 +52,20 @@ final class WithdrawalReactor: Reactor {
             return Observable.just(Mutation.changeAgreeButtonState)
             
         case .withdrawButtonDidTap:
-            let successWithdraw = userUseCase.deleteUser(description: currentState.reason ?? "")
+            var reason = currentState.reason ?? ""
+            if reason == "기타" {
+                reason = "기타 - " + (currentState.etcReasonText ?? "")
+            }
+            let successWithdraw = userUseCase.deleteUser(description: reason)
                 .filter { $0 }
                 .map { _ in Mutation.withDraw }
             return successWithdraw
             
         case .selectReason(let reason):
             return Observable.just(Mutation.setReason(reason))
+            
+        case .etcReasonTextViewDidChange(let text):
+            return Observable.just(Mutation.setEtcReason(text))
         }
     }
     
@@ -67,6 +77,7 @@ final class WithdrawalReactor: Reactor {
             newState.agreeButtonSelected.toggle()
             newState.isEnableClickWithdrawButton = setEnableWithdrawButton(
                 reason: newState.reason,
+                etcReason: newState.etcReasonText,
                 isAgree: newState.agreeButtonSelected)
             
         case .withDraw:
@@ -76,13 +87,29 @@ final class WithdrawalReactor: Reactor {
             newState.reason = reason
             newState.isEnableClickWithdrawButton = setEnableWithdrawButton(
                 reason: newState.reason,
+                etcReason: newState.etcReasonText,
+                isAgree: newState.agreeButtonSelected)
+            
+        case .setEtcReason(let reason):
+            newState.etcReasonText = reason
+            newState.isEnableClickWithdrawButton = setEnableWithdrawButton(
+                reason: newState.reason,
+                etcReason: newState.etcReasonText,
                 isAgree: newState.agreeButtonSelected)
         }
         
         return newState
     }
     
-    private func setEnableWithdrawButton(reason: String?, isAgree: Bool) -> Bool {
+    private func setEnableWithdrawButton(reason: String?, etcReason: String?, isAgree: Bool) -> Bool {
+        if reason == "기타" {
+            if let etcReason = etcReason,
+               !etcReason.isEmpty {
+                return isAgree
+            }
+            return false
+        }
+        
         return isAgree && (reason != nil)
     }
 }

@@ -223,6 +223,11 @@ final class WithdrawalViewController: BaseViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        self.withDrawalReasonView.rx.etcReasonText
+            .map { Reactor.Action.etcReasonTextViewDidChange($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         self.closeButton.rx.tap
             .withUnretained(self)
             .bind { owner, _ in
