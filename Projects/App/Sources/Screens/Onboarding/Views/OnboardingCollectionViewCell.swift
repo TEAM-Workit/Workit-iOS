@@ -26,8 +26,7 @@ final class OnboardingCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = .wkBlack45
         label.font = .b2M
-        label.numberOfLines = 0
-        label.textAlignment = .center
+        label.numberOfLines = 2
         return label
     }()
 
@@ -92,6 +91,8 @@ final class OnboardingCollectionViewCell: UICollectionViewCell {
     internal func setData(onboarding: Onboarding) {
         self.titleLabel.text = onboarding.title
         self.subtitleLabel.text = onboarding.subtitle
+        self.subtitleLabel.setLineSpacing(lineSpacing: 2)
+        self.subtitleLabel.textAlignment = .center
         self.imageView.image = onboarding.image
     }
 }
