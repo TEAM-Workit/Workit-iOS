@@ -6,6 +6,7 @@
 //  Copyright © 2023 com.workit. All rights reserved.
 //
 
+import Global
 import UIKit
 
 import SnapKit
@@ -25,14 +26,14 @@ final class OnboardingCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = .wkBlack45
         label.font = .b2M
-        label.numberOfLines = 2
+        label.numberOfLines = 0
         label.textAlignment = .center
         return label
     }()
 
     private let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .top
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 
@@ -42,6 +43,9 @@ final class OnboardingCollectionViewCell: UICollectionViewCell {
         stackView.alignment = .center
         return stackView
     }()
+    
+    private let topEmptyView = UIView()
+    private let bottomEmptyView = UIView()
 
     // MARK: - Initializer
     
@@ -59,7 +63,7 @@ final class OnboardingCollectionViewCell: UICollectionViewCell {
     // MARK: - Methods
 
     private func setStackView() {
-        self.stackView.addArrangedSubviews([titleLabel, subtitleLabel, imageView])
+        self.stackView.addArrangedSubviews([topEmptyView, titleLabel, subtitleLabel, imageView, bottomEmptyView])
         self.stackView.setCustomSpacing(12, after: titleLabel)
         self.stackView.setCustomSpacing(29, after: subtitleLabel)
     }
@@ -68,16 +72,20 @@ final class OnboardingCollectionViewCell: UICollectionViewCell {
         self.addSubviews([stackView])
 
         self.stackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(57)
+            make.top.equalToSuperview()
             make.leading.bottom.trailing.equalToSuperview()
         }
         
         self.titleLabel.snp.makeConstraints { make in
             make.height.equalTo(29)
         }
-    
+
         self.subtitleLabel.snp.makeConstraints { make in
             make.height.equalTo(38)
+        }
+        
+        self.bottomEmptyView.snp.makeConstraints { make in
+            make.height.equalTo(self.topEmptyView.snp.height).priority(.medium)
         }
     }
     
