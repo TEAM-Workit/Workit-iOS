@@ -14,10 +14,9 @@ import RxSwift
 public final class DefaultProjectRepository: ProjectRepository {
     public init() { }
     
-    public func createProject(title: String) -> Observable<Project> {
+    public func createProject(title: String) -> Observable<Project?> {
         return NetworkService.shared.project.createProject(request: ProjectRequestDTO.init(title: title))
-            .compactMap { $0.data }
-            .map { $0.toProjectDomain() }
+            .map { $0.data?.toProjectDomain() }
     }
     
     public func createProject(title: String, completion: @escaping (Project) -> Void) {

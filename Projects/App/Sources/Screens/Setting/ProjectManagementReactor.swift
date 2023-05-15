@@ -19,7 +19,9 @@ final class ProjectManagementReactor: Reactor {
         self.projectUseCase = projectUseCase
         self.initialState = .init(
             newProjectTitle: "",
-            projectList: []
+            projectList: [],
+            isEnableCreateButton: false,
+            isDuplicatedProject: false
         )
     }
     
@@ -29,19 +31,23 @@ final class ProjectManagementReactor: Reactor {
         case createButtonTapped
         case modifyButtonTapped(String?, Int?)
         case deleteButtonTapped(Int?)
+        case setNewProjectTitle(String?)
     }
     
     struct State {
         var newProjectTitle: String
         var projectList: [Project]
+        var isEnableCreateButton: Bool
+        var isDuplicatedProject: Bool
     }
     
     enum Mutation {
         case setTitle(String)
-        case createProject(Project)
+        case createProject(Project?)
         case projects([Project])
         case modifyTitle(String, Int, Int)
         case deleteProject(Int, Int)
+        case setNewProjectTitle(String?)
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
@@ -81,9 +87,13 @@ final class ProjectManagementReactor: Reactor {
                 .deleteProject(id: projectID)
                 .map { Mutation.deleteProject(projectID, $0) }
                 .asObservable()
+            
+        case let .setNewProjectTitle(title):
+            return .just(Mutation.setNewProjectTitle(title))
         }
     }
     
+    // swiftlint:disable cyclomatic_complexity
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         
@@ -95,7 +105,12 @@ final class ProjectManagementReactor: Reactor {
             newState.newProjectTitle = name
             
         case let .createProject(response):
-            newState.projectList.insert(response, at: 0)
+            guard let project = response else {
+                newState.isDuplicatedProject = true
+                return newState
+            }
+            newState.isDuplicatedProject = false
+            newState.projectList.insert(project, at: 0)
             
         case let .modifyTitle(name, projectID, statusCode):
             if statusCode == 20000 {
@@ -114,8 +129,22 @@ final class ProjectManagementReactor: Reactor {
                 
                 newState.projectList.remove(at: index)
             }
+            
+        case let .setNewProjectTitle(title):
+            guard let title = title else { return newState }
+            if isOnlyContainsSpacing(newTitle: title) || title.isEmpty {
+                newState.isEnableCreateButton = false
+                return newState
+            }
+            newState.isEnableCreateButton = true
         }
         
         return newState
+    }
+    // swiftlint:enable cyclomatic_complexity
+    
+    func isOnlyContainsSpacing(newTitle: String) -> Bool {
+        let replacedString = newTitle.replacingOccurrences(of: " ", with: "")
+        return replacedString.isEmpty
     }
 }

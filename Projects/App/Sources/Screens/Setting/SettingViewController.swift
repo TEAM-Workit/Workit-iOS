@@ -21,6 +21,7 @@ class SettingViewController: BaseViewController, View {
     enum Setting: Int, CaseIterable {
         case project
         case service
+        case csv
         case inquiry
         case policy
         case logout
@@ -29,9 +30,23 @@ class SettingViewController: BaseViewController, View {
             switch self {
             case .project: return "프로젝트 관리"
             case .service: return "서비스 소개"
+            case .csv: return "CSV 추출하기"
             case .inquiry: return "문의하기"
-            case .policy: return "정책 및 약관"
+            case .policy: return "앱 정보"
             case .logout: return "로그아웃"
+            }
+        }
+        
+        var url: String {
+            switch self {
+            case .service:
+                return "https://workit-team.notion.site/Workit-9fd68a7ce34e4b23ad0f20bcd9841569"
+            case .inquiry:
+                return "https://forms.gle/ZzG7zY1mc7DAZ7ot9"
+            case .policy:
+                return "https://workit-team.notion.site/About-Workit-1efde21df0ec4d358a87d1d6acb49801"
+            default:
+                return ""
             }
         }
     }
@@ -41,6 +56,8 @@ class SettingViewController: BaseViewController, View {
         static let logoutTitle = "로그아웃 하시겠습니까?"
         static let cancel = "취소"
         static let confirm = "확인"
+        static let preparing = "준비중인 기능입니다."
+        static let profileEmptyEmail = "오늘도 열심히 워킷 💜"
     }
     
     public var disposeBag = DisposeBag()
@@ -121,8 +138,10 @@ class SettingViewController: BaseViewController, View {
             .map { $0.userInformation }
             .withUnretained(self)
             .bind { owner, user in
-                owner.profileView.setUsername(text: user.nickname)
-                owner.profileView.setEmail(text: user.email)
+                let nameSuffix = user.email.isEmpty ? "님" : ""
+                owner.profileView.setUsername(text: user.nickname + nameSuffix)
+                let subTitle = user.email.isEmpty ? Text.profileEmptyEmail : user.email
+                owner.profileView.setEmail(text: subTitle)
             }
             .disposed(by: disposeBag)
     }
@@ -166,7 +185,7 @@ class SettingViewController: BaseViewController, View {
     private func setNavigationBar() {
         self.navigationController?.isNavigationBarHidden = true
         self.navigationBar.topItem?.title = "설정"
-        self.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.wkWhite]
+        self.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.wkWhite, .font: UIFont.h3Sb]
     }
     
     @objc private func dismissButtonDidTapped() {
@@ -183,23 +202,29 @@ extension SettingViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch Setting(rawValue: indexPath.row) {
+        guard let type = Setting(rawValue: indexPath.row) else { return }
+        switch type {
         case .project:
             let projectViewController = ProjectManagementViewController()
             let useCase = DefaultProjectUseCase(projectRepository: DefaultProjectRepository())
             projectViewController.reactor = ProjectManagementReactor(projectUseCase: useCase)
             self.navigationController?.pushViewController(projectViewController, animated: true)
         case .service:
-            let url = URL(string: "https://www.notion.so/workit-team/About-Workit-1efde21df0ec4d358a87d1d6acb49801?pvs=4")
+            let url = URL(string: type.url)
             let view: SFSafariViewController = SFSafariViewController(url: url!)
             self.present(view, animated: true, completion: nil)
+        case .csv:
+            let alert = UIAlertController(title: Text.preparing,
+                                          message: nil,
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: Text.confirm, style: .cancel))
+            self.present(alert, animated: true)
         case .inquiry:
-            let url = URL(string: "https://forms.gle/ZzG7zY1mc7DAZ7ot9")
+            let url = URL(string: type.url)
             let view: SFSafariViewController = SFSafariViewController(url: url!)
             self.present(view, animated: true, completion: nil)
-        
         case .policy:
-            let url = URL(string: "https://www.notion.so/workit-team/Workit-9fd68a7ce34e4b23ad0f20bcd9841569?pvs=4")
+            let url = URL(string: type.url)
             let view: SFSafariViewController = SFSafariViewController(url: url!)
             self.present(view, animated: true, completion: nil)
         case .logout:
@@ -212,8 +237,6 @@ extension SettingViewController: UITableViewDelegate {
                 RootViewChange.shared.setRootViewController(.splash)
             })
             self.present(alert, animated: true, completion: nil)
-        case .none:
-            return
         }
     }
     

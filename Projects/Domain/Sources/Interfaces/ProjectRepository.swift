@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 
 public protocol ProjectRepository {
-    func createProject(title: String) -> Observable<Project>
+    func createProject(title: String) -> Observable<Project?>
     func createProject(title: String, completion: @escaping (Project) -> Void)
     func fetchProjects() -> Observable<[Project]>
     func fetchProjectsDetail(id: Int, startDate: Date?, endDate: Date?) -> Observable<[Work]>

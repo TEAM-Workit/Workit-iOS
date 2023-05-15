@@ -53,8 +53,8 @@ class AbilityViewController: BaseViewController, PageTabProtocol, View {
     }
     
     public func bindAction(reactor: AbilityReactor) {
-        self.rx.viewDidLoad
-            .map { _ in Reactor.Action.viewDidLoad }
+        self.rx.viewWillAppear
+            .map { _ in Reactor.Action.viewWillAppear }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }

@@ -105,6 +105,11 @@ final class ProjectManagementViewController: BaseViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        self.projectCreateView.textField.rx.text
+            .map { Reactor.Action.setNewProjectTitle($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         self.modifyConfirmSubject
             .map { Reactor.Action.modifyButtonTapped($0, $1) }
             .bind(to: reactor.action)
@@ -123,6 +128,24 @@ final class ProjectManagementViewController: BaseViewController, View {
             .withUnretained(self)
             .bind { owner, projects in
                 owner.applySnapshot(projects: projects)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.isEnableCreateButton }
+            .withUnretained(self)
+            .bind { owner, isEnableCreateButton in
+                owner.projectCreateView.createButton.isEnabled = isEnableCreateButton
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.isDuplicatedProject }
+            .withUnretained(self)
+            .bind { _, isDuplicatedProject in
+                if isDuplicatedProject {
+                    
+                }
             }
             .disposed(by: disposeBag)
     }
@@ -144,7 +167,7 @@ final class ProjectManagementViewController: BaseViewController, View {
         }
             
         self.collectionView.snp.makeConstraints { make in
-            make.top.equalTo(projectCreateView.snp.bottom)
+            make.top.equalTo(projectCreateView.snp.bottom).offset(15)
             make.leading.bottom.trailing.equalToSuperview()
         }
     }
