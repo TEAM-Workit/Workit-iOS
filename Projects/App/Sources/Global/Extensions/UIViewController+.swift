@@ -148,4 +148,34 @@ extension UIViewController {
             completion: completion
         )
     }
+    
+    func showCustomAlert(
+        title: String? = nil,
+        message: String? = nil,
+        buttons: [AlertButton]
+    ) {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
+        
+        let alertViewController = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert)
+        
+        for button in buttons {
+            let action = UIAlertAction(
+                title: button.title,
+                style: button.style,
+                handler: button.action)
+            alertViewController.addAction(action)
+        }
+        
+        self.present(alertViewController, animated: true)
+    }
+}
+
+struct AlertButton {
+    let title: String
+    let style: UIAlertAction.Style
+    let action: ((UIAlertAction) -> Void)?
 }

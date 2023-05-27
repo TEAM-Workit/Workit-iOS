@@ -30,6 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         )
 
         application.registerForRemoteNotifications()
+        FirebaseService.shared.start()
         return true
     }
     

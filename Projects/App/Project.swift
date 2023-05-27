@@ -16,6 +16,7 @@ let project = Project.app(
         .external(name: "FirebaseAuth"),
         .external(name: "FirebaseFirestore"),
         .external(name: "FirebaseMessaging"),
+        .external(name: "FirebaseRemoteConfig"),
         .external(name: "Mixpanel"),
         .project(target: "Data", path: "../Data"),
         .project(target: "DesignSystem", path: "../DesignSystem"),
