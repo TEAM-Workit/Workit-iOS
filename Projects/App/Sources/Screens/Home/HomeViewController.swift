@@ -293,17 +293,15 @@ final class HomeViewController: BaseViewController, View {
         var systemNotificationSetting: Bool = false
         UNUserNotificationCenter.current().getNotificationSettings(completionHandler: { setting in
             systemNotificationSetting = setting.alertSetting == .enabled
+            Mixpanel.mainInstance().people.set(
+                properties: [
+                    "$name": name,
+                    "$email": email,
+                    "$distinct_id": "\(userId)",
+                    "State of 시스템 푸시 동의": systemNotificationSetting
+                ]
+            )
         })
-        
-        Mixpanel.mainInstance().people.set(
-            properties: [
-                "$name": name,
-                "$email": email,
-                "$distinct_id": "\(userId)",
-                "State of 시스템 푸시 동의": systemNotificationSetting
-            ]
-        )
-
     }
 }
 
