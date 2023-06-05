@@ -307,6 +307,7 @@ final class HomeViewController: BaseViewController, View {
 
 extension HomeViewController: MyWorkitHeaderViewDelegate {
     func dateButtonDidTap() {
+        Mixpanel.mainInstance().track(event: "홈_기간설정_Clicked")
         let bottomSheetViewController = CalendarBottomSheetViewController()
         bottomSheetViewController.modalPresentationStyle = .overFullScreen
         bottomSheetViewController.modalTransitionStyle = .crossDissolve
