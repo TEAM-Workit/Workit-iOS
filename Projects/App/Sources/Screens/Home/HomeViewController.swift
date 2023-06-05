@@ -11,6 +11,7 @@ import DesignSystem
 import Domain
 import UIKit
 
+import Mixpanel
 import ReactorKit
 import RxSwift
 
@@ -140,6 +141,7 @@ final class HomeViewController: BaseViewController, View {
             .withUnretained(self)
             .bind { owner, name in
                 owner.bannerView.setName(name: name)
+                owner.sendMixpanelUserProperties(name: name, email: "testEmail", userId: -1)
             }
             .disposed(by: disposeBag)
         
@@ -282,6 +284,24 @@ final class HomeViewController: BaseViewController, View {
         snapshot.appendItems([Item.empty], toSection: .empty)
         snapshot.appendItems(works.map { Item.workit($0) }, toSection: .myWorkit)
         self.dataSource.apply(snapshot)
+    }
+    
+    private func sendMixpanelUserProperties(name: String, email: String, userId: Int) {
+        Mixpanel.mainInstance().createAlias("\(userId)", distinctId: "\(userId)")
+        Mixpanel.mainInstance().identify(distinctId: "\(userId)")
+        
+        var systemNotificationSetting: Bool = false
+        UNUserNotificationCenter.current().getNotificationSettings(completionHandler: { setting in
+            systemNotificationSetting = setting.alertSetting == .enabled
+            Mixpanel.mainInstance().people.set(
+                properties: [
+                    "$name": name,
+                    "$email": email,
+                    "$distinct_id": "\(userId)",
+                    "State of 시스템 푸시 동의": systemNotificationSetting
+                ]
+            )
+        })
     }
 }
 
