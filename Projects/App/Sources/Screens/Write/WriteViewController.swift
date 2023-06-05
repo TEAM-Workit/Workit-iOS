@@ -321,7 +321,7 @@ final class WriteViewController: BaseViewController {
             title: self.workTextField.text ?? "",
             projectId: self.selectedProjectId,
             description: self.workDescriptionTextView.text,
-            date: self.dateButton.date(),
+            date: (self.dateButton.date().toString(type: .dot).toDate(type: .dot) ?? Date()) + 60,
             abilityIds: self.createAbilityIdList(
                 hardList: self.selectedHardAbilityList,
                 softList: self.selectedSoftAbilityList
@@ -447,7 +447,6 @@ final class WriteViewController: BaseViewController {
 
 extension WriteViewController: SingleDayCalendarBottomSheetDelegate {
     func sendSelectedSingleDay(_ date: Date) {
-        print(date)
         self.dateButton.setDate(date: date)
     }
 }

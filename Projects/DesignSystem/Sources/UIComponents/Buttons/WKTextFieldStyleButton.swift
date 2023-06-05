@@ -77,7 +77,7 @@ extension WKTextFieldStyleButton {
         
         if style == Style.withCalendarStyle {
             self.setCalendarImageLayout()
-            self.setDate(date: Date())
+            self.setDate(date: Date().toString(type: .dot).toDate(type: .dot) ?? Date())
         }
     }
     
