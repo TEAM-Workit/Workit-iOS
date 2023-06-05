@@ -9,6 +9,7 @@
 import DesignSystem
 import UIKit
 
+import Mixpanel
 import ReactorKit
 
 final class OnboardingReactor: Reactor {
@@ -95,6 +96,12 @@ final class OnboardingReactor: Reactor {
             newState.buttonTitle = getButtonTitle(page: page)
             
         case .setNextPage:
+            if newState.page == 0 {
+                Mixpanel.mainInstance().track(event: "온보딩_다음버튼(1)_Clicked")
+            } else if newState.page == 2 {
+                Mixpanel.mainInstance().track(event: "온보딩_다음버튼(3)_Clicked")
+            }
+            
             if newState.page >= Number.lastPage {
                 newState.startButtonTap = true
                 break
