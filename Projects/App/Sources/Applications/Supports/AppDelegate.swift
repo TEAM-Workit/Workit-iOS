@@ -1,8 +1,10 @@
 import Global
+import Data
 import UIKit
 
 import FirebaseCore
 import FirebaseMessaging
+import Mixpanel
 import RxKakaoSDKCommon
 import RxKakaoSDKAuth
 import KakaoSDKAuth
@@ -31,6 +33,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
         application.registerForRemoteNotifications()
         FirebaseService.shared.start()
+        
+        #if DEBUG
+        let token = SecretKey.mixpanelDevToken
+        Mixpanel.initialize(token: token, trackAutomaticEvents: true)
+        #else
+        let token = SecretKey.mixpanelProdToken
+        Mixpanel.initialize(token: token, trackAutomaticEvents: true)
+        #endif
         return true
     }
     
