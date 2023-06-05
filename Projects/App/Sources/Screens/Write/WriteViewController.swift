@@ -12,6 +12,7 @@ import DesignSystem
 import Global
 import UIKit
 
+import Mixpanel
 import RxSwift
 import SnapKit
 
@@ -168,6 +169,7 @@ final class WriteViewController: BaseViewController {
         self.setCloseButtonAction()
         self.setSaveButtonAction()
         self.setWorkTextField()
+        self.sendMixpanelEvent()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -302,6 +304,7 @@ final class WriteViewController: BaseViewController {
                     alert.dismiss(animated: true)
                 }
                 let cancelAction = UIAlertAction(title: Text.cancelTitle, style: .destructive) { _ in
+                    Mixpanel.mainInstance().track(event: "기록하기_기록 저장_Cancelled")
                     self?.dismiss(animated: true)
                 }
                 
@@ -433,6 +436,10 @@ final class WriteViewController: BaseViewController {
         if self.workDescriptionTextView.text.count > 1000 {
             self.workDescriptionTextView.deleteBackward()
         }
+    }
+    
+    private func sendMixpanelEvent() {
+        Mixpanel.mainInstance().track(event: "기록하기_기록하기 창_Viewed")
     }
 }
 
@@ -582,6 +589,10 @@ extension WriteViewController {
         
         self.workRepository.createWork(data: data) { response in
             if response != nil {
+                Mixpanel.mainInstance().track(event: "기록하기_저장_Completed")
+                if data.description != "" {
+                    Mixpanel.mainInstance().track(event: "기록하기_업무내용입력_Completed")
+                }
                 completion()
             } else {
                 self.showAlert(title: Message.networkError.text)
@@ -596,6 +607,10 @@ extension WriteViewController {
         
         self.workRepository.updateWork(data: data, workId: workId) { response in
             if response != nil {
+                Mixpanel.mainInstance().track(event: "기록하기_저장_Completed")
+                if data.description != "" {
+                    Mixpanel.mainInstance().track(event: "기록하기_업무내용입력_Completed")
+                }
                 completion()
             } else {
                 self.showAlert(title: Message.networkError.text)

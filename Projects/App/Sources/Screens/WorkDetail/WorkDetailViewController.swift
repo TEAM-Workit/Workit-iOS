@@ -12,6 +12,7 @@ import Domain
 import Global
 import UIKit
 
+import Mixpanel
 import SnapKit
 
 // swiftlint:disable file_length
@@ -122,6 +123,7 @@ final class WorkDetailViewController: BaseViewController {
         self.setScrollView()
         self.setLayout()
         self.setAbilityCollectionView()
+        self.sendMixpanelEvent()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -304,6 +306,10 @@ final class WorkDetailViewController: BaseViewController {
         editViewController.setEditViewController(workId: self.workId)
         
         self.present(editViewController, animated: true)
+    }
+    
+    private func sendMixpanelEvent() {
+        Mixpanel.mainInstance().track(event: "상세보기_기록 상세_ Viewed")
     }
 }
 
