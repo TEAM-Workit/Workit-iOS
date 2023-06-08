@@ -9,6 +9,7 @@
 import Domain
 
 import ReactorKit
+import Mixpanel
 
 final class ProjectManagementReactor: Reactor {
     var initialState: State
@@ -67,6 +68,8 @@ final class ProjectManagementReactor: Reactor {
             if currentState.newProjectTitle.isEmpty {
                 return .empty()
             }
+            
+            Mixpanel.mainInstance().track(event: "설정_프로젝트 생성 버튼_Clicked")
             
             return .concat(
                 [self.projectUseCase

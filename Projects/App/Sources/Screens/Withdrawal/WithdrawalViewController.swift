@@ -14,6 +14,8 @@ import ReactorKit
 import RxSwift
 import SnapKit
 
+import Mixpanel
+
 // swiftlint:disable all
 final class WithdrawalViewController: BaseViewController, View {
     var disposeBag: RxSwift.DisposeBag = DisposeBag()
@@ -206,6 +208,7 @@ final class WithdrawalViewController: BaseViewController, View {
                         owner.presentAlert(
                             type: .completeWithdraw,
                             okAction: { _ in
+                                Mixpanel.mainInstance().track(event: "설정_탈퇴 모달 확인 버튼_Clicked")
                                 owner.withDrawPublisher.onNext(())
                             }
                         )

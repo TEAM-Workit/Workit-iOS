@@ -15,6 +15,7 @@ import UIKit
 
 import ReactorKit
 import SnapKit
+import Mixpanel
 
 class SettingViewController: BaseViewController, View {
     
@@ -241,6 +242,8 @@ extension SettingViewController: UITableViewDelegate {
             let view: SFSafariViewController = SFSafariViewController(url: url!)
             self.present(view, animated: true, completion: nil)
         case .csv:
+            Mixpanel.mainInstance().track(event: "설정_추출버튼_Clicked")
+            
             let alert = UIAlertController(title: Text.preparing,
                                           message: nil,
                                           preferredStyle: .alert)
@@ -260,6 +263,7 @@ extension SettingViewController: UITableViewDelegate {
                                           preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: Text.cancel, style: .cancel))
             alert.addAction(UIAlertAction(title: Text.confirm, style: .default) { _ in
+                Mixpanel.mainInstance().track(event: "설정_로그아웃 모달 확인 버튼_Clicked")
                 UserDefaultsManager.shared.removeToken()
                 RootViewChange.shared.setRootViewController(.splash)
             })

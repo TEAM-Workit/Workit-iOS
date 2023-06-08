@@ -12,6 +12,7 @@ import DesignSystem
 import UIKit
 
 import ReactorKit
+import Mixpanel
 
 class AbilityViewController: BaseViewController, PageTabProtocol, View {
     
@@ -113,6 +114,8 @@ class AbilityViewController: BaseViewController, PageTabProtocol, View {
 
 extension AbilityViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        Mixpanel.mainInstance().track(event: "모아보기_역량_목록_Clicked")
+        
         let detailViewController = DetailViewController(previousView: .ability)
         detailViewController.reactor = DetailReactor(
             title: self.reactor?.currentState.abilities[indexPath.row].name ?? "",
