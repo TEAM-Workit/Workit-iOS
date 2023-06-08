@@ -15,6 +15,7 @@ class SettingTableViewCell: UITableViewCell {
     
     enum `Type` {
         case `default`
+        case subtitle
         case toggle
     }
     
@@ -23,6 +24,13 @@ class SettingTableViewCell: UITableViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .h4M
+        return label
+    }()
+    
+    public let subTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .h4M
+        label.textColor = .wkBlack45
         return label
     }()
     
@@ -64,11 +72,20 @@ class SettingTableViewCell: UITableViewCell {
     // MARK: - Methods
     
     private func setLayout() {
-        self.addSubviews([titleLabel, nextImageView, separatorView, toggle])
+        self.addSubviews([titleLabel, subTitleLabel, nextImageView, separatorView, toggle])
         
         self.titleLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalToSuperview().offset(20)
+        }
+        
+        if self.type == .subtitle {
+            self.subTitleLabel.snp.makeConstraints { make in
+                make.centerY.equalToSuperview()
+                make.leading.equalTo(titleLabel.snp.trailing).offset(6)
+            }
+        } else {
+            self.subTitleLabel.removeFromSuperview()
         }
         
         self.nextImageView.snp.makeConstraints { make in

@@ -26,6 +26,7 @@ class SettingViewController: BaseViewController, View {
         case inquiry
         case policy
         case logout
+        case appVersion
         
         var title: String {
             switch self {
@@ -36,6 +37,7 @@ class SettingViewController: BaseViewController, View {
             case .inquiry: return "문의하기"
             case .policy: return "앱 정보"
             case .logout: return "로그아웃"
+            case .appVersion: return "현재 버전"
             }
         }
         
@@ -262,6 +264,16 @@ extension SettingViewController: UITableViewDelegate {
                 RootViewChange.shared.setRootViewController(.splash)
             })
             self.present(alert, animated: true, completion: nil)
+        case .appVersion:
+            guard
+                let url = URL(string: "itms-apps://itunes.apple.com/app/6448702578")
+            else {
+                return
+            }
+            
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            }
         }
     }
     
@@ -279,13 +291,19 @@ extension SettingViewController: UITableViewDataSource {
         let cell: SettingTableViewCell = tableView.dequeueReusableCell(for: indexPath)
         cell.setTitle(Setting.allCases[indexPath.item].title)
         cell.selectionStyle = .none
-        if Setting.allCases[indexPath.item] == .notification {
+        
+        switch Setting.allCases[indexPath.item] {
+        case .notification:
             cell.type = .toggle
             cell.toggle.delegate = self
             cell.toggle.isOn = notificationState
-        } else {
+        case .appVersion:
+            cell.type = .subtitle
+            cell.subTitleLabel.text = Bundle.appVersion
+        default:
             cell.type = .default
         }
+        
         return cell
     }
     
