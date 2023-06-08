@@ -30,7 +30,7 @@ class SettingViewController: BaseViewController, View {
             switch self {
             case .project: return "프로젝트 관리"
             case .service: return "서비스 소개"
-            case .csv: return "CSV 추출하기"
+            case .csv: return "파일로 내려받기"
             case .inquiry: return "문의하기"
             case .policy: return "앱 정보"
             case .logout: return "로그아웃"
@@ -40,11 +40,11 @@ class SettingViewController: BaseViewController, View {
         var url: String {
             switch self {
             case .service:
-                return "https://workit-team.notion.site/Workit-9fd68a7ce34e4b23ad0f20bcd9841569"
+                return "https://workit-team.notion.site/About-Workit-1efde21df0ec4d358a87d1d6acb49801"
             case .inquiry:
                 return "https://forms.gle/ZzG7zY1mc7DAZ7ot9"
             case .policy:
-                return "https://workit-team.notion.site/About-Workit-1efde21df0ec4d358a87d1d6acb49801"
+                return "https://workit-team.notion.site/Workit-9fd68a7ce34e4b23ad0f20bcd9841569"
             default:
                 return ""
             }
