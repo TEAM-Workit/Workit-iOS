@@ -172,6 +172,31 @@ extension UIViewController {
         
         self.present(alertViewController, animated: true)
     }
+    
+    public func showToast(message: String, font: UIFont) {
+        let toastLabel = UILabel()
+        toastLabel.backgroundColor = UIColor.wkBlack45.withAlphaComponent(0.8)
+        toastLabel.textColor = UIColor.white
+        toastLabel.font = font
+        toastLabel.textAlignment = .center
+        toastLabel.text = message
+        toastLabel.alpha = 1.0
+        toastLabel.layer.cornerRadius = 10
+        toastLabel.clipsToBounds = true
+        
+        self.view.addSubview(toastLabel)
+        toastLabel.snp.makeConstraints { make in
+            make.top.equalTo(self.view.safeAreaLayoutGuide)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(40)
+        }
+        
+        UIView.animate(withDuration: 1.0, delay: 3.0, options: .curveEaseOut, animations: {
+            toastLabel.alpha = 0.0
+        }, completion: { _ in
+            toastLabel.removeFromSuperview()
+        })
+    }
 }
 
 struct AlertButton {

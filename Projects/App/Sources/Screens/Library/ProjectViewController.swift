@@ -12,6 +12,7 @@ import DesignSystem
 import UIKit
 
 import ReactorKit
+import Mixpanel
 
 class ProjectViewController: BaseViewController, PageTabProtocol, View {
     
@@ -118,6 +119,8 @@ class ProjectViewController: BaseViewController, PageTabProtocol, View {
 
 extension ProjectViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        Mixpanel.mainInstance().track(event: "모아보기_프로젝트_목록_Clicked")
+        
         let detailViewController = DetailViewController(previousView: .project)
         detailViewController.reactor = DetailReactor(
             title: self.reactor?.currentState.projects[indexPath.row].name ?? "",

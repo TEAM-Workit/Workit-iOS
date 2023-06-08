@@ -15,36 +15,41 @@ import UIKit
 
 import ReactorKit
 import SnapKit
+import Mixpanel
 
 class SettingViewController: BaseViewController, View {
     
     enum Setting: Int, CaseIterable {
+        case notification
         case project
         case service
         case csv
         case inquiry
         case policy
         case logout
+        case appVersion
         
         var title: String {
             switch self {
+            case .notification: return "알림 설정"
             case .project: return "프로젝트 관리"
             case .service: return "서비스 소개"
-            case .csv: return "CSV 추출하기"
+            case .csv: return "파일로 내려받기"
             case .inquiry: return "문의하기"
             case .policy: return "앱 정보"
             case .logout: return "로그아웃"
+            case .appVersion: return "현재 버전"
             }
         }
         
         var url: String {
             switch self {
             case .service:
-                return "https://workit-team.notion.site/Workit-9fd68a7ce34e4b23ad0f20bcd9841569"
+                return "https://workit-team.notion.site/About-Workit-1efde21df0ec4d358a87d1d6acb49801"
             case .inquiry:
                 return "https://forms.gle/ZzG7zY1mc7DAZ7ot9"
             case .policy:
-                return "https://workit-team.notion.site/About-Workit-1efde21df0ec4d358a87d1d6acb49801"
+                return "https://workit-team.notion.site/Workit-9fd68a7ce34e4b23ad0f20bcd9841569"
             default:
                 return ""
             }
@@ -92,6 +97,12 @@ class SettingViewController: BaseViewController, View {
         return tableView
     }()
     
+    private var notificationState: Bool = false {
+        didSet {
+            tableView.reloadData()
+        }
+    }
+    
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
@@ -105,6 +116,14 @@ class SettingViewController: BaseViewController, View {
     
     override func viewWillAppear(_ animated: Bool) {
         self.setNavigationBar()
+        UNUserNotificationCenter.current().getNotificationSettings(completionHandler: notificationSettingsCompletionHandler)
+    }
+    
+    // MARK: - Notification oberserver methods
+    
+    @objc
+    func willEnterForeground() {
+        UNUserNotificationCenter.current().getNotificationSettings(completionHandler: notificationSettingsCompletionHandler)
     }
     
     // MARK: - Bind (ReactorKit)
@@ -191,6 +210,13 @@ class SettingViewController: BaseViewController, View {
     @objc private func dismissButtonDidTapped() {
         self.dismiss(animated: true)
     }
+    
+    @objc
+    private func notificationSettingsCompletionHandler(settings: UNNotificationSettings) {
+        DispatchQueue.main.async {
+            self.notificationState = settings.authorizationStatus == .authorized ? true : false
+        }
+    }
 }
 
 // MARK: - UITableViewDelegate
@@ -201,9 +227,12 @@ extension SettingViewController: UITableViewDelegate {
         return 60
     }
     
+    // swiftlint:disable cyclomatic_complexity
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let type = Setting(rawValue: indexPath.row) else { return }
         switch type {
+        case .notification:
+            break
         case .project:
             let projectViewController = ProjectManagementViewController()
             let useCase = DefaultProjectUseCase(projectRepository: DefaultProjectRepository())
@@ -214,9 +243,8 @@ extension SettingViewController: UITableViewDelegate {
             let view: SFSafariViewController = SFSafariViewController(url: url!)
             self.present(view, animated: true, completion: nil)
         case .csv:
-            let alert = UIAlertController(title: Text.preparing,
-                                          message: nil,
-                                          preferredStyle: .alert)
+            Mixpanel.mainInstance().track(event: "설정_추출버튼_Clicked")
+            let alert = UIAlertController(title: Text.preparing, message: nil, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: Text.confirm, style: .cancel))
             self.present(alert, animated: true)
         case .inquiry:
@@ -233,12 +261,20 @@ extension SettingViewController: UITableViewDelegate {
                                           preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: Text.cancel, style: .cancel))
             alert.addAction(UIAlertAction(title: Text.confirm, style: .default) { _ in
+                Mixpanel.mainInstance().track(event: "설정_로그아웃 모달 확인 버튼_Clicked")
                 UserDefaultsManager.shared.removeToken()
                 RootViewChange.shared.setRootViewController(.splash)
             })
             self.present(alert, animated: true, completion: nil)
+        case .appVersion:
+            guard let url = URL(string: "itms-apps://itunes.apple.com/app/6448702578") else { return }
+            
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            }
         }
     }
+    // swiftlint:enable cyclomatic_complexity
     
 }
 
@@ -254,7 +290,29 @@ extension SettingViewController: UITableViewDataSource {
         let cell: SettingTableViewCell = tableView.dequeueReusableCell(for: indexPath)
         cell.setTitle(Setting.allCases[indexPath.item].title)
         cell.selectionStyle = .none
+        
+        switch Setting.allCases[indexPath.item] {
+        case .notification:
+            cell.type = .toggle
+            cell.toggle.delegate = self
+            cell.toggle.isOn = notificationState
+        case .appVersion:
+            cell.type = .subtitle
+            cell.subTitleLabel.text = Bundle.appVersion
+        default:
+            cell.type = .default
+        }
+        
         return cell
     }
     
+}
+
+extension SettingViewController: WKToggleDelegate {
+    func toggleStateChanged(_ toggle: WKToggle, isOn: Bool) {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        if UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
+        }
+    }
 }

@@ -12,7 +12,7 @@ import SnapKit
 
 // MARK: - Protocols
 
-protocol WKToggleDelegate: AnyObject {
+public protocol WKToggleDelegate: AnyObject {
     func toggleStateChanged(_ toggle: WKToggle, isOn: Bool)
 }
 
@@ -30,20 +30,24 @@ public class WKToggle: UIView {
 
     private let containerView: UIView = {
         let view = UIView()
-        view.backgroundColor = .purple
+        view.backgroundColor = .wkMainPurple
         return view
     }()
 
     private let circleView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .wkWhite
         return view
     }()
 
     // MARK: - Properties
 
-    private var isOn: Bool = true
-    weak var delegate: WKToggleDelegate?
+    public var isOn: Bool = true {
+        didSet {
+            isOn ? turnOn() : turnOff()
+        }
+    }
+    public weak var delegate: WKToggleDelegate?
 
     // MARK: - Initializer
 
@@ -117,7 +121,7 @@ public class WKToggle: UIView {
 
         UIView.animate(withDuration: 0.2) {
             self.layoutIfNeeded()
-            self.containerView.backgroundColor = .purple
+            self.containerView.backgroundColor = .wkMainPurple
         }
     }
 
@@ -129,7 +133,7 @@ public class WKToggle: UIView {
 
         UIView.animate(withDuration: Number.duration) {
             self.layoutIfNeeded()
-            self.containerView.backgroundColor = .gray
+            self.containerView.backgroundColor = .wkBlack45
         }
     }
 

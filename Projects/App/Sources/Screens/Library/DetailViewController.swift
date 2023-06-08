@@ -11,6 +11,7 @@ import DesignSystem
 import UIKit
 
 import ReactorKit
+import Mixpanel
 
 class DetailViewController: BaseViewController, View {
     var disposeBag = DisposeBag()
@@ -67,6 +68,7 @@ class DetailViewController: BaseViewController, View {
         self.setLayout()
         self.registerCell()
         self.setDataSource()
+        self.trackEmptyView()
     }
     
     private func setNavigationBar() {
@@ -190,6 +192,15 @@ class DetailViewController: BaseViewController, View {
         self.dataSource.apply(snapshot)
     }
 
+    func trackEmptyView() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(addMixpanel(sender:)))
+        emptyView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc
+    func addMixpanel(sender: UITapGestureRecognizer) {
+        Mixpanel.mainInstance().track(event: "모아보기_프로젝트_목록_Clicked")
+    }
 }
 
 extension DetailViewController: CalendarBottomSheetDelegate {
