@@ -227,6 +227,7 @@ extension SettingViewController: UITableViewDelegate {
         return 60
     }
     
+    // swiftlint:disable cyclomatic_complexity
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let type = Setting(rawValue: indexPath.row) else { return }
         switch type {
@@ -243,10 +244,7 @@ extension SettingViewController: UITableViewDelegate {
             self.present(view, animated: true, completion: nil)
         case .csv:
             Mixpanel.mainInstance().track(event: "설정_추출버튼_Clicked")
-            
-            let alert = UIAlertController(title: Text.preparing,
-                                          message: nil,
-                                          preferredStyle: .alert)
+            let alert = UIAlertController(title: Text.preparing, message: nil, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: Text.confirm, style: .cancel))
             self.present(alert, animated: true)
         case .inquiry:
@@ -269,17 +267,14 @@ extension SettingViewController: UITableViewDelegate {
             })
             self.present(alert, animated: true, completion: nil)
         case .appVersion:
-            guard
-                let url = URL(string: "itms-apps://itunes.apple.com/app/6448702578")
-            else {
-                return
-            }
+            guard let url = URL(string: "itms-apps://itunes.apple.com/app/6448702578") else { return }
             
             if UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url)
             }
         }
     }
+    // swiftlint:enable cyclomatic_complexity
     
 }
 

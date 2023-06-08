@@ -14,6 +14,7 @@ import Global
 import SnapKit
 import ReactorKit
 
+// swiftlint:disable type_body_length
 final class ProjectManagementViewController: BaseViewController, View {
     
     typealias DiffableDataSource = UICollectionViewDiffableDataSource<Section, Project>
@@ -64,6 +65,8 @@ final class ProjectManagementViewController: BaseViewController, View {
     }()
     
     private let projectCreateView = ProjectCreateView()
+    
+    // swiftlint:enable type_body_length
     
     // MARK: - Properties
     
