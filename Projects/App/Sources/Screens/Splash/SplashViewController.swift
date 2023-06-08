@@ -16,7 +16,7 @@ import SnapKit
 final class SplashViewController: UIViewController {
     
     struct Config {
-        static let appId = ""
+        static let appId = "6448702578"
     }
     
     private let disposeBag = DisposeBag()
