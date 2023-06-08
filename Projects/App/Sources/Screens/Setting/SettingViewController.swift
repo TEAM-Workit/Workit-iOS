@@ -19,6 +19,7 @@ import SnapKit
 class SettingViewController: BaseViewController, View {
     
     enum Setting: Int, CaseIterable {
+        case notification
         case project
         case service
         case csv
@@ -28,6 +29,7 @@ class SettingViewController: BaseViewController, View {
         
         var title: String {
             switch self {
+            case .notification: return "알림 설정"
             case .project: return "프로젝트 관리"
             case .service: return "서비스 소개"
             case .csv: return "파일로 내려받기"
@@ -92,6 +94,12 @@ class SettingViewController: BaseViewController, View {
         return tableView
     }()
     
+    private var notificationState: Bool = false {
+        didSet {
+            tableView.reloadData()
+        }
+    }
+    
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
@@ -105,6 +113,14 @@ class SettingViewController: BaseViewController, View {
     
     override func viewWillAppear(_ animated: Bool) {
         self.setNavigationBar()
+        UNUserNotificationCenter.current().getNotificationSettings(completionHandler: notificationSettingsCompletionHandler)
+    }
+    
+    // MARK: - Notification oberserver methods
+    
+    @objc
+    func willEnterForeground() {
+        UNUserNotificationCenter.current().getNotificationSettings(completionHandler: notificationSettingsCompletionHandler)
     }
     
     // MARK: - Bind (ReactorKit)
@@ -191,6 +207,13 @@ class SettingViewController: BaseViewController, View {
     @objc private func dismissButtonDidTapped() {
         self.dismiss(animated: true)
     }
+    
+    @objc
+    private func notificationSettingsCompletionHandler(settings: UNNotificationSettings) {
+        DispatchQueue.main.async {
+            self.notificationState = settings.authorizationStatus == .authorized ? true : false
+        }
+    }
 }
 
 // MARK: - UITableViewDelegate
@@ -204,6 +227,8 @@ extension SettingViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let type = Setting(rawValue: indexPath.row) else { return }
         switch type {
+        case .notification:
+            break
         case .project:
             let projectViewController = ProjectManagementViewController()
             let useCase = DefaultProjectUseCase(projectRepository: DefaultProjectRepository())
@@ -254,7 +279,23 @@ extension SettingViewController: UITableViewDataSource {
         let cell: SettingTableViewCell = tableView.dequeueReusableCell(for: indexPath)
         cell.setTitle(Setting.allCases[indexPath.item].title)
         cell.selectionStyle = .none
+        if Setting.allCases[indexPath.item] == .notification {
+            cell.type = .toggle
+            cell.toggle.delegate = self
+            cell.toggle.isOn = notificationState
+        } else {
+            cell.type = .default
+        }
         return cell
     }
     
+}
+
+extension SettingViewController: WKToggleDelegate {
+    func toggleStateChanged(_ toggle: WKToggle, isOn: Bool) {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        if UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
+        }
+    }
 }

@@ -13,6 +13,11 @@ import SnapKit
 
 class SettingTableViewCell: UITableViewCell {
     
+    enum `Type` {
+        case `default`
+        case toggle
+    }
+    
     // MARK: - UIComponents
     
     private let titleLabel: UILabel = {
@@ -33,6 +38,17 @@ class SettingTableViewCell: UITableViewCell {
         return view
     }()
     
+    public lazy var toggle: WKToggle = {
+        let toggle = WKToggle()
+        return toggle
+    }()
+    
+    public var type: `Type` = .default {
+        didSet {
+            self.setLayout()
+        }
+    }
+    
     // MARK: - Initalizer
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -48,7 +64,7 @@ class SettingTableViewCell: UITableViewCell {
     // MARK: - Methods
     
     private func setLayout() {
-        self.addSubviews([titleLabel, nextImageView, separatorView])
+        self.addSubviews([titleLabel, nextImageView, separatorView, toggle])
         
         self.titleLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -64,6 +80,15 @@ class SettingTableViewCell: UITableViewCell {
             make.height.equalTo(1)
             make.leading.trailing.equalToSuperview().inset(20)
             make.bottom.equalToSuperview()
+        }
+        
+        if self.type == .toggle {
+            self.toggle.snp.makeConstraints { make in
+                make.centerY.equalToSuperview()
+                make.trailing.equalToSuperview().inset(20)
+            }
+        } else {
+            self.toggle.removeFromSuperview()
         }
     }
     
