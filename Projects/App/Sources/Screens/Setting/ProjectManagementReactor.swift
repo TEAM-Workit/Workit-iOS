@@ -21,7 +21,8 @@ final class ProjectManagementReactor: Reactor {
             newProjectTitle: "",
             projectList: [],
             isEnableCreateButton: false,
-            isDuplicatedProject: false
+            isDuplicatedProject: false,
+            isShowingToast: false
         )
     }
     
@@ -39,6 +40,7 @@ final class ProjectManagementReactor: Reactor {
         var projectList: [Project]
         var isEnableCreateButton: Bool
         var isDuplicatedProject: Bool
+        var isShowingToast: Bool
     }
     
     enum Mutation {
@@ -48,6 +50,7 @@ final class ProjectManagementReactor: Reactor {
         case modifyTitle(String, Int, Int)
         case deleteProject(Int, Int)
         case setNewProjectTitle(String?)
+        case showToast(Bool)
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
@@ -65,10 +68,15 @@ final class ProjectManagementReactor: Reactor {
                 return .empty()
             }
             
-            return self.projectUseCase
-                .createProject(title: currentState.newProjectTitle)
-                .map { Mutation.createProject($0) }
-                .asObservable()
+            return .concat(
+                [self.projectUseCase
+                    .createProject(title: currentState.newProjectTitle)
+                    .map { Mutation.createProject($0) }
+                    .asObservable(),
+                 .just(.showToast(true)),
+                 .just(.showToast(false)).delay(.seconds(3), scheduler: MainScheduler.instance)
+                ]
+            )
             
         case let .modifyButtonTapped(projectName, projectID):
             if let projectName = projectName,
@@ -98,6 +106,7 @@ final class ProjectManagementReactor: Reactor {
         var newState = state
         
         switch mutation {
+            
         case let .projects(projects):
             newState.projectList = projects
             
@@ -110,6 +119,7 @@ final class ProjectManagementReactor: Reactor {
                 return newState
             }
             newState.isDuplicatedProject = false
+            newState.newProjectTitle = ""
             newState.projectList.insert(project, at: 0)
             
         case let .modifyTitle(name, projectID, statusCode):
@@ -120,7 +130,7 @@ final class ProjectManagementReactor: Reactor {
                 
                 newState.projectList[index].title = name
             }
-            
+
         case let .deleteProject(projectID, statusCode):
             if statusCode == 20000 {
                 guard let index = newState.projectList.firstIndex(where: { item in
@@ -137,9 +147,13 @@ final class ProjectManagementReactor: Reactor {
                 return newState
             }
             newState.isEnableCreateButton = true
+            
+        case let .showToast(show):
+            newState.isShowingToast = show
         }
         
         return newState
+        
     }
     // swiftlint:enable cyclomatic_complexity
     

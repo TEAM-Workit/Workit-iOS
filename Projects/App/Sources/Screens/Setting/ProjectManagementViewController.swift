@@ -9,6 +9,7 @@
 import Domain
 import DesignSystem
 import UIKit
+import Global
 
 import SnapKit
 import ReactorKit
@@ -125,6 +126,7 @@ final class ProjectManagementViewController: BaseViewController, View {
         reactor.state
             .map { $0.projectList }
             .filter { !$0.isEmpty }
+            .distinctUntilChanged()
             .withUnretained(self)
             .bind { owner, projects in
                 owner.applySnapshot(projects: projects)
@@ -133,6 +135,7 @@ final class ProjectManagementViewController: BaseViewController, View {
         
         reactor.state
             .map { $0.isEnableCreateButton }
+            .distinctUntilChanged()
             .withUnretained(self)
             .bind { owner, isEnableCreateButton in
                 owner.projectCreateView.createButton.isEnabled = isEnableCreateButton
@@ -140,14 +143,25 @@ final class ProjectManagementViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         reactor.state
-            .map { $0.isDuplicatedProject }
+            .compactMap { $0.newProjectTitle }
+            .distinctUntilChanged()
             .withUnretained(self)
-            .bind { _, isDuplicatedProject in
-                if isDuplicatedProject {
-                    
+            .bind { owner, text in
+                owner.projectCreateView.textField.text = text
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.isShowingToast }
+            .distinctUntilChanged()
+            .withUnretained(self)
+            .bind { owner, isShowingToast in
+                if isShowingToast && reactor.currentState.isDuplicatedProject {
+                    owner.showToast(message: "이미 생성된 프로젝트입니다.", font: .b2M)
                 }
             }
             .disposed(by: disposeBag)
+            
     }
 
     // MARK: - Methods
