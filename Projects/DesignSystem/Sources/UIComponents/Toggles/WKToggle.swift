@@ -36,7 +36,7 @@ public class WKToggle: UIView {
 
     private let circleView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .wkWhite
         return view
     }()
 
@@ -133,7 +133,7 @@ public class WKToggle: UIView {
 
         UIView.animate(withDuration: Number.duration) {
             self.layoutIfNeeded()
-            self.containerView.backgroundColor = .gray
+            self.containerView.backgroundColor = .wkBlack45
         }
     }
 
