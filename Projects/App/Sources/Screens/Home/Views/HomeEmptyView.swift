@@ -12,6 +12,20 @@ import UIKit
 import SnapKit
 
 final class HomeEmptyView: UIView {
+    
+    enum EmptyViewType {
+        case today
+        case range
+        
+        var title: String {
+            switch self {
+            case .today:
+                return "오늘의 기록이 없어요"
+            case .range:
+                return "작성된 기록이 없어요"
+            }
+        }
+    }
 
     private let emptyImageView: UIImageView = {
         let imageView = UIImageView()
@@ -22,7 +36,7 @@ final class HomeEmptyView: UIView {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "아직 작성된 기록이 없어요"
+        label.text = EmptyViewType.today.title
         label.font = .h4M
         label.textColor = .wkBlack45
         label.textAlignment = .center
@@ -50,6 +64,10 @@ final class HomeEmptyView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    internal func setEmptyViewType(type: EmptyViewType) {
+        self.titleLabel.text = type.title
     }
     
     private func setLayout() {

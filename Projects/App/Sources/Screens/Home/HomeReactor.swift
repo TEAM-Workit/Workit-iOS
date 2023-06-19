@@ -27,7 +27,8 @@ final class HomeReactor: Reactor {
         initialState = .init(
             works: [],
             dates: (startDate: Date(), endDate: Date()),
-            username: "")
+            username: "",
+            emptyViewState: .today)
     }
     
     enum Action {
@@ -39,12 +40,14 @@ final class HomeReactor: Reactor {
         var works: [Work]
         var dates: (startDate: Date, endDate: Date)
         var username: String
+        var emptyViewState: HomeEmptyView.EmptyViewType
     }
     
     enum Mutation {
         case setProjects([Work])
         case setName(String)
         case setDate(Date, Date)
+        case setEmptyViewState(HomeEmptyView.EmptyViewType)
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
@@ -64,7 +67,9 @@ final class HomeReactor: Reactor {
                 start: startDate,
                 end: endDate)
                 .map { Mutation.setProjects($0) }
-            return Observable.concat(date, works)
+            let sameDate = startDate == endDate
+            let emptyState = Observable.just(Mutation.setEmptyViewState(sameDate ? .today : .range))
+            return Observable.concat(emptyState, date, works)
         }
     }
     
@@ -78,6 +83,8 @@ final class HomeReactor: Reactor {
             newState.username = name
         case .setDate(let startDate, let endDate):
             newState.dates = (startDate, endDate)
+        case .setEmptyViewState(let emptyViewState):
+            newState.emptyViewState = emptyViewState
         }
         
         return newState
