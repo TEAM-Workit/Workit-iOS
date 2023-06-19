@@ -153,6 +153,15 @@ final class HomeViewController: BaseViewController, View {
                 owner.applySnapshot(works: owner.reactor?.currentState.works ?? [])
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.emptyViewState }
+            .withUnretained(self)
+            .bind { owner, emptyState in
+                print(emptyState)
+                owner.homeEmptyView.setEmptyViewType(type: emptyState)
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Methods
