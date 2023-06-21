@@ -152,6 +152,7 @@ final class LoginViewController: BaseViewController {
                 }
                 .bind(onNext: { authToken in
                     UserDefaultsManager.shared.accessToken = authToken.accessToken
+                    UserDefaultsManager.shared.userId = authToken.id
                     RootViewChange.shared.setRootViewController(.home)
                 })
                 .disposed(by: disposeBag)
@@ -166,6 +167,7 @@ final class LoginViewController: BaseViewController {
                 }
                 .bind(onNext: { authToken in
                     UserDefaultsManager.shared.accessToken = authToken.accessToken
+                    UserDefaultsManager.shared.userId = authToken.id
                     RootViewChange.shared.setRootViewController(.home)
                 })
                 .disposed(by: disposeBag)
@@ -279,6 +281,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizatio
             self.authUseCase.postSocialLogin(requestValue: request)
                 .bind { authToken in
                     UserDefaultsManager.shared.accessToken = authToken.accessToken
+                    UserDefaultsManager.shared.userId = authToken.id
                     RootViewChange.shared.setRootViewController(.home)
                 }
                 .disposed(by: disposeBag)

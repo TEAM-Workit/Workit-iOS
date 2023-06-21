@@ -9,6 +9,7 @@
 import Data
 import DesignSystem
 import Domain
+import Global
 import UIKit
 
 import Mixpanel
@@ -141,7 +142,10 @@ final class HomeViewController: BaseViewController, View {
             .withUnretained(self)
             .bind { owner, name in
                 owner.bannerView.setName(name: name)
-                owner.sendMixpanelUserProperties(name: name, email: "testEmail", userId: -1)
+                owner.sendMixpanelUserProperties(
+                    name: name,
+                    email: "testEmail",
+                    userId: UserDefaultsManager.shared.userId ?? -1)
             }
             .disposed(by: disposeBag)
         

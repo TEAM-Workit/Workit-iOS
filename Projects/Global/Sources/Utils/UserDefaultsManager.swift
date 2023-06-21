@@ -32,7 +32,17 @@ public struct UserDefaultsManager {
         }
     }
     
+    public var userId: Int? {
+        get {
+            return UserDefaults.standard.object(forKey: "userId") as? Int ?? nil
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "userId")
+        }
+    }
+    
     public func removeToken() {
         UserDefaults.standard.removeObject(forKey: "accessToken")
+        UserDefaults.standard.removeObject(forKey: "userId")
     }
 }

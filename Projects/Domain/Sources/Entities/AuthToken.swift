@@ -8,8 +8,10 @@
 
 public struct AuthToken {
     public let accessToken: String
+    public let id: Int
     
-    public init(accessToken: String) {
+    public init(accessToken: String, id: Int) {
         self.accessToken = accessToken
+        self.id = id
     }
 }

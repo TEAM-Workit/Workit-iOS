@@ -10,8 +10,9 @@ import Domain
 
 public struct AuthResponseDTO: Decodable {
     let accessToken: String
+    let id: Int
     
     public func toDomain() -> AuthToken {
-        return AuthToken.init(accessToken: accessToken)
+        return AuthToken.init(accessToken: accessToken, id: id)
     }
 }
