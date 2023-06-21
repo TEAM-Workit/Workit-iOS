@@ -68,7 +68,7 @@ final class MyWorkitHeaderView: UICollectionReusableView {
     
     public func setDate(startDate: Date, endDate: Date) {
         print(startDate, endDate)
-        dateButton.setDate(fromDate: startDate, toDate: endDate)
+        dateButton.setDate(fromDate: startDate, toDate: endDate, isHome: true)
     }
 
     private func setBackgroundColor() {
