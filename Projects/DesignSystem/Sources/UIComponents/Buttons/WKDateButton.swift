@@ -118,7 +118,8 @@ public final class WKDateButton: UIView {
     /// - Parameters:
     ///    - fromDate: 시작날짜 (날짜 선택 전일 경우 nil)
     ///    - toDate: 끝나는 날짜 (단일 날짜의 경우 nil)
-    public func setDate(fromDate: Date?, toDate: Date?) {
+    ///    - isHome: 홈인경우 오늘이면 "오늘"로 나와야 해서 true값으로 준다. (optional)
+    public func setDate(fromDate: Date?, toDate: Date?, isHome: Bool = false) {
         self.fromDate = fromDate
         self.toDate = toDate
         if fromDate == nil && toDate == nil {
@@ -127,14 +128,21 @@ public final class WKDateButton: UIView {
         } else if toDate == nil, let fromDate = fromDate {
             /// 날짜 단일인 경우
             self.dateLabel.text = "\(fromDate.toString(type: .dot))"
+            if isHome, fromDate == Date() {
+                self.dateLabel.text = "오늘"
+            }
         } else if let fromDate = fromDate?.toString(type: .dot),
                 let toDate = toDate?.toString(type: .dot) {
             if fromDate == toDate {
                 self.dateLabel.text = "\(fromDate)"
+                if isHome, fromDate == Date().toString(type: .dot) {
+                    self.dateLabel.text = "오늘"
+                }
             } else {
                 self.dateLabel.text = "\(fromDate) - \(toDate)"
             }
         }
+        
         dateLabel.sizeToFit()
     }
 }
